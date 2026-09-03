@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Media Mansion — Real Estate Media in Philadelphia, PA</title>
+<meta name="description" content="Photo, video, and 3D Matterport tours for real estate listings. Philadelphia, PA based, serving Greater Philadelphia, New Jersey and Delaware.">
+<link rel="icon" href="https://static.showit.com/file/5TM7Lbemb2ZT0DGp28HF6A/273321/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="https://static.showit.com/file/5TM7Lbemb2ZT0DGp28HF6A/273321/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Media Mansion — Real Estate Media in Philadelphia, PA">
+<meta property="og:description" content="Photo, video, and 3D Matterport tours for real estate listings. Philadelphia, PA based, serving Greater Philadelphia, New Jersey and Delaware.">
+<meta property="og:image" content="https://static.showit.com/file/1k77VDFhZ6cB_A7WMYvtJQ/273321/screenshot_2026-09-03_at_4_50_53_pm.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Media Mansion — Real Estate Media in Philadelphia, PA">
+<meta name="twitter:description" content="Photo, video, and 3D Matterport tours for real estate listings. Philadelphia, PA based, serving Greater Philadelphia, New Jersey and Delaware.">
+<meta name="twitter:image" content="https://static.showit.com/file/1k77VDFhZ6cB_A7WMYvtJQ/273321/screenshot_2026-09-03_at_4_50_53_pm.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#060a0c;
+    --ink:#1c1a17;
+    --panel:#1a1917;
+    --line:rgba(255,255,255,.1);
+    --taupe:#9c9489;
+    --taupe-lt:#c9c2b8;
+    --cream:#eceae5;
+    --paper:#f7f5f1;
+    --gold:#c9a15c;
+    --gold-dk:#a5813f;
+    --serif:'Playfair Display',Georgia,serif;
+    --display:'Bebas Neue',Impact,sans-serif;
+    --sans:'Montserrat',system-ui,sans-serif;
+    --max:1180px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:auto}   /* JS handles smooth in-page scrolling; CSS smooth here fights the rAF tween */
+  body{font-family:var(--sans);font-weight:300;color:#fff;background:var(--black);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  h1,h2{font-family:var(--display);font-weight:400;line-height:.92;letter-spacing:.01em;text-transform:uppercase}
+  h3{font-family:var(--display);font-weight:400;line-height:1;letter-spacing:.03em;text-transform:uppercase}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+  section{padding:120px 0}
+  section[id]{scroll-margin-top:112px}
+  .btn{display:inline-flex;align-items:center;gap:12px;font-family:var(--sans);font-weight:500;font-size:12px;letter-spacing:.16em;text-transform:uppercase;padding:16px 26px;border:1px solid var(--gold);color:var(--gold);border-radius:3px;transition:background .2s,color .2s;cursor:pointer;background:transparent}
+  .btn:hover,.btn:focus-visible{background:var(--gold);color:var(--black)}
+  .btn:active{transform:translateY(1px)}
+  .btn.solid{background:var(--gold);color:var(--black)}
+  .btn.solid:hover{background:var(--gold-dk);border-color:var(--gold-dk)}
+  .btn.ghost{border-color:rgba(255,255,255,.3);color:#fff}
+  .btn.ghost:hover{background:#fff;color:var(--black);border-color:#fff}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+  .kicker{font-family:var(--serif);font-style:italic;font-size:clamp(20px,2.2vw,26px);color:var(--taupe-lt)}
+
+  /* ---------- page loader ---------- */
+  .page-loader{position:fixed;inset:0;z-index:9999;background:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;opacity:1;transition:opacity .7s ease}
+  .page-loader.fade-out{opacity:0;pointer-events:none;visibility:hidden}
+  .loader-content{text-align:center;transition:opacity .35s ease}
+  .loader-content.hidden{opacity:0}
+  .loader-logo{width:112px;max-width:46vw;height:auto;margin:0 auto 22px;display:block}
+  .loader-bar{width:172px;height:3px;background:#e2e0da;overflow:hidden;border-radius:2px;margin:0 auto}
+  .loader-fill{width:0;height:100%;background:var(--gold-dk);animation:loadBar 1.2s .15s ease-in-out forwards}
+  @keyframes loadBar{to{width:100%}}
+
+  /* ---------- scroll reveal + micro-motion ---------- */
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity 1.05s ease,transform 1.05s cubic-bezier(.16,1,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+  /* these elements carry their own hover transitions — make the reveal one win while revealing */
+  .tile.reveal,.capab .cap-item.reveal,.svc .svc-tile.reveal{transition:opacity 1.05s ease,transform 1.05s cubic-bezier(.16,1,.3,1)}
+  @keyframes heroIn{to{opacity:1;transform:none}}
+  .hero .wrap > *{opacity:0;transform:translateY(8px);animation:heroIn 1.15s ease forwards}
+  .hero .wrap > *:nth-child(1){animation-delay:1.6s}
+  .hero .wrap > *:nth-child(2){animation-delay:1.74s}
+  .hero .wrap > *:nth-child(3){animation-delay:1.88s}
+  .hero .wrap > *:nth-child(4){animation-delay:2.02s}
+  /* return visits this session skip the loader -> show the hero right away */
+  html.loaded-before .hero .wrap > *{animation:none;opacity:1;transform:none}
+
+  /* ---------- header ---------- */
+  header{position:fixed;inset:0 0 auto 0;z-index:50;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+  header::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(6,10,12,.62),rgba(6,10,12,0));transition:opacity .3s}
+  header.scrolled{background:rgba(6,10,12,.92);backdrop-filter:blur(10px);border-color:var(--line)}
+  header.scrolled::before{opacity:0}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:104px}
+  .logo{display:flex;align-items:center;color:#fff}
+  .logo img{height:74px;width:auto}
+  .links{display:flex;gap:44px}
+  .links a{color:#fff;font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;transition:opacity .2s}
+  .links a:hover{opacity:.7}
+  .nav-right{display:flex;align-items:center;gap:20px}
+  .nav .btn{padding:13px 22px;font-size:11px;background:#fff;border-color:#fff;color:var(--black)}
+  .nav .btn:hover{background:var(--gold);border-color:var(--gold)}
+  .burger{display:none;background:none;border:0;color:#fff;font-size:26px;cursor:pointer;line-height:1}
+  .book-m{display:none}
+  @media (max-width:960px){
+    header .links{display:none}
+    .burger{display:block}
+    header .links.open{display:flex;flex-direction:column;position:absolute;top:104px;left:0;right:0;background:var(--black);padding:24px;gap:22px;border-bottom:1px solid var(--line)}
+    header .links.open .book-m{display:block;color:var(--gold)}
+  }
+  @media (max-width:600px){.nav{height:92px}.logo img{height:56px}.nav .nav-right > .btn{display:none}header .links.open{top:92px}}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;min-height:100vh;display:flex;align-items:flex-end;padding:160px 0 0;overflow:hidden;color:#fff}
+  .hero-bg{position:absolute;inset:0;z-index:0;
+    background-image:
+      linear-gradient(90deg,rgba(11,17,19,.86) 0%,rgba(11,17,19,.5) 48%,rgba(11,17,19,.18) 100%),
+      linear-gradient(180deg,rgba(11,17,19,.35) 0%,rgba(11,17,19,.03) 38%,rgba(11,17,19,.72) 68%,rgba(0,0,0,.95) 90%,#000 100%),
+      url('https://static.showit.com/file/OV-MXGxxnXy6Rq2UxxeZEQ/273321/0_da2c8f260fb230f4ab80ddfd8415981a_1788455973461_super.png');
+    background-size:cover;background-position:62% center;
+  }
+  .hero .wrap{position:relative;z-index:1;width:100%;padding-bottom:120px}
+  .hero .eyebrow{display:flex;align-items:center;gap:11px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--taupe-lt);margin-bottom:26px;font-weight:400}
+  .hero .eyebrow .dot{width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px 2px rgba(201,161,92,.55);flex:none;animation:pulseDot 2.6s ease-in-out infinite}
+  @keyframes pulseDot{0%,100%{box-shadow:0 0 10px 1px rgba(201,161,92,.4)}50%{box-shadow:0 0 16px 4px rgba(201,161,92,.7)}}
+  .hero h1{font-size:clamp(52px,9vw,140px);line-height:.84}
+  .hero h1 .type{display:inline-block;color:var(--gold)}
+  .hero h1 .cursor{display:inline-block;width:3px;height:.78em;background:var(--gold);margin-left:8px;vertical-align:baseline;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .hero .tagline{font-family:var(--serif);font-style:italic;font-size:clamp(18px,2.4vw,30px);color:var(--taupe-lt);margin:30px 0 38px}
+  .hero .actions{display:flex;gap:16px;flex-wrap:wrap}
+  .hero .actions .btn{background:#fff;border-color:#fff;color:var(--black)}
+  .hero .actions .btn:hover{background:var(--gold);border-color:var(--gold)}
+  .hero .actions .btn svg{width:22px;height:12px}
+  @media (max-width:700px){.hero h1{font-size:clamp(38px,11vw,72px)}.hero .wrap{padding-bottom:21vh}}
+
+  /* ---------- matterport loop ---------- */
+  .tour{padding:16px 0 0;background:linear-gradient(180deg,#000 0%,#000 9%,#060a0c 78%,#060a0c 100%);text-align:center}
+  .tour video{width:66vw;max-width:832px;height:auto;display:inline-block;background:#000;vertical-align:middle}
+  @media (max-width:820px){.tour{padding:0}.tour video{width:100%;max-width:none;display:block}}
+
+  /* ---------- about ---------- */
+  .about .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:80px;align-items:center}
+  .about .kicker{margin-bottom:28px;display:block;color:var(--gold);font-style:italic;font-size:clamp(29px,3.3vw,38px);line-height:1.16}
+  @media (max-width:860px){.about .kicker{margin-bottom:20px}}
+  .about p{font-size:18px;max-width:56ch;margin-bottom:22px;color:#e9e6e0;line-height:1.7}
+  .about .about-note{display:flex;align-items:flex-start;gap:10px;margin-top:22px;max-width:none;font-size:10px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;line-height:1.65;color:var(--taupe-lt)}
+  .about .about-note .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);flex:none;margin-top:4px;box-shadow:0 0 10px 1px rgba(201,161,92,.5)}
+  @media (max-width:600px){.about .about-note{font-size:9px;letter-spacing:.06em}}
+  .capab{border-top:1px solid var(--line)}
+  .capab > .cap-item{padding:32px 16px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:46px 1fr;gap:20px;position:relative;cursor:pointer;transition:background .25s ease}
+  .capab > .cap-item:hover{background:rgba(255,255,255,.04)}
+  .capab > .cap-item::after{content:"";position:absolute;left:0;top:-1px;bottom:-1px;width:2px;background:var(--gold);transform:scaleY(0);transform-origin:top;transition:transform .3s cubic-bezier(.16,1,.3,1)}
+  .capab > .cap-item:hover::after{transform:scaleY(1)}
+  .capab svg{width:30px;height:30px;stroke:var(--gold);fill:none;stroke-width:1.3;margin-top:4px;transition:transform .3s ease}
+  .capab > .cap-item:hover svg{transform:translateX(3px)}
+  .capab h3{font-size:30px;margin-bottom:8px;transition:color .2s ease}
+  .capab > .cap-item:hover h3{color:var(--gold)}
+  .capab p{font-size:15px;color:var(--taupe-lt);margin:0;max-width:44ch;line-height:1.7}
+  @media (max-width:860px){.about .wrap{grid-template-columns:1fr;gap:48px}}
+
+  /* ---------- trusted by strip ---------- */
+  .trusted{background:#a98c59;padding:56px 0;overflow:hidden}
+  .trusted .label{text-align:center;font-size:22px;letter-spacing:.22em;text-transform:uppercase;color:#fff;opacity:.92;margin-bottom:36px}
+  .trusted .track{display:flex;align-items:center;gap:160px;width:max-content;animation:marquee 70s linear infinite}
+  .trusted .logo{flex:none;height:75px;display:flex;align-items:center}
+  .trusted .logo img{height:100%;width:auto;object-fit:contain}
+  @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @media (max-width:600px){.trusted{padding:40px 0}.trusted .label{font-size:17px;margin-bottom:26px}.trusted .track{gap:104px}.trusted .logo{height:56px}}
+
+  /* ---------- section heading ---------- */
+  .sec-head{text-align:center;margin-bottom:60px}
+  .sec-head h2{font-size:clamp(60px,8vw,120px)}
+  .sec-head .sec-sub{margin-top:16px;font-size:13px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--taupe)}
+
+  /* ---------- portfolio ---------- */
+  .work{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  @media (max-width:900px){.work{grid-template-columns:repeat(2,1fr)}}
+  .work-more{display:none;margin:32px auto 0;padding:14px 32px;background:transparent;border:1px solid var(--gold);color:var(--gold);font:inherit;font-weight:600;font-size:12px;letter-spacing:.16em;text-transform:uppercase;border-radius:3px;cursor:pointer;transition:background .2s,color .2s}
+  .work-more:hover{background:var(--gold);color:var(--black)}
+  @media (max-width:560px){
+    .work{grid-template-columns:1fr}
+    .work .tile:nth-child(n+7){display:none}
+    .work.expanded .tile:nth-child(n+7){display:flex}
+    .work-more{display:block}
+  }
+  .tile{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;font:inherit;color:inherit;padding:0;display:flex;flex-direction:column;transition:border-color .25s,transform .25s ease}
+  .tile:hover{border-color:rgba(201,161,92,.6);transform:translateY(-5px)}
+  .tile .ph{position:relative;aspect-ratio:4/3;background:linear-gradient(135deg,#2a2723,#4a443c);overflow:hidden;display:grid;place-items:center}
+  .tile .ph-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.16,1,.3,1)}
+  .tile:hover .ph-img{transform:scale(1.05)}
+  .tile .ph-tag{position:absolute;z-index:2;right:12px;bottom:12px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--taupe-lt);background:rgba(0,0,0,.55);padding:4px 9px;border-radius:3px}
+  .tile .body{padding:24px 26px 28px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .tile .year{align-self:flex-start;font-size:11px;font-weight:600;letter-spacing:.14em;padding:5px 10px;background:var(--gold);color:var(--black);border-radius:4px}
+  .tile h3{font-size:30px;margin-top:6px}
+  .tile .role{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--taupe)}
+  .tile .desc{font-size:15px;color:var(--taupe-lt);line-height:1.6}
+  .tile .more{margin-top:auto;padding-top:16px;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+
+  /* ---------- services ---------- */
+  .svc{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel)}
+  @media (max-width:900px){.svc{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:560px){.svc{grid-template-columns:1fr}}
+  .svc .svc-tile{padding:34px 32px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-direction:column;min-width:0;min-height:248px;position:relative;color:inherit;transition:background .2s}
+  .svc a.svc-tile:hover{background:#211f1c}
+  .svc .svc-tile h3{font-size:31px;margin-bottom:15px;padding-right:104px}
+  .svc ul{list-style:none;color:var(--taupe-lt);font-size:14.5px;display:grid;gap:4px;min-width:0}
+  .svc li{display:flex;gap:11px;align-items:baseline;min-width:0;overflow-wrap:anywhere;line-height:1.42}
+  .svc li::before{content:"";width:5px;height:5px;background:var(--gold);flex:none;transform:translateY(-3px)}
+  .svc .foot{margin-top:auto;padding-top:22px}
+  .svc .price{font-family:var(--serif);font-size:29px;font-weight:600;color:var(--gold)}
+  .svc .price small{font-family:var(--sans);font-weight:400;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--taupe);margin-left:10px}
+  .svc .go{display:block;margin-top:12px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--taupe);transition:color .2s}
+  .svc a.svc-tile:hover .go{color:var(--gold)}
+  .svc div.svc-tile{cursor:default}
+  .svc .soon-tile h3{padding-right:0}
+  .svc .soon-badge{align-self:flex-start;display:inline-block;font-size:13px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:12px 20px;border:1px solid var(--taupe);border-radius:5px;color:var(--taupe)}
+  .tag{position:absolute;top:26px;right:26px;font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;padding:7px 12px;border-radius:4px;background:var(--gold);color:var(--black)}
+  .tag.soon{background:transparent;border:1px solid var(--taupe);color:var(--taupe)}
+  @media (max-width:560px){
+    .svc .svc-tile{padding:30px 24px;min-height:0}
+    .svc .svc-tile h3{padding-right:0}
+    .tag{position:static;align-self:flex-start;margin-bottom:18px}
+  }
+
+  /* ---------- contact ---------- */
+  .contact .wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:64px;align-items:center}
+  @media (max-width:860px){.contact .wrap{grid-template-columns:1fr}}
+  .contact h2{font-size:clamp(64px,9vw,130px);margin:10px 0 24px}
+  .contact .email{font-family:var(--serif);font-size:clamp(24px,3.4vw,42px);display:inline-block;margin-bottom:40px;border-bottom:2px solid var(--gold);padding-bottom:10px;word-break:break-word}
+  .contact .cta{display:flex;align-items:center;gap:22px;flex-wrap:wrap;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--taupe)}
+  .contact .cta a:not(.btn){font-weight:600;font-size:13px;letter-spacing:.12em;color:#efece6;border-bottom:1px solid rgba(255,255,255,.28);padding-bottom:2px;transition:color .2s,border-color .2s}
+  .contact .cta a:not(.btn):hover{color:#fff;border-color:var(--gold)}
+  .founder{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:36px 34px}
+  .founder-photo{width:100px;height:100px;border-radius:50%;object-fit:cover;margin-bottom:20px;border:1px solid var(--line)}
+  .founder-name{font-family:var(--display);font-size:27px;letter-spacing:.03em;text-transform:uppercase;line-height:1;color:#fff}
+  .founder-title{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-top:7px}
+  .founder-bio{font-size:14.5px;line-height:1.75;color:var(--taupe-lt);margin-top:20px}
+  @media (max-width:860px){.founder{padding:30px 26px}}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line);padding:48px 0;font-size:13px;color:var(--taupe)}
+  footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
+  footer .row + .row{margin-top:28px;padding-top:28px;border-top:1px solid var(--line)}
+  footer .links{gap:22px 28px;flex-wrap:wrap}
+  footer .links a{font-size:14px}
+  footer a:hover{color:#fff}
+  footer .social{display:flex;gap:18px;align-items:center}
+  footer .social a{color:var(--taupe);transition:color .2s}
+  footer .social a:hover{color:#fff}
+  footer .social svg{width:20px;height:20px;display:block}
+  footer .legal{display:flex;gap:24px;flex-wrap:wrap}
+  footer .legal button{background:none;border:0;padding:0;color:var(--taupe);font:inherit;font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:color .2s}
+  footer .legal button:hover{color:#fff}
+
+  /* ---------- legal modal ---------- */
+  .legal-body{padding:40px 44px 48px}
+  .legal-body h3{font-size:34px;margin:0 0 6px}
+  .legal-body .eff{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--taupe);margin-bottom:22px}
+  .legal-body h4{font-family:var(--sans);font-weight:600;font-size:14px;letter-spacing:.04em;text-transform:uppercase;color:#fff;margin:26px 0 10px}
+  .legal-body p{font-size:14px;color:var(--taupe-lt);margin:0 0 12px;max-width:none;line-height:1.75}
+  .legal-body ul{margin:0 0 12px;padding-left:20px;color:var(--taupe-lt);font-size:14px;line-height:1.75}
+  .legal-body a{color:var(--gold);text-decoration:underline}
+  @media (max-width:600px){.legal-body{padding:26px 22px 34px}}
+
+  /* ---------- modal ---------- */
+  .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.8);backdrop-filter:blur(8px)}
+  .modal.open{display:flex}
+  .modal-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;max-width:900px;width:100%;max-height:90vh;overflow:auto;position:relative}
+  .modal-card .media{aspect-ratio:16/9;background:#0b0b0b;display:grid;place-items:center;color:rgba(255,255,255,.35);font-size:12px;letter-spacing:.18em;text-transform:uppercase}
+  .modal-card .media iframe{width:100%;height:100%;border:0}
+  .modal-card .media.gallery{aspect-ratio:auto;display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:0}
+  .modal-card .media.gallery img{width:100%;aspect-ratio:4/3;object-fit:cover}
+  @media (max-width:600px){.modal-card .media.gallery{grid-template-columns:1fr}}
+  .modal-body{padding:36px 40px 44px}
+  .modal-body small{color:var(--taupe);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+  .modal-body h3{font-size:44px;margin:10px 0 16px}
+  .modal-body p{max-width:60ch;margin-bottom:28px;color:var(--taupe-lt);font-size:16px;line-height:1.7}
+  .modal-close{position:absolute;top:18px;right:18px;width:46px;height:46px;border:0;border-radius:50%;background:rgba(0,0,0,.72);color:#fff;font-size:24px;line-height:1;cursor:pointer;display:grid;place-items:center;z-index:120;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transition:background .2s}
+  .modal-close:hover{background:rgba(0,0,0,.92)}
+  @media (max-width:600px){.modal-body{padding:24px}.modal-close{top:12px;right:12px}}
+</style>
+</head>
+<body>
+
+<div class="page-loader" id="pageLoader">
+  <div class="loader-content" id="loaderContent">
+    <img class="loader-logo" src="https://static.showit.com/file/VzoNCbn9l4wWgaA3TXpCQA/273321/asdasrqewf.png" alt="Media Mansion">
+    <div class="loader-bar"><div class="loader-fill"></div></div>
+  </div>
+</div>
+
+<header id="hdr">
+  <div class="wrap nav">
+    <a class="logo" href="#top" aria-label="Media Mansion home">
+      <picture>
+        <source media="(max-width:600px)" srcset="https://static.showit.com/file/mgDRBmGbsMLbZFDyFbkjOA/273321/123213.png">
+        <img src="https://static.showit.com/file/a11IH6b1hoegliIBUSFsWQ/273321/main_loog.png" alt="Media Mansion">
+      </picture>
+    </a>
+    <nav class="links" id="links">
+      <a href="#services">Services</a>
+      <a href="#portfolio">Portfolio</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a class="book-m" href="https://nate.amberandmeade.com/booking">Book a shoot</a>
+    </nav>
+    <div class="nav-right">
+      <a class="btn" href="https://nate.amberandmeade.com/booking">Book a shoot</a>
+      <button class="burger" id="burger" aria-label="Menu" aria-expanded="false">☰</button>
+    </div>
+  </div>
+</header>
+
+<!-- ---------- HERO ---------- -->
+<section class="hero" id="top">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="eyebrow"><span class="dot" aria-hidden="true"></span>Philadelphia, PA based</div>
+    <h1>We create…<br><span class="type" id="typed">Real Estate Media</span><span class="cursor" aria-hidden="true"></span></h1>
+    <p class="tagline">Make your listing unforgettable…</p>
+    <div class="actions">
+      <a class="btn" href="https://nate.amberandmeade.com/booking">Book a shoot
+        <svg viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M0 6h22M17 1l5 5-5 5"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- MATTERPORT LOOP ---------- -->
+<section id="tour" class="tour">
+  <video src="https://static.showit.com/file/CcrVUpL6dMA98Adc_E-efA/273321/modern_home_interior_3d_model_202609031219_2.mp4"
+         autoplay muted loop playsinline preload="metadata" aria-label="Rotating 3D Matterport tour"></video>
+</section>
+
+<!-- ---------- ABOUT ---------- -->
+<section class="about" id="about">
+  <div class="wrap">
+    <div>
+      <span class="kicker">We make properties unforgettable…</span>
+      <p>Media Mansion is a real estate and property media company based in Philadelphia, PA. We create photo, video, and digital property media for listings, rentals, commercial spaces, and design-focused projects.</p>
+      <p>With a background in video production and post-production, we produce property content designed to capture attention, build interest, and help listings stand out.</p>
+      <p class="about-note"><span class="dot" aria-hidden="true"></span>Our post-production background includes campaign work for Netflix, Apple TV, and Hulu — the same high standard every scan and listing gets.</p>
+    </div>
+    <div class="capab">
+      <a class="cap-item" href="#services">
+        <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8 7l1.5-3h5L16 7"/></svg>
+        <div><h3>Photography</h3><p>HDR interior and exterior stills for listings, rentals, and design-focused spaces.</p></div>
+      </a>
+      <a class="cap-item" href="#services">
+        <svg viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/></svg>
+        <div><h3>Video &amp; editing</h3><p>Walkthrough reels and cinematic property tours, shot and cut with real post-production craft.</p></div>
+      </a>
+      <a class="cap-item" href="#services">
+        <svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>
+        <div><h3>3D Matterport tours</h3><p>Full walkthroughs, dollhouse models, and floor plans. Scan technician &amp; QC experience.</p></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- TRUSTED BY ---------- -->
+<div class="trusted">
+  <div class="label">Trusted by</div>
+  <div class="track" id="trusted-track"></div>
+</div>
+
+<!-- ---------- PORTFOLIO ---------- -->
+<section class="portfolio" id="portfolio">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Portfolio</h2>
+      <p class="sec-sub">Over 100 properties scanned and photographed in total</p>
+    </div>
+    <div class="work" id="work"></div>
+    <button class="work-more" id="workMore" type="button">Show more</button>
+  </div>
+</section>
+
+<!-- ---------- SERVICES ---------- -->
+<section class="services" id="services">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Services</h2>
+    </div>
+    <div class="svc">
+      <a class="svc-tile" href="https://nate.amberandmeade.com/booking">
+        <h3>Property Photography</h3>
+        <ul><li>HDR interior and exterior stills</li><li>15–50 edited photos</li><li>24hr delivery</li></ul>
+        <div class="foot">
+          <div class="price">$99<small>starting at</small></div>
+          <span class="go">Book this →</span>
+        </div>
+      </a>
+      <a class="svc-tile" href="https://nate.amberandmeade.com/booking">
+        <h3>3D Matterport Tours</h3>
+        <ul><li>Full 3D Matterport scan</li><li>Exterior 360s</li><li>Floor plans</li><li>24–48hr delivery</li></ul>
+        <div class="foot">
+          <div class="price">$210<small>starting at</small></div>
+          <span class="go">Book this →</span>
+        </div>
+      </a>
+      <a class="svc-tile" href="https://nate.amberandmeade.com/booking">
+        <h3>Simple Walkthrough Reel</h3>
+        <ul><li>Single continuous property walkthrough</li><li>30–60 seconds, vertical or horizontal</li><li>Shot and edited for social media</li></ul>
+        <div class="foot">
+          <div class="price">$99<small>starting at</small></div>
+          <span class="go">Book this →</span>
+        </div>
+      </a>
+      <a class="svc-tile" href="https://nate.amberandmeade.com/booking">
+        <h3>Full Property Videos</h3>
+        <ul><li>Multi-room, professionally edited</li><li>Transitions, color grading, and music</li></ul>
+        <div class="foot">
+          <div class="price">$265<small>starting at</small></div>
+          <span class="go">Book this →</span>
+        </div>
+      </a>
+      <a class="svc-tile" href="https://nate.amberandmeade.com/booking">
+        <h3>Deluxe Bundles</h3>
+        <ul><li>Photos, floor plan, and 3D Matterport tour</li><li>Exterior 360s and property website</li><li>Social media kit, 2 virtual dusk photos, vertical walkthrough reel</li><li>48hr delivery</li></ul>
+        <div class="foot">
+          <div class="price">$560<small>starting at</small></div>
+          <span class="go">Book this →</span>
+        </div>
+      </a>
+      <div class="svc-tile soon-tile">
+        <h3>Drone Aerials</h3>
+        <ul>
+          <li>Exterior and neighborhood aerial footage</li>
+          <li>Roofline, lot lines, and property boundaries</li>
+          <li>Delivered as edited aerial stills and short clips</li>
+        </ul>
+        <div class="foot"><span class="soon-badge">Coming Soon</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- CONTACT ---------- -->
+<section class="contact" id="contact">
+  <div class="wrap">
+    <div>
+      <span class="kicker">we'd love to connect…</span>
+      <h2>Get in touch</h2>
+      <a class="email" href="mailto:hello@mediamansion.com">hello@mediamansion.com</a>
+      <div class="cta">
+        <a class="btn solid" href="https://nate.amberandmeade.com/booking">Book an appointment</a>
+        <a href="mailto:hello@mediamansion.com">or email anytime</a>
+      </div>
+    </div>
+    <div class="founder">
+      <img class="founder-photo" src="https://static.showit.co/400/FgBUND7oUy-5EFEtrIEJKg/273321/natew.jpg" alt="Nate Wiggins" loading="lazy">
+      <div class="founder-name">Nate Wiggins</div>
+      <div class="founder-title">Founder &amp; Photographer</div>
+      <p class="founder-bio">Hi, I'm Nate, founder of Media Mansion. I've spent six-plus years in photography, 3D scanning, and video, and over the past year our team has scanned or photographed more than 100 properties across Greater Philadelphia. Real estate media is what we do best. Whether you need a listing that stands out or a Matterport scan for a design or renovation project, we'd love to help. Not sure what you need? Just ask.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <nav class="links"><a href="#about">about</a><a href="#portfolio">portfolio</a><a href="#services">services</a><a href="#contact">contact</a></nav>
+      <div class="social">
+        <a href="https://instagram.com/media.mansion" target="_blank" rel="noopener" aria-label="Media Mansion on Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/natewiggins/" target="_blank" rel="noopener" aria-label="Nate Wiggins on LinkedIn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 0 5 8.5a2.5 2.5 0 0 0-.02-5zM3.25 9.25h3.5V21h-3.5zM9.5 9.25h3.35v1.6h.05c.47-.88 1.6-1.8 3.3-1.8 3.53 0 4.18 2.32 4.18 5.34V21h-3.5v-5.2c0-1.24-.02-2.84-1.73-2.84-1.74 0-2 1.35-2 2.75V21H9.5z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="row">
+      <div>© Media Mansion 2026</div>
+      <div class="legal">
+        <button type="button" data-legal="privacy">Privacy Policy</button>
+        <button type="button" data-legal="terms">Terms &amp; Conditions</button>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ---------- MODAL ---------- -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
+  <button class="modal-close" id="m-close" aria-label="Close">×</button>
+  <div class="modal-card">
+    <div class="media" id="m-media"></div>
+    <div class="modal-body">
+      <small id="m-meta"></small>
+      <h3 id="m-title"></h3>
+      <p id="m-desc"></p>
+      <a class="btn" id="m-link" href="#" target="_blank" rel="noopener">Watch on Vimeo ↗</a>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- LEGAL MODAL ---------- -->
+<div class="modal" id="legal-modal" role="dialog" aria-modal="true" aria-labelledby="legal-title">
+  <button class="modal-close" id="legal-close" aria-label="Close">×</button>
+  <div class="modal-card">
+    <div class="modal-body legal-body">
+      <h3 id="legal-title"></h3>
+      <div id="legal-content"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- always open at the top (never restore to a section / #hash) ---------- */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+if (location.hash) { try { history.replaceState(null, '', location.pathname + location.search); } catch (_) {} }
+window.scrollTo(0, 0);
+
+/* ---------- shared assets ---------- */
+const BOOKING = "https://nate.amberandmeade.com/booking";
+const VIDEO_THUMB = "https://static.showit.com/file/w8Y1NwZUFs_pC94v6KJZJA/273321/number4.jpg";
+const vimeoEmbed = id => `https://player.vimeo.com/video/${id}?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479`;
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- matterport loop autoplay ---------- */
+const tourVideo = document.querySelector('.tour video');
+if (tourVideo) {
+  const tryPlay = () => tourVideo.play().catch(() => {});
+  tourVideo.addEventListener('canplay', tryPlay);
+  tryPlay();
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(entries => {
+      entries.forEach(e => e.isIntersecting ? tryPlay() : tourVideo.pause());
+    }, {threshold: 0.15}).observe(tourVideo);
+  }
+  ['pointerdown','touchstart','keydown'].forEach(ev =>
+    window.addEventListener(ev, tryPlay, {once: true, passive: true}));
+}
+
+/* ---------- hero typing effect ---------- */
+const phrases = ["Real Estate Media","Matterport Tours","Property Photos","Real Estate Videos","3D Scans","Virtual Walkthroughs"];
+const typed = document.getElementById('typed');
+if (typed) {
+  let i = 0, txt = phrases[0], del = false;
+  function tick(){
+    const full = phrases[i];
+    txt = del ? full.slice(0, txt.length - 1) : full.slice(0, txt.length + 1);
+    typed.textContent = txt;
+    let wait = del ? 38 : 82;
+    if (!del && txt === full) { wait = 1700; del = true; }          // fully typed -> pause, then delete
+    else if (del && txt === '') { del = false; i = (i + 1) % phrases.length; wait = 320; }
+    setTimeout(tick, wait);
+  }
+  setTimeout(tick, 2600);   // start once the loader has cleared, from the phrase already on screen
+}
+
+/* ---------- trusted-by marquee ---------- */
+const TRUSTED_LOGOS = [
+  "https://static.showit.com/file/-LFVUyvbf5N9U9PsrZHHdw/273321/chatgpt_image_sep_3_2026_02_44_06_pm.png",
+  "https://static.showit.com/file/TNkoJMW7YjNO0ie6rAMR-w/273321/chatgpt_image_sep_3_2026_02_49_46_pm.png",
+  "https://static.showit.com/file/QUdM5z8aSm0o4_nzlyypbA/273321/chatgpt_image_sep_3_2026_02_50_59_pm.png",
+  "https://static.showit.com/file/SaTwnQtRY99Ul17-m779Zw/273321/2345235243.png",
+  "https://static.showit.com/file/G96auXzoJyoTnM229PZBBw/273321/chatgpt_image_sep_3_2026_02_45_22_pm.png",
+  "https://static.showit.com/file/stus7PXxKbpedL9jTT58eA/273321/chatgpt_image_sep_3_2026_02_47_25_pm.png",
+  "https://static.showit.com/file/HrqSyGuXs22AJL5mDeJ_Nw/273321/chatgpt_image_sep_3_2026_02_46_27_pm.png"
+];
+const trackEl = document.getElementById('trusted-track');
+if (trackEl) {
+  const set = TRUSTED_LOGOS.map(u => `<span class="logo"><img src="${u}" alt="Client logo" loading="lazy"></span>`).join('');
+  trackEl.innerHTML = set + set;   // doubled for a seamless loop
+}
+
+/* ---------- portfolio data ----------
+   type: "gallery" -> photo set in popup   |   "video" -> Vimeo embed in popup
+------------------------------------------------------ */
+const projects = [
+  {
+    title:"Avalon, NJ — Beach House", year:"2026", role:"Photography", type:"gallery",
+    desc:"Full interior and exterior photo set, bedrooms, kitchen, and living spaces shot in natural light.",
+    thumb:"https://static.showit.com/file/D_9YygL3fAC8ndEtAtSk2w/273321/bedroom_7.jpg",
+    gallery:[
+      "https://static.showit.com/file/D_9YygL3fAC8ndEtAtSk2w/273321/bedroom_7.jpg",
+      "https://static.showit.com/file/p4F5RTTPoEju_5PO5SBwLw/273321/bedroom_6.jpg",
+      "https://static.showit.com/file/DCJnVWIs5mA5LxE-eaDX_A/273321/bedroom_2.jpg",
+      "https://static.showit.com/file/tZ25aQPSlgsLxfvAO6wg3g/273321/bathroom_1.jpg",
+      "https://static.showit.com/file/oEhZolSSiwC246JMsT0roA/273321/chatgpt_image_sep_3_2026_03_15_25_pm.png",
+      "https://static.showit.com/file/UBDxG81ypDpTjHDQaArtOA/273321/bedroom_4.jpg"
+    ]
+  },
+  {
+    title:"Lake Harmony, PA - Airbnb", year:"2026", role:"Matterport Scan", type:"tour",
+    desc:"Complete 3D scan with dollhouse model and floor plan for a short-term rental listing.",
+    thumb:"https://static.showit.com/file/vhjgyTC56_b5jWGSwF7q1A/273321/03072026_165900_1.jpg",
+    vid:"1173621935"
+  },
+  {
+    title:"Domus Apartments", year:"2026", role:"Photography", type:"gallery",
+    desc:"Listing photography for renovated apartment units — kitchen, bath, and living areas.",
+    thumb:"https://static.showit.com/file/FwUqMfeD4htzspb7yA_v-A/273321/06132026_210322.jpg",
+    gallery:[
+      "https://static.showit.com/file/QFdOrsaNWboWyepfkx54Sg/273321/06132026_210809.jpg",
+      "https://static.showit.com/file/3v_gGHlILZ3DxJgy5T0CLA/273321/living-room_7.jpg",
+      "https://static.showit.com/file/VcJSzOKj3oMiWOWKep5rOw/273321/living-room_8.jpg",
+      "https://static.showit.com/file/xF2wrT0MiTV98Gr1wnDgMQ/273321/living-room_19.jpg",
+      "https://static.showit.com/file/LggW8QWqc8XPOEWbQ0WR9A/273321/06132026_211030.jpg",
+      "https://static.showit.com/file/-cl3PVorDEbAVBy-euTwYw/273321/living-room_6.jpg"
+    ]
+  },
+  {
+    title:"Evolve Real Estate — Property Tour", year:"2025", role:"Virtual Tour", type:"video",
+    desc:"Promotional video showcasing a 3-bedroom apartment, featuring smooth pacing and clean transitions.",
+    thumb:"https://static.showit.com/file/L1WsCDeit1y81v9DNkauuw/273321/chatgpt_image_sep_3_2026_03_52_50_pm.png",
+    vid:"1099222537"
+  },
+  {
+    title:"Commercial Restaurant Chain 3D Model", year:"2026", role:"Matterport Tour", type:"tour",
+    desc:"Commercial-space 3D scan for a franchise location.",
+    thumb:"https://static.showit.com/file/Gu_wdfd0OMEDx4EJdRWNPg/273321/chatgpt_image_sep_3_2026_03_56_28_pm.png",
+    vid:"1173625647"
+  },
+  {
+    title:"RE/MAX Property Listing Promo — New Zealand", year:"2022", role:"Video Editing", type:"video",
+    desc:"A property showcase edited from provided footage, focused on highlighting the home's key features for listings and social media.",
+    thumb:"https://static.showit.com/file/_9HLtQuYmZqIEP1b3ASdHw/273321/screenshot_2026-09-03_at_3_57_33_pm.png",
+    vid:"1099235875"
+  },
+  {
+    title:"Seed Real Estate Promo", year:"2025", role:"Video Editing", type:"video",
+    desc:"Listing package combining photography and a short property film.",
+    thumb:"https://static.showit.com/file/rYFp0T6tUuWg_-YRAZcjHQ/273321/chatgpt_image_sep_3_2026_04_00_01_pm.png",
+    vid:"1099221519"
+  },
+  {
+    title:"Sunrise Senior Living", year:"2026", role:"Photography", type:"tour",
+    desc:"Full scan of a 30,000 sq ft senior living property for updates and renovations.",
+    thumb:"https://static.showit.com/file/mbPknpRH41C2NdpXUbil6Q/273321/screenshot_2026-09-03_at_4_00_50_pm.png",
+    vid:"1173624578"
+  },
+  {
+    title:"Dobson Mills Apartments", year:"2026", role:"Photography", type:"gallery",
+    desc:"Full photo set of apartment amenities for website promotion and advertising.",
+    thumb:"https://static.showit.com/file/AqrRGXP6JOME3w0dPYWSbQ/273321/screenshot_2026-09-03_at_4_03_44_pm.png",
+    gallery:[
+      "https://static.showit.com/file/Sa6kVe-Ng6Ycth1OYgub1w/273321/07022026_205612.jpg",
+      "https://static.showit.com/file/Izfv3sexd4-LA2ZWBgA59g/273321/screenshot_2026-09-03_at_4_04_20_pm.png",
+      "https://static.showit.com/file/GUdm885W06-Qfsteg165tA/273321/07022026_205400.jpg",
+      "https://static.showit.com/file/Db50B8JhCzN7_NWem25Y3g/273321/07022026_205532.jpg",
+      "https://static.showit.com/file/Kob-EvOgV5juiMd3ig10Xw/273321/07022026_204814.jpg",
+      "https://static.showit.com/file/IesmCjB13z9zEotJJpZ3Rw/273321/07022026_205246.jpg"
+    ]
+  }
+];
+
+const work = document.getElementById('work');
+const CTA = { gallery:'View gallery', tour:'View tour →', video:'View video →' };
+const TAG = { gallery:'Gallery', tour:'Tour', video:'Video' };
+projects.forEach(p => {
+  const isMedia = p.type !== 'gallery';           // tour or video -> Vimeo popup + play button
+  const thumb = p.thumb || (p.gallery && p.gallery[0]) || VIDEO_THUMB;
+  const b = document.createElement('button');
+  b.className = 'tile';
+  b.setAttribute('aria-haspopup','dialog');
+  b.innerHTML = `
+    <div class="ph">
+      <img class="ph-img" src="${thumb}" alt="" loading="lazy">
+      <span class="ph-tag">${TAG[p.type]}</span>
+    </div>
+    <div class="body">
+      ${p.year ? `<span class="year">${p.year}</span>` : ''}
+      <h3>${p.title}</h3>
+      <div class="desc">${p.desc}</div>
+      <div class="more">${CTA[p.type]}</div>
+    </div>`;
+  b.addEventListener('click', () => openModal(p));
+  work.appendChild(b);
+});
+
+/* ---------- portfolio "show more" (mobile only) ---------- */
+const workMore = document.getElementById('workMore');
+if (workMore) {
+  workMore.addEventListener('click', () => {
+    work.classList.add('expanded');
+    work.querySelectorAll('.tile').forEach(t => { t.classList.remove('reveal'); t.classList.add('in'); });
+    workMore.remove();
+  });
+}
+
+/* ---------- modal ---------- */
+const modal = document.getElementById('modal');
+let lastFocus;
+function openModal(p){
+  const isVideo = p.type !== 'gallery';
+  lastFocus = document.activeElement;
+  document.getElementById('m-meta').textContent = [p.year, p.role].filter(Boolean).join('  ·  ');
+  document.getElementById('m-title').textContent = p.title;
+  document.getElementById('m-desc').textContent = p.desc;
+  const media = document.getElementById('m-media');
+  if (isVideo) {
+    media.className = 'media';
+    media.innerHTML = p.vid
+      ? `<iframe src="${vimeoEmbed(p.vid)}" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" allowfullscreen title="${p.title}"></iframe>`
+      : 'Video coming soon';
+  } else {
+    media.className = 'media gallery';
+    media.innerHTML = (p.gallery || []).map(s => `<img src="${s}" alt="" loading="lazy">`).join('');
+  }
+  const link = document.getElementById('m-link');
+  link.style.display = (isVideo && p.vid) ? 'inline-flex' : 'none';
+  link.href = (isVideo && p.vid) ? `https://vimeo.com/${p.vid}` : '#';
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('m-close').focus();
+}
+function closeModal(){
+  modal.classList.remove('open');
+  document.getElementById('m-media').innerHTML = '';
+  document.body.style.overflow = '';
+  if (lastFocus) lastFocus.focus();
+}
+document.getElementById('m-close').addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+
+/* ---------- header on scroll ---------- */
+const hdr = document.getElementById('hdr');
+const onScroll = () => hdr.classList.toggle('scrolled', window.scrollY > 40);
+onScroll(); addEventListener('scroll', onScroll, {passive:true});
+
+/* ---------- mobile nav ---------- */
+const burger = document.getElementById('burger'), links = document.getElementById('links');
+burger.addEventListener('click', () => {
+  const open = links.classList.toggle('open');
+  burger.setAttribute('aria-expanded', open);
+});
+links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+
+/* ---------- legal modals (privacy / terms) ---------- */
+const legalDocs = {
+  privacy: {
+    title: "Privacy Policy",
+    html: `
+      <p class="eff">Effective Date: September 3, 2026 &nbsp;·&nbsp; Last Updated: September 3, 2026</p>
+      <p>This Privacy Policy explains how information is collected, used, and protected when you visit mediamansion.com (the &ldquo;Site&rdquo;).</p>
+      <p>By using the Site, you consent to the practices described in this policy.</p>
+      <h4>1. Information We Collect</h4>
+      <p>We collect personal information that you voluntarily provide to us, such as when you fill out a contact form or send an email. This may include:</p>
+      <ul><li>Name</li><li>Email address</li><li>Any other information you choose to share in your message</li></ul>
+      <p>We do not knowingly collect any sensitive personal information or data from individuals under the age of 13.</p>
+      <h4>2. How We Use Your Information</h4>
+      <p>We use the information you submit for the following purposes:</p>
+      <ul><li>To respond to inquiries or messages you send through the Site</li><li>To communicate with you about potential projects or bookings</li><li>To maintain basic internal records</li></ul>
+      <p>We do not sell, rent, or share your personal information with third parties for marketing purposes.</p>
+      <h4>3. Cookies &amp; Analytics</h4>
+      <p>This Site may use cookies or basic analytics tools (such as Google Analytics) to collect non-personal information about your visit, such as:</p>
+      <ul><li>Browser type</li><li>Device type</li><li>Pages visited</li><li>Duration of visit</li><li>General geographic region (not precise location)</li></ul>
+      <p>This information is used only to improve the functionality and performance of the Site.</p>
+      <p>You can disable cookies through your browser settings if you prefer not to have this data collected.</p>
+      <h4>4. Data Retention</h4>
+      <p>We retain submitted information for as long as necessary to respond to your inquiry or maintain a record of legitimate business interest. You can request deletion at any time (see Section 6).</p>
+      <h4>5. Data Security</h4>
+      <p>We take reasonable steps to protect your personal information from unauthorized access or misuse. However, no method of transmission over the internet is 100% secure, and we cannot guarantee the absolute security of your data.</p>
+      <h4>6. Your Rights</h4>
+      <p>If you are located in the EU, UK, California, or other regions with data protection laws, you may have the right to:</p>
+      <ul><li>Access the personal information we hold about you</li><li>Request that we correct or delete your information</li><li>Withdraw your consent to processing</li></ul>
+      <p>To exercise any of these rights, contact us at: <a href="mailto:hello@mediamansion.com">hello@mediamansion.com</a></p>
+      <h4>7. Third-Party Links</h4>
+      <p>This Site may include links to external websites. We are not responsible for the privacy practices of those websites and encourage you to read their policies separately.</p>
+      <h4>8. Changes to This Policy</h4>
+      <p>We may update this Privacy Policy occasionally to reflect changes to the Site or legal requirements. The updated version will always be posted here with the most recent date.</p>
+      <h4>9. Contact</h4>
+      <p>For any questions or requests related to this Privacy Policy, please contact: <a href="mailto:hello@mediamansion.com">hello@mediamansion.com</a></p>`
+  },
+  terms: {
+    title: "Terms & Conditions",
+    html: `
+      <p class="eff">Effective Date: September 3, 2026 &nbsp;·&nbsp; Last Updated: September 3, 2026</p>
+      <p>Welcome to mediamansion.com (the &ldquo;Site&rdquo;). These Terms and Conditions (&ldquo;Terms&rdquo;) govern your access to and use of the Site. By accessing or using the Site, you agree to be bound by these Terms.</p>
+      <p>If you do not agree with these Terms, please do not use this Site.</p>
+      <h4>1. Intellectual Property</h4>
+      <p>All content on this Site&mdash;including videos, designs, text, graphics, logos, and images&mdash;is the intellectual property of Media Mansion or is used with appropriate permissions. All rights are reserved.</p>
+      <p>You may not copy, reproduce, republish, upload, post, transmit, distribute, or modify any content from this Site without prior written permission.</p>
+      <h4>2. Portfolio Use</h4>
+      <p>This Site showcases original creative work, including real estate photography, video, and 3D Matterport tour projects. Some featured work is created in collaboration with clients and companies. Any third-party trademarks, logos, or brand names are displayed solely for the purpose of portfolio demonstration and remain the property of their respective owners.</p>
+      <p>If you are a client and would like your work removed from this portfolio, please email <a href="mailto:hello@mediamansion.com">hello@mediamansion.com</a> with your request.</p>
+      <h4>3. No Guarantees</h4>
+      <p>This Site is intended for informational and promotional purposes only. While efforts are made to keep the content accurate and up-to-date, we make no guarantees about the results you may obtain from using or relying on the content or services mentioned here.</p>
+      <h4>4. User Submissions</h4>
+      <p>If you submit any content or information through this Site (e.g. via a contact form), you agree not to submit anything unlawful, harmful, or misleading. We reserve the right to ignore or delete submissions at our discretion.</p>
+      <h4>5. Privacy</h4>
+      <p>We respect your privacy. Any personal information you submit through the contact form or email will be used solely to communicate with you and will not be sold or shared. For more details, please refer to our Privacy Policy.</p>
+      <h4>6. External Links</h4>
+      <p>This Site may contain links to other websites. We are not responsible for the content or accuracy of those third-party sites, and linking does not imply endorsement.</p>
+      <h4>7. Limitation of Liability</h4>
+      <p>We are not liable for any direct, indirect, incidental, or consequential damages that result from your use of&mdash;or inability to use&mdash;the Site or any content herein.</p>
+      <h4>8. Changes to These Terms</h4>
+      <p>We reserve the right to update or modify these Terms at any time without prior notice. The latest version will always be available on this page.</p>
+      <h4>9. Contact</h4>
+      <p>If you have any questions about these Terms, please contact: <a href="mailto:hello@mediamansion.com">hello@mediamansion.com</a></p>`
+  }
+};
+const legalModal = document.getElementById('legal-modal');
+let legalLastFocus;
+function openLegal(key){
+  const doc = legalDocs[key];
+  if (!doc) return;
+  legalLastFocus = document.activeElement;
+  document.getElementById('legal-title').textContent = doc.title;
+  document.getElementById('legal-content').innerHTML = doc.html;
+  legalModal.querySelector('.modal-card').scrollTop = 0;
+  legalModal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('legal-close').focus();
+}
+function closeLegal(){
+  legalModal.classList.remove('open');
+  document.body.style.overflow = '';
+  if (legalLastFocus) legalLastFocus.focus();
+}
+document.querySelectorAll('[data-legal]').forEach(b =>
+  b.addEventListener('click', () => openLegal(b.dataset.legal)));
+document.getElementById('legal-close').addEventListener('click', closeLegal);
+legalModal.addEventListener('click', e => { if (e.target === legalModal) closeLegal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && legalModal.classList.contains('open')) closeLegal(); });
+
+/* ---------- page loader (plays once per browser session) ---------- */
+(function(){
+  const loader = document.getElementById('pageLoader');
+  if (!loader) return;
+  const root = document.documentElement;
+  let seen = false;
+  try { seen = sessionStorage.getItem('mm_intro') === '1'; } catch (e) {}
+  if (seen) { root.classList.add('loaded-before'); loader.remove(); window.scrollTo(0, 0); return; }
+  try { sessionStorage.setItem('mm_intro', '1'); } catch (e) {}
+  const content = document.getElementById('loaderContent');
+  root.style.overflow = 'hidden';
+  const go = () => {
+    setTimeout(() => content && content.classList.add('hidden'), 1500);
+    setTimeout(() => { loader.classList.add('fade-out'); root.style.overflow = ''; window.scrollTo(0, 0); }, 1750);
+    setTimeout(() => { loader.style.display = 'none'; }, 2650);
+  };
+  if (document.readyState === 'complete') go();
+  else window.addEventListener('load', go, {once:true});
+  setTimeout(go, 4000);   // safety: never trap the page if load stalls
+})();
+
+/* ---------- smooth in-page scrolling ---------- */
+(function(){
+  // ease-out: moves off quickly, then glides to a stop (no slow ramp-up)
+  const easeOutQuart = t => 1 - Math.pow(1 - t, 4);
+  let animating = 0;
+  function scrollToY(target, dur){
+    const startY = window.scrollY, dist = target - startY, t0 = performance.now();
+    if (Math.abs(dist) < 2) return;
+    const run = ++animating;
+    (function frame(now){
+      if (run !== animating) return;           // a newer scroll took over
+      const p = Math.min(1, (now - t0) / dur);
+      window.scrollTo(0, startY + dist * easeOutQuart(p));
+      if (p < 1) requestAnimationFrame(frame);
+    })(t0);
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    const id = a.getAttribute('href');
+    if (!id || id.length < 2) return;
+    a.addEventListener('click', e => {
+      const target = document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+      links.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+      const y = Math.max(0, target.getBoundingClientRect().top + window.scrollY - 88);
+      const dist = Math.abs(y - window.scrollY);
+      scrollToY(y, Math.min(760, Math.max(380, dist * 0.28)));   // snappy: ~0.4s short hops, ~0.75s long
+    });
+  });
+})();
+
+/* ---------- scroll reveal (fade up, gentle) ---------- */
+(function(){
+  const els = [];
+  document.querySelectorAll('.sec-head, .about .wrap > div:first-child, .trusted, #tour, .contact .wrap > div').forEach(el => els.push(el));
+  document.querySelectorAll('.capab .cap-item').forEach((el, n) => { el.style.transitionDelay = n * 90 + 'ms'; els.push(el); });
+  document.querySelectorAll('#work .tile').forEach((el, n) => { el.style.transitionDelay = (n % 3) * 80 + 'ms'; els.push(el); });
+  document.querySelectorAll('.svc-tile').forEach((el, n) => { el.style.transitionDelay = (n % 3) * 70 + 'ms'; els.push(el); });
+  els.forEach(el => el.classList.add('reveal'));
+  if (!('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('in')); return; }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      const t = en.target;
+      t.classList.add('in');
+      io.unobserve(t);
+      // once shown, drop the reveal classes so element-specific hover transitions take over again
+      setTimeout(() => { t.classList.remove('reveal', 'in'); t.style.transitionDelay = ''; }, 1400);
+    });
+  }, {threshold: .1, rootMargin: '0px 0px -8% 0px'});
+  els.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>
