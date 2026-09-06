@@ -1,0 +1,1619 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media Mansion — Appointment Booking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#fff;--bg:#f4f6f9;--charcoal:#1a1a1a;
+  --accent:#5b7fa6;--accent-dark:#3d6491;--accent-tint:#edf1f7;
+  --gray:#888;--border:#dde2ea;--red:#c0392b;--green:#27ae60;
+  --shadow:0 2px 12px rgba(0,0,0,.07);--r:8px;--t:.25s ease;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;color:var(--charcoal);background:var(--bg);font-size:15px;line-height:1.6}
+
+/* LAYOUT */
+.page-wrap{max-width:1100px;margin:0 auto;padding:48px 20px 80px;display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}
+.form-col{min-width:0}
+
+/* LOGO */
+.logo-header{text-align:center;margin-bottom:32px;padding:28px 20px 22px;background:var(--white);border-radius:var(--r);box-shadow:var(--shadow)}
+.logo-img{height:90px;width:auto;display:block;margin:0 auto 14px;object-fit:contain}
+.logo-sub{font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+
+/* SECTION CARDS */
+.section-card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:20px 28px;margin-bottom:14px;position:relative}
+.section-card.locked{padding-bottom:16px}
+.section-card.locked .section-title{opacity:.4;font-size:14px}
+.section-card.locked .section-sub{display:none}
+.section-card.locked .section-body{display:none}
+.section-card.locked .lock-hint{display:flex}
+.lock-hint{display:none;align-items:center;gap:5px;margin-top:5px;font-size:11px;color:#bbb}
+.section-header{margin-bottom:16px}
+.section-title{font-size:17px;font-weight:600;color:var(--charcoal);margin-bottom:2px}
+.section-sub{font-size:13px;color:var(--gray)}
+.section-note{font-size:12px;color:var(--gray);margin-top:6px;font-style:italic}
+.section-body{animation:fadeIn .28s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+
+/* CONTINUE BUTTON */
+.continue-wrap{margin-top:18px;display:flex;justify-content:flex-end}
+.continue-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background var(--t);letter-spacing:.02em}
+.continue-btn:hover{background:var(--accent-dark)}
+
+/* À LA CARTE HEADER */
+.alacarte-header{display:none;padding:10px 4px 6px}
+.alacarte-header.visible{display:block}
+.alacarte-title{font-size:21px;font-weight:700;color:var(--charcoal);margin-bottom:4px}
+.alacarte-sub{font-size:13px;color:var(--gray)}
+
+/* BIG CONTINUE */
+.big-continue-wrap{margin-top:20px;margin-bottom:20px}
+.big-continue-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:background var(--t);letter-spacing:.04em;text-transform:uppercase}
+.big-continue-btn:hover{background:var(--accent-dark)}
+
+/* INFO BOX (video edit / retainer / etc) */
+.videdit-info,.info-box{margin-top:8px;background:#edf1f7;border-radius:6px;padding:12px 14px;font-size:13px;color:#3d6491;border-left:3px solid var(--accent);line-height:1.6}
+
+/* TRAVEL FEE BANNER */
+.travel-fee-banner{background:#fff8e1;border:1.5px solid #f0a500;border-radius:6px;padding:10px 14px;font-size:13px;color:#7a5200;margin-top:10px;display:none}
+.travel-fee-banner.show{display:block}
+.travel-fee-banner .check-wrap{margin-top:8px;font-size:12px}
+
+/* OPTIONS */
+.option-group{display:flex;flex-direction:column;gap:8px}
+.radio-option,.check-option{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1.5px solid var(--border);border-radius:6px;cursor:pointer;transition:border-color var(--t),background var(--t);position:relative}
+.radio-option:hover,.check-option:hover{border-color:var(--accent);background:var(--accent-tint)}
+.radio-option.selected,.check-option.selected{border-color:var(--accent);background:var(--accent-tint)}
+.radio-option input,.check-option input{margin-top:2px;accent-color:var(--accent);flex-shrink:0;width:16px;height:16px;cursor:pointer}
+.opt-label{flex:1}
+.opt-name{font-weight:500;font-size:14px}
+.opt-desc{display:block;font-size:12px;color:var(--gray);margin-top:4px}
+.opt-price{font-weight:600;font-size:14px;white-space:nowrap;margin-left:auto;padding-left:12px;flex-shrink:0}
+.gift-img{width:72px;height:72px;object-fit:cover;border-radius:6px;margin-left:14px;flex-shrink:0}
+
+/* COMING SOON / REFERRAL CARD */
+.coming-soon{border:1.5px dashed var(--border);border-radius:6px;padding:22px;text-align:center;background:#fafafa}
+.coming-soon-label{font-size:13px;font-weight:600;color:var(--gray);letter-spacing:.08em;text-transform:uppercase}
+.coming-soon-sub{font-size:12px;color:#bbb;margin-top:4px}
+
+/* SLIDE */
+.slide{overflow:hidden;max-height:0;transition:max-height .3s ease,opacity .25s ease;opacity:0}
+.slide.open{max-height:600px;opacity:1}
+.sub-wrap{margin-top:8px;background:var(--bg);border-radius:6px}
+
+/* PACKAGE GRID */
+.pkg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.pkg-card{border:2px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:border-color var(--t),background var(--t),opacity var(--t);position:relative}
+.pkg-card:hover{border-color:var(--accent);background:var(--accent-tint)}
+.pkg-card.selected{border-color:var(--accent);background:var(--accent-tint)}
+.pkg-card.disabled-pkg{opacity:.35;pointer-events:none}
+.pkg-check{position:absolute;top:12px;right:12px;width:20px;height:20px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--white);transition:background var(--t),border-color var(--t)}
+.pkg-card.selected .pkg-check{background:var(--accent);border-color:var(--accent)}
+.pkg-card.selected .pkg-check::after{content:'\2713 ';color:#fff;font-size:10px}
+.pkg-tag{display:inline-block;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;padding:3px 11px;border-radius:20px;margin-bottom:7px}
+.pkg-img{width:100%;height:145px;object-fit:cover;border-radius:5px;margin-bottom:10px;display:block}
+.pkg-price{font-size:19px;font-weight:300;color:var(--accent);margin-top:2px;margin-bottom:2px}
+.pkg-list{list-style:none;font-size:12px;color:var(--gray);margin-top:8px}
+.pkg-list li{padding:2px 0;font-weight:600}
+.pkg-list li::before{content:'\2713  ';color:var(--green);font-weight:700}
+.pkg-list .pkg-note{font-size:8px;color:#666;font-style:italic;font-weight:400;padding-left:14px}
+.pkg-clear{display:none;font-size:11px;color:var(--accent);text-decoration:underline;cursor:pointer;margin-top:8px;background:none;border:none;padding:0}
+
+/* DEDUP */
+.dedup-note{font-size:12px;color:var(--green);font-weight:500;margin-top:6px;padding:6px 10px;background:#eafaf1;border-radius:4px;border-left:3px solid var(--green)}
+.already-inc{opacity:.55;pointer-events:none}
+.already-inc .opt-name::after{content:' \2014  \2713  Already included';color:var(--green);font-weight:500}
+
+/* QTY SPINNER */
+.qty-wrap{display:flex;align-items:center;gap:8px;margin-top:8px}
+.qty-label{font-size:13px;color:var(--gray)}
+.qty-btn{width:28px;height:28px;border:1.5px solid var(--border);border-radius:4px;background:var(--white);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:background var(--t)}
+.qty-btn:hover{background:var(--bg);border-color:var(--accent)}
+.qty-inp{width:52px;text-align:center;border:1.5px solid var(--border);border-radius:4px;padding:4px;font-family:'Inter',sans-serif;font-size:14px;font-weight:500}
+.qty-inp:focus{outline:2px solid var(--accent);border-color:var(--accent)}
+
+/* FIELDS */
+.fgroup{margin-bottom:16px}
+.flabel{display:block;font-size:13px;font-weight:500;margin-bottom:6px;color:var(--charcoal)}
+.flabel .req{color:var(--red);margin-left:2px}
+.finput,.fselect,.ftextarea{width:100%;padding:10px 14px;border:1.5px solid #dde2ea !important;border-radius:6px;font-family:'Inter',sans-serif;font-size:14px;color:var(--charcoal);background:#fff !important;transition:border-color var(--t);appearance:none;box-sizing:border-box}
+.finput:focus,.fselect:focus,.ftextarea:focus{outline:none;border-color:var(--accent) !important;box-shadow:0 0 0 3px rgba(91,127,166,.15)}
+.finput.err,.fselect.err,.ftextarea.err{border-color:var(--red) !important}
+.fselect{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23888' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+.ftextarea{resize:none;min-height:90px;overflow:hidden}
+.fhelper{font-size:12px;color:var(--gray);margin-top:4px}
+.ferr{font-size:12px;color:var(--red);margin-top:4px;display:none}
+.ferr.show{display:flex;align-items:center;gap:4px}
+.ferr::before{content:'\26A0 ';font-size:11px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ADDRESS AUTOCOMPLETE */
+.addr-wrap{position:relative}
+.addr-drop{position:absolute;top:100%;left:0;right:0;background:var(--white);border:1.5px solid var(--accent);border-top:none;border-radius:0 0 6px 6px;box-shadow:0 6px 16px rgba(0,0,0,.1);z-index:200;max-height:220px;overflow-y:auto;display:none}
+.addr-drop.open{display:block}
+.addr-item{padding:10px 14px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--bg)}
+.addr-item:hover{background:var(--accent-tint)}
+.addr-item:last-child{border-bottom:none}
+.addr-item-main{font-weight:500}
+.addr-item-sub{font-size:11px;color:var(--gray);margin-top:1px}
+
+/* MAP */
+#map-wrap{margin-top:14px;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--border);display:none}
+#map-wrap.visible{display:block}
+#map-canvas{width:100%;height:220px}
+.map-note{font-size:12px;color:var(--gray);margin-top:6px;font-style:italic}
+
+/* TERMS */
+.terms-box{max-height:150px;overflow-y:scroll;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;padding:14px 16px;font-size:13px;line-height:1.7;color:#444;margin-bottom:14px}
+.terms-box p{margin-bottom:10px}
+.terms-box p:last-child{margin-bottom:0}
+.check-wrap{display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:14px}
+.check-wrap input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;margin-top:2px;cursor:pointer}
+
+/* SIDEBAR */
+.sidebar-wrap{position:sticky;top:24px;display:flex;flex-direction:column;gap:14px}
+.summary-card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:20px}
+.summary-card{border-top:3px solid var(--accent)}
+.summary-title{font-size:14px;font-weight:600;margin-bottom:14px}
+.summary-items{min-height:30px}
+.s-item{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;font-size:13px;padding:5px 0;border-bottom:1px solid var(--bg)}
+.s-item:last-child{border-bottom:none}
+.s-item-name{color:#444;flex:1}
+.s-item-price{font-weight:500;white-space:nowrap}
+.s-item.addon .s-item-name{color:var(--gray);font-size:12px;padding-left:12px}
+.s-empty{color:var(--gray);font-size:13px;font-style:italic}
+.s-divider{border:none;border-top:1.5px solid var(--border);margin:12px 0}
+.s-line{display:flex;justify-content:space-between;font-size:14px;padding:3px 0}
+.s-line.tax{color:var(--gray);font-style:italic;font-size:12px}
+.s-line.total{font-size:17px;font-weight:600;margin-top:4px}
+.s-usd{font-size:11px;color:var(--gray);text-align:right;margin-top:2px}
+
+/* TIME ESTIMATE CARD */
+.time-card{border-left:3px solid var(--accent)}
+.time-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--gray);margin-bottom:6px}
+.time-value{font-size:18px;font-weight:600;color:var(--charcoal);margin-bottom:2px}
+.time-sub{font-size:11px;color:var(--gray);font-style:italic}
+
+/* SUBMIT */
+.submit-btn{display:block;width:100%;padding:14px;margin-top:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:15px;font-weight:600;letter-spacing:.04em;cursor:pointer;transition:background var(--t);text-transform:uppercase}
+.submit-btn:hover:not(:disabled):not(.submit-locked){background:var(--accent-dark)}
+.submit-btn:disabled{opacity:.42;cursor:not-allowed;background:var(--gray)}
+.submit-btn.submit-locked{opacity:.42;cursor:not-allowed;background:var(--gray)}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* MOBILE BAR */
+.mob-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--charcoal);color:#fff;padding:12px 20px;z-index:999;align-items:center;justify-content:space-between}
+.mob-bar .mb-label{font-weight:300;font-size:13px;opacity:.7}
+.mob-bar .mb-amt{font-weight:600;font-size:20px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--charcoal);color:#fff;padding:12px 24px;border-radius:6px;font-size:14px;z-index:2000;opacity:0;transition:transform .3s ease,opacity .3s ease;max-width:90vw;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.err{background:var(--red)}
+
+/* ERROR BANNER */
+.err-banner{display:none;background:#fdf2f2;border:1.5px solid var(--red);border-radius:var(--r);padding:14px 16px;font-size:14px;color:var(--red);margin-bottom:16px}
+.err-banner.show{display:block}
+
+/* APPOINTMENT SUCCESS SCREEN */
+#appt-screen{display:none;min-height:100vh;background:var(--bg);flex-direction:column;align-items:center;justify-content:flex-start;padding:100px 20px 48px;text-align:center}
+#appt-screen.show{display:flex}
+.success-logo{height:70px;width:auto;display:block;margin:0 auto 28px;object-fit:contain}
+.success-icon{font-size:52px;margin-bottom:16px}
+.appt-title{font-size:26px;font-weight:600;margin-bottom:16px;color:var(--charcoal)}
+.appt-body{font-size:15px;color:var(--gray);max-width:520px;line-height:1.8;margin-bottom:28px}
+.appt-body strong{color:var(--charcoal);font-weight:600}
+.appt-cta,.appt-cta:visited{display:inline-block;padding:14px 32px;background:var(--accent);color:#fff !important;border:none;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;letter-spacing:.02em;transition:background var(--t)}
+.appt-cta:hover,.appt-cta:active{background:var(--accent-dark);color:#fff !important}
+.appt-note{font-size:13px;color:var(--gray);margin-top:20px}
+
+/* MOBILE */
+@media(max-width:480px){.pkg-grid{grid-template-columns:1fr}}
+@media(max-width:768px){
+  .page-wrap{grid-template-columns:1fr;padding:36px 14px 100px}
+  .sidebar-wrap{display:none}
+  .mob-bar{display:flex}
+  .frow{grid-template-columns:1fr}
+  .section-card{padding:18px 16px}
+  #gift-lbl{flex-wrap:wrap}
+  #gift-lbl .gift-img{order:3;width:100%;height:180px;margin-left:0;margin-top:12px}
+  .appt-title{font-size:18.2px}
+  .appt-body{font-size:13.5px}
+  .appt-cta{font-size:13.5px}
+  .appt-note{font-size:11.7px}
+}
+</style>
+<div class="page-wrap" id="page-wrap">
+<div class="form-col" id="form-col">
+
+<!-- LOGO -->
+<div class="logo-header">
+  <img src="https://static.showit.com/file/TKs8wocQwMHG7R-6VQMwFA/273321/asdadsdasdf.png" alt="Media Mansion" class="logo-img" onerror="this.style.display='none'">
+  <div class="logo-sub">Appointment Booking Form</div>
+</div>
+
+<div id="err-banner" class="err-banner" role="alert">
+  There was a problem submitting your order. Please email <a href="mailto:hello@mediamansion.com">hello@mediamansion.com</a> directly or try again.
+</div>
+
+<!-- SECTION 1 — PROPERTY SIZE -->
+<div class="section-card" id="sec1">
+  <div class="section-header">
+    <div class="section-title">Property Size</div>
+    <div class="section-sub">Select your property's square footage to get started.</div>
+  </div>
+  <div class="section-body">
+    <div class="option-group" id="sqft-group" role="radiogroup">
+      <label class="radio-option" data-value="200-2000"><input type="radio" name="sqft_range" value="200-2000"><span class="opt-label"><span class="opt-name">200 – 2,000 Sq Ft</span></span></label>
+      <label class="radio-option" data-value="2001-4000"><input type="radio" name="sqft_range" value="2001-4000"><span class="opt-label"><span class="opt-name">2,001 – 4,000 Sq Ft</span></span></label>
+      <label class="radio-option" data-value="4001-6000"><input type="radio" name="sqft_range" value="4001-6000"><span class="opt-label"><span class="opt-name">4,001 – 6,000 Sq Ft</span></span></label>
+      <label class="radio-option" data-value="6001-8000"><input type="radio" name="sqft_range" value="6001-8000"><span class="opt-label"><span class="opt-name">6,001 – 8,000 Sq Ft</span></span></label>
+      <label class="radio-option" data-value="8001-15000"><input type="radio" name="sqft_range" value="8001-15000"><span class="opt-label"><span class="opt-name">8,001 – 15,000 Sq Ft</span></span></label>
+    </div>
+    <div id="sqft-error" class="ferr" role="alert">Please select your property's square footage to continue.</div>
+    <div class="section-note" style="margin-top:10px"><strong>Note:</strong> Pricing and invoices reflect the total square footage scanned, which includes unfinished spaces, porches &amp; balconies if applicable at the property.</div>
+  </div>
+</div>
+
+<!-- SECTION 2 — PACKAGES -->
+<div class="section-card locked" id="sec2">
+  <div class="section-header">
+    <div class="section-title">Package Bundles</div>
+    <div class="section-sub">Select one package, or skip this and build entirely à la carte below.</div>
+    <div class="lock-hint"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="2" y="5" width="6" height="7" rx="1" fill="#bbb"></rect><path d="M3 5V4a2 2 0 014 0v1" stroke="#bbb" stroke-width="1.2" fill="none"></path></svg>Complete Property Size above</div>
+  </div>
+  <div class="section-body">
+    <div class="pkg-grid">
+      <div class="pkg-card" id="pkg-essential" tabindex="0" role="button" aria-pressed="false">
+        <div class="pkg-check"></div>
+        <div class="pkg-tag" style="background:#8a97a8">Essential Photos</div>
+        <img src="https://static.showit.com/file/VRswM6lC5RIzNBe_vPulKA/273321/bedroom_7.jpg" alt="Essential Photos Package" class="pkg-img" draggable="false">
+        <div class="pkg-price" id="pkg-ess-price">$220</div>
+        <ul class="pkg-list"><li>30 Photos</li><li>Floor Plan</li><li>Property Website</li><li class="pkg-note">Active 90 days — $10/month after</li><li>Delivered in 24–48 Hrs</li></ul>
+        <button class="pkg-clear" id="clear-ess">Clear</button>
+      </div>
+      <div class="pkg-card" id="pkg-escan" tabindex="0" role="button" aria-pressed="false">
+        <div class="pkg-check"></div>
+        <div class="pkg-tag" style="background:#5c6b73">Essential Scan</div>
+        <img src="https://static.showit.com/file/GGDgT_jvOXvOaX3xmxOHbw/273321/dollhouse-view_3.jpg" alt="Essential Scan Package" class="pkg-img" draggable="false">
+        <div class="pkg-price" id="pkg-escan-price">$230</div>
+        <ul class="pkg-list"><li>3D Matterport Scan</li><li class="pkg-note">Active 90 days — $20/month after</li><li>5 Exterior 360s</li><li>Delivered in 24–48 Hrs</li></ul>
+        <button class="pkg-clear" id="clear-escan">Clear</button>
+      </div>
+      <div class="pkg-card" id="pkg-signature" tabindex="0" role="button" aria-pressed="false">
+        <div class="pkg-check"></div>
+        <div class="pkg-tag" style="background:#3d6491">Premier Combo</div>
+        <img src="https://static.showit.com/file/U2rd3-3Ikj7spZIDQX4lIA/273321/20260104_1108_luxury_minimalist_home_interior_simple_compose_01ke4w8v7gfpks0f2x94tbjny1.png" alt="Premier Combo Package" class="pkg-img" draggable="false">
+        <div class="pkg-price" id="pkg-sig-price">$360</div>
+        <ul class="pkg-list"><li>35 Photos</li><li>Floor Plan</li><li>Matterport Tour</li><li class="pkg-note">Active 90 days — $20/month after</li><li>5 Exterior 360s</li><li>Property Website</li><li class="pkg-note">Active 90 days — $10/month after</li><li>Delivered in 48 Hrs</li></ul>
+        <button class="pkg-clear" id="clear-sig">Clear</button>
+      </div>
+      <div class="pkg-card" id="pkg-deluxe" tabindex="0" role="button" aria-pressed="false">
+        <div class="pkg-check"></div>
+        <div class="pkg-tag" style="background:var(--accent)">Deluxe Bundle</div>
+        <img src="https://static.showit.com/file/MxZlE4a-bYW6LVbGxFbo7w/273321/124314.jpg" alt="Deluxe Bundle Package" class="pkg-img" draggable="false">
+        <div class="pkg-price" id="pkg-del-price">$590</div>
+        <ul class="pkg-list"><li>35 Photos</li><li>Floor Plan</li><li>Matterport Tour</li><li class="pkg-note">Active 90 days — $20/month after</li><li>5 Exterior 360s</li><li>Property Website</li><li class="pkg-note">Active 90 days — $10/month after</li><li>Social Media Kit</li><li>2 Virtual Dusk Photos</li><li>1 Vertical Property Walkthrough Reel</li><li>Delivered in 48 Hrs</li></ul>
+        <button class="pkg-clear" id="clear-del">Clear</button>
+      </div>
+    </div>
+    <div class="info-box" id="pkg-custom-note" style="display:none;margin-top:12px">For properties over 8,000 sq ft every package is quoted individually. Select the package you're interested in and we'll reach out personally to gather a few details and send you a custom quote &mdash; nothing is charged until you approve it.</div>
+    <div class="slide" id="ess-addon-wrap">
+      <div class="sub-wrap">
+        <label class="check-option" id="ess-addon-lbl">
+          <input type="checkbox" id="ess-addon">
+          <span class="opt-label"><span class="opt-name">Add 15 Photos</span><span class="opt-desc">Add 15 more photos to your package total</span></span>
+          <span class="opt-price">+$75</span>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- À LA CARTE HEADER -->
+<div class="alacarte-header" id="alacarte-header">
+  <div class="alacarte-title">Individual/Add-on Services</div>
+  <div class="alacarte-sub">Add individual services to your package, or build your entire order à la carte.</div>
+</div>
+
+<!-- SECTION 3 — LISTING PHOTOS -->
+<div class="section-card locked" id="sec3">
+  <div class="section-header">
+    <div class="section-title">Listing Photos</div>
+    <div class="section-sub">À la carte photography — or skip if you selected a package above.</div>
+    <div class="lock-hint"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="2" y="5" width="6" height="7" rx="1" fill="#bbb"></rect><path d="M3 5V4a2 2 0 014 0v1" stroke="#bbb" stroke-width="1.2" fill="none"></path></svg>Complete previous section</div>
+  </div>
+  <div class="section-body">
+    <div class="dedup-note" id="photo-pkg-note" style="display:none"></div>
+    <div class="option-group" id="photo-group" role="listbox">
+      <div class="radio-option photo-opt" tabindex="0" role="option" data-value="15"><span class="opt-label"><span class="opt-name">15 Photos</span></span><span class="opt-price" id="photo-15-price">$99</span></div>
+      <div class="radio-option photo-opt" tabindex="0" role="option" data-value="25"><span class="opt-label"><span class="opt-name">25 Photos</span></span><span class="opt-price" id="photo-25-price">$120</span></div>
+      <div class="radio-option photo-opt" tabindex="0" role="option" data-value="35"><span class="opt-label"><span class="opt-name">35 Photos</span></span><span class="opt-price" id="photo-35-price">$145</span></div>
+      <div class="radio-option photo-opt" tabindex="0" role="option" data-value="50"><span class="opt-label"><span class="opt-name">50 Photos</span></span><span class="opt-price" id="photo-50-price">$200</span></div>
+      <div class="radio-option photo-opt" tabindex="0" role="option" data-value="65"><span class="opt-label"><span class="opt-name">65 Photos</span><span class="opt-desc">Recommended for large homes</span></span><span class="opt-price" id="photo-65-price">$250</span></div>
+    </div>
+    <div class="section-note">Click a selected option again to deselect.</div>
+    <div class="slide" id="photo-social-wrap">
+      <div class="sub-wrap">
+        <label class="check-option" id="photo-social-lbl">
+          <input type="checkbox" id="photo-social">
+          <span class="opt-label"><span class="opt-name">Social Media Kit &amp; Property Website</span><span class="opt-desc">Custom-edited social reels, branded tiles, and digital flyers, plus a dedicated property website. Website active for 90 days — $10/month to keep active after that.</span></span>
+          <span class="opt-price">+$110</span>
+        </label>
+        <div class="dedup-note" id="photo-social-dedup" style="display:none">✓ Already included in your package</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4 — VIDEO -->
+<div class="section-card locked" id="sec4">
+  <div class="section-header">
+    <div class="section-title">Video</div>
+    <div class="lock-hint"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="2" y="5" width="6" height="7" rx="1" fill="#bbb"></rect><path d="M3 5V4a2 2 0 014 0v1" stroke="#bbb" stroke-width="1.2" fill="none"></path></svg>Complete previous section</div>
+  </div>
+  <div class="section-body">
+    <div class="option-group">
+      <div>
+        <label class="check-option" id="vvt-lbl"><input type="checkbox" id="vid-vvt"><span class="opt-label"><span class="opt-name">Simple Walk-Through Video</span><span class="opt-desc">30–60 sec, light edit, single continuous flow. One format included — add both vertical and horizontal cuts for +$45.</span></span><span class="opt-price" id="vvt-price">$110</span></label>
+        <div class="slide" id="vvt-fmt-wrap">
+          <div style="padding:10px 0 4px 28px">
+            <label class="flabel" for="vvt-fmt">Format <span class="req">*</span></label>
+            <select class="fselect" id="vvt-fmt" style="max-width:300px"><option value="">Select format</option><option value="Vertical">Vertical</option><option value="Horizontal/Landscape">Horizontal/Landscape</option><option value="Both">Both — Vertical + Horizontal (+$45)</option></select>
+            <div id="vvt-fmt-err" class="ferr" role="alert">Please select a format.</div>
+          </div>
+        </div>
+      </div>
+      <div id="fwv-priced-wrap" style="display:none">
+        <label class="check-option" id="cine-lbl"><input type="checkbox" id="vid-cine"><span class="opt-label"><span class="opt-name">Full Walkthrough Video</span><span class="opt-desc">Multi-room, professionally edited — transitions, color grading, music. Priced by property size.</span></span><span class="opt-price" id="fwv-price">$265</span></label>
+      </div>
+      <div id="fwv-large-wrap" style="display:none">
+        <label class="check-option" id="fwv-large-lbl">
+          <input type="checkbox" id="fwv-large-cb">
+          <span class="opt-label"><span class="opt-name">Full Walkthrough Video</span><span class="opt-desc">Multi-room, professionally edited — transitions, color grading, music. Quoted individually for properties over 8,000 sq ft — check this box and we'll reach out with a custom quote.</span></span>
+          <span class="opt-price">Custom Quote</span>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5 — SCHEDULING & RUSH OPTIONS -->
+<div class="section-card locked" id="sec5">
+  <div class="section-header">
+    <div class="section-title">Scheduling &amp; Rush Options</div>
+    <div class="section-sub">Optional — only select what applies to this shoot.</div>
+    <div class="lock-hint"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="2" y="5" width="6" height="7" rx="1" fill="#bbb"></rect><path d="M3 5V4a2 2 0 014 0v1" stroke="#bbb" stroke-width="1.2" fill="none"></path></svg>Complete Property Size above</div>
+  </div>
+  <div class="section-body">
+    <div class="option-group">
+      <label class="check-option" id="rush-lbl"><input type="checkbox" id="rush-cb"><span class="opt-label"><span class="opt-name">Rush Delivery (Under 24 Hours)</span><span class="opt-desc">Photos and floor plan delivered within 24 hours of the shoot (video and 3D tours follow the standard window)</span></span><span class="opt-price">+$75</span></label>
+      <label class="check-option" id="holiday-lbl"><input type="checkbox" id="holiday-cb"><span class="opt-label"><span class="opt-name">Holiday Booking</span><span class="opt-desc">Appointments on major U.S. holidays</span></span><span class="opt-price">+$100</span></label>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 6 — FLOOR PLANS & ADDITIONAL FILES -->
+<div class="section-card locked" id="sec6">
+  <div class="section-header">
+    <div class="section-title">Floor Plans &amp; Additional Files</div>
+    <div class="lock-hint"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="2" y="5" width="6" height="7" rx="1" fill="#bbb"></rect><path d="M3 5V4a2 2 0 014 0v1" stroke="#bbb" stroke-width="1.2" fill="none"></path></svg>Complete Property Size above</div>
+  </div>
+  <div class="section-body">
+    <div class="section-note" style="margin-top:0;margin-bottom:10px">Note: Unlike your other listing media, the technical files below are ordered per project after your scan and are not included in your standard delivery window. Turnaround times are in business days and begin after your scan has been processed and the order is placed. See each item below.</div>
+    <div class="option-group">
+      <label class="check-option" id="fp-lbl">
+        <input type="checkbox" id="fp-cb">
+        <span class="opt-label"><span class="opt-name">Floor Plans</span><span class="opt-desc">Professional measured floor plan of your property. Delivered in 24–48 hrs. Rush delivery (under 24 hours) available as an add-on.</span></span>
+        <span class="opt-price">$40</span>
+      </label>
+      <div class="dedup-note" id="fp-dedup" style="display:none">✓ Floor plans are already included in your current selection</div>
+      <label class="check-option" id="matterpak-lbl">
+        <input type="checkbox" id="matterpak-cb">
+        <span class="opt-label"><span class="opt-name">MatterPak Bundle</span><span class="opt-desc">Full 3D data package — textured mesh, point cloud, and floor/ceiling plan images for use in outside 3D or CAD software. Delivered within 1–2 business days.</span></span>
+        <span class="opt-price">$80</span>
+      </label>
+      <label class="check-option" id="e57-lbl">
+        <input type="checkbox" id="e57-cb">
+        <span class="opt-label"><span class="opt-name">E57 Point Cloud Export</span><span class="opt-desc">High-density raw point cloud file for import into professional CAD/BIM software (Revit, AutoCAD, ReCap, and others). Delivered within 1–2 business days.</span></span>
+        <span class="opt-price">$160</span>
+      </label>
+      <label class="check-option" id="cad-lbl">
+        <input type="checkbox" id="cad-cb">
+        <span class="opt-label"><span class="opt-name">CAD File (DWG/DXF)</span><span class="opt-desc">2D computer-aided design floor plan file, ready for architects and designers to build from. Delivered in 3–5 business days. Larger or complex properties may take longer.</span></span>
+        <span class="opt-price">Starting at $180</span>
+      </label>
+      <label class="check-option" id="bim-lbl">
+        <input type="checkbox" id="bim-cb">
+        <span class="opt-label"><span class="opt-name">BIM File (Revit/IFC)</span><span class="opt-desc">Full Building Information Model file for renovation, design, or construction planning. Delivered in 2–7 business days for typical residential properties. Turnaround scales with property size — large or complex properties may take 1–2 weeks.</span></span>
+        <span class="opt-price">Starting at $300</span>
+      </label>
+      <label class="check-option" id="trueplan-lbl">
+        <input type="checkbox" id="trueplan-cb">
+        <span class="opt-label"><span class="opt-name">TruePlan (Xactimate Sketch File)</span><span class="opt-desc">Insurance and restoration-ready sketch file (.SKX), compatible with Xactimate claims software. Delivered in 2–3 business days, up to a week for complex properties.</span></span>
+        <span class="opt-price">Starting at $140</span>
+      </label>
+      <label class="check-option" id="pireport-lbl">
+        <input type="checkbox" id="pireport-cb">
+        <span class="opt-label"><span class="opt-name">Property Intelligence Report</span><span class="opt-desc">Automated, MLS-ready measurement and room-by-room report generated from your scan. Delivered within 1 business day of scan processing.</span></span>
+        <span class="opt-price">$40</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 7 — EDITING SERVICES -->
+<div class="section-card locked" id="sec7">
+  <div class="section-header">
+    <div class="section-title">Editing Services</div>
+    <div class="lock-hint"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="2" y="5" width="6" height="7" rx="1" fill="#bbb"></rect><path d="M3 5V4a2 2 0 014 0v1" stroke="#bbb" stroke-width="1.2" fill="none"></path></svg>Complete Property Size above</div>
+  </div>
+  <div class="section-body">
+    <div class="section-note" style="margin-top:0;margin-bottom:8px;font-weight:600;font-style:normal;color:var(--charcoal)">Photo Editing</div>
+    <div class="option-group">
+      <label class="check-option" id="vdusk-lbl"><input type="checkbox" id="virt-dusk"><span class="opt-label"><span class="opt-name">Virtual Dusk</span></span><span class="opt-price">$30/photo</span></label>
+      <div class="slide" id="vdusk-qty-wrap">
+        <div style="padding:6px 0 6px 28px">
+          <div class="qty-wrap">
+            <span class="qty-label">Qty:</span>
+            <button class="qty-btn" id="vdusk-minus" type="button">−</button>
+            <input class="qty-inp" id="vdusk-qty" type="number" min="1" max="75" value="1">
+            <button class="qty-btn" id="vdusk-plus" type="button">+</button>
+            <span id="vdusk-total" style="font-size:13px;font-weight:600;color:var(--accent);margin-left:8px">= $30</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section-note" style="margin-top:18px;margin-bottom:2px;font-weight:600;font-style:normal;color:var(--charcoal)">Video Editing</div>
+    <div class="section-note">For footage you've already shot. Choose a tier below:</div>
+    <div class="option-group" id="videdit-group" role="listbox" style="margin-top:8px">
+      <div class="radio-option videdit-opt" tabindex="0" role="option" data-value="short60"><span class="opt-label"><span class="opt-name">Up to 60 Seconds</span><span class="opt-desc">Edited into your desired format — social, walkthrough, or custom style</span></span><span class="opt-price">$80</span></div>
+      <div class="radio-option videdit-opt" tabindex="0" role="option" data-value="1to3"><span class="opt-label"><span class="opt-name">1–3 Minutes</span><span class="opt-desc">Edited into your desired format — social, walkthrough, or custom style</span></span><span class="opt-price">$150</span></div>
+      <div class="radio-option videdit-opt" tabindex="0" role="option" data-value="4to10"><span class="opt-label"><span class="opt-name">4–10 Minutes</span><span class="opt-desc">Longer footage, fully edited — final price confirmed after we review your footage</span></span><span class="opt-price">Starting at $250</span></div>
+    </div>
+    <div class="section-note">Click a selected option again to deselect.</div>
+    <div class="slide" id="videdit-info-wrap">
+      <div class="info-box" id="videdit-info-text"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 8 — AERIAL SERVICES (referral) -->
+<div class="section-card locked" id="sec8">
+  <div class="section-header">
+    <div class="section-title">Aerial Services</div>
+    <div class="lock-hint"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="2" y="5" width="6" height="7" rx="1" fill="#bbb"></rect><path d="M3 5V4a2 2 0 014 0v1" stroke="#bbb" stroke-width="1.2" fill="none"></path></svg>Complete Property Size above</div>
+  </div>
+  <div class="section-body">
+    <div class="coming-soon">
+      <div class="coming-soon-label">Coming Soon</div>
+      <div class="coming-soon-sub">Aerial photography &amp; video isn't available yet — check the box below to let us know you're interested, and we'll notify you as soon as it launches.</div>
+    </div>
+    <div class="option-group" style="margin-top:12px">
+      <label class="check-option" id="aerial-lbl">
+        <input type="checkbox" id="aerial-cb">
+        <span class="opt-label"><span class="opt-name">Notify Me When Aerial Services Launch</span><span class="opt-desc">Not available yet — check this box to gauge interest and we'll reach out when it's ready.</span></span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 9 — VIRTUAL STAGING / CLUTTER REMOVAL -->
+<div class="section-card locked" id="sec9">
+  <div class="section-header">
+    <div class="section-title">Virtual Staging / Clutter Removal</div>
+    <div class="section-sub">AI-powered room staging and digital clutter removal — no in-person visit needed.</div>
+    <div class="lock-hint"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="2" y="5" width="6" height="7" rx="1" fill="#bbb"></rect><path d="M3 5V4a2 2 0 014 0v1" stroke="#bbb" stroke-width="1.2" fill="none"></path></svg>Complete Property Size above</div>
+  </div>
+  <div class="section-body">
+    <div class="option-group">
+      <label class="check-option" id="stage-only-lbl">
+        <input type="checkbox" id="stage-only-cb">
+        <span class="opt-label"><span class="opt-name">Virtual Staging</span><span class="opt-desc">AI-furnished staging for empty or under-furnished rooms. Priced per image — each angle of a room counts as one image.</span></span>
+        <span class="opt-price">$35/image</span>
+      </label>
+      <div class="slide" id="stage-only-qty-wrap">
+        <div style="padding:6px 0 6px 28px">
+          <div class="qty-wrap">
+            <span class="qty-label">Images:</span>
+            <button class="qty-btn" id="stage-only-minus" type="button">−</button>
+            <input class="qty-inp" id="stage-only-qty" type="number" min="1" max="75" value="1">
+            <button class="qty-btn" id="stage-only-plus" type="button">+</button>
+            <span id="stage-only-total" style="font-size:13px;font-weight:600;color:var(--accent);margin-left:8px">= $35</span>
+          </div>
+        </div>
+      </div>
+
+      <label class="check-option" id="clutter-only-lbl">
+        <input type="checkbox" id="clutter-only-cb">
+        <span class="opt-label"><span class="opt-name">Clutter Removal</span><span class="opt-desc">Digitally remove clutter, personal items, and mess — no staging added. Priced per image.</span></span>
+        <span class="opt-price">$25/image</span>
+      </label>
+      <div class="slide" id="clutter-only-qty-wrap">
+        <div style="padding:6px 0 6px 28px">
+          <div class="qty-wrap">
+            <span class="qty-label">Images:</span>
+            <button class="qty-btn" id="clutter-only-minus" type="button">−</button>
+            <input class="qty-inp" id="clutter-only-qty" type="number" min="1" max="75" value="1">
+            <button class="qty-btn" id="clutter-only-plus" type="button">+</button>
+            <span id="clutter-only-total" style="font-size:13px;font-weight:600;color:var(--accent);margin-left:8px">= $25</span>
+          </div>
+        </div>
+      </div>
+
+      <label class="check-option" id="stage-clutter-lbl">
+        <input type="checkbox" id="stage-clutter-cb">
+        <span class="opt-label"><span class="opt-name">Virtual Staging + Clutter Removal</span><span class="opt-desc">Full transformation — clutter removed and professionally staged. Priced per image.</span></span>
+        <span class="opt-price">$50/image</span>
+      </label>
+      <div class="slide" id="stage-clutter-qty-wrap">
+        <div style="padding:6px 0 6px 28px">
+          <div class="qty-wrap">
+            <span class="qty-label">Images:</span>
+            <button class="qty-btn" id="stage-clutter-minus" type="button">−</button>
+            <input class="qty-inp" id="stage-clutter-qty" type="number" min="1" max="75" value="1">
+            <button class="qty-btn" id="stage-clutter-plus" type="button">+</button>
+            <span id="stage-clutter-total" style="font-size:13px;font-weight:600;color:var(--accent);margin-left:8px">= $50</span>
+          </div>
+        </div>
+      </div>
+      <div class="section-note">Enter the number of images (photos) for each service — if you want three angles of the living room staged, that's three images. 1–2 days to process.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 10 — MARKETING PACKAGE -->
+<div class="section-card locked" id="sec10">
+  <div class="section-header">
+    <div class="section-title">Marketing Package</div>
+    <div class="section-sub">Get a Social Media Kit, a Property Website, or bundle both and save.</div>
+    <div class="lock-hint"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="2" y="5" width="6" height="7" rx="1" fill="#bbb"></rect><path d="M3 5V4a2 2 0 014 0v1" stroke="#bbb" stroke-width="1.2" fill="none"></path></svg>Complete Property Size above</div>
+  </div>
+  <div class="section-body">
+    <div class="option-group" id="mkt-group" role="listbox">
+      <div class="radio-option mkt-opt" tabindex="0" role="option" data-value="kit" id="mkt-kit-opt"><span class="opt-label"><span class="opt-name">Social Media Kit</span><span class="opt-desc">Custom-edited social reels, branded tiles, and digital flyers built from your listing media</span></span><span class="opt-price">$85</span></div>
+      <div class="radio-option mkt-opt" tabindex="0" role="option" data-value="website" id="mkt-website-opt"><span class="opt-label"><span class="opt-name">Property Website</span><span class="opt-desc">A dedicated single-property website for your listing. Active for 90 days — $10/month to keep active after that.</span></span><span class="opt-price">$40</span></div>
+      <div class="radio-option mkt-opt" tabindex="0" role="option" data-value="bundle" id="mkt-bundle-opt"><span class="opt-label"><span class="opt-name">Social Media Kit &amp; Property Website</span><span class="opt-desc">Both together — $15 less than buying separately. Website active for 90 days — $10/month to keep active after that.</span></span><span class="opt-price">$110</span></div>
+    </div>
+    <div class="section-note">Click a selected option again to deselect.</div>
+    <div class="dedup-note" id="mkt-dedup" style="display:none">✓ Already included in your package selection</div>
+  </div>
+</div>
+
+<!-- SECTION 11 — CLOSING GIFT -->
+<div class="section-card locked" id="sec11">
+  <div class="section-header">
+    <div class="section-title">The Closing Gift Collection</div>
+    <div class="lock-hint"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="2" y="5" width="6" height="7" rx="1" fill="#bbb"></rect><path d="M3 5V4a2 2 0 014 0v1" stroke="#bbb" stroke-width="1.2" fill="none"></path></svg>Complete previous section</div>
+  </div>
+  <div class="section-body">
+    <div class="option-group">
+      <label class="check-option" id="gift-lbl"><input type="checkbox" id="gift-sig"><span class="opt-label"><span class="opt-name">The Signature Album</span><span class="opt-desc">Free Shipping! A hardcover photo book with beautifully printed matte pages, featuring your property photos and address.</span></span><span class="opt-price">$159</span><img class="gift-img" src="https://static.showit.com/file/C3VU0B6OMGp9Jfp3v1pxwQ/273321/screenshot_2026-08-13_at_2_43_04_pm.png" alt="The Signature Album"></label>
+    </div>
+  </div>
+</div>
+
+<!-- BIG CONTINUE — outside à la carte sections -->
+<div class="big-continue-wrap" id="big-continue-outer" style="display:none">
+  <button class="big-continue-btn" id="cont-sec11" type="button">Continue to Booking Details →</button>
+</div>
+
+<!-- SECTION 12 — PROPERTY INFORMATION -->
+<div class="section-card locked" id="sec12">
+  <div class="section-header">
+    <div class="section-title">Property Information</div>
+    <div class="lock-hint"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="2" y="5" width="6" height="7" rx="1" fill="#bbb"></rect><path d="M3 5V4a2 2 0 014 0v1" stroke="#bbb" stroke-width="1.2" fill="none"></path></svg>Complete previous section</div>
+  </div>
+  <div class="section-body">
+    <div class="fgroup addr-wrap">
+      <label class="flabel" for="addr1">Address Line 1 <span class="req">*</span></label>
+      <input class="finput" type="text" id="addr1" autocomplete="off" placeholder="Start typing your address…" aria-required="true">
+      <div id="addr-drop" class="addr-drop" role="listbox"></div>
+      <div id="addr1-err" class="ferr" role="alert">Please enter the property address.</div>
+    </div>
+    <div class="fgroup"><label class="flabel" for="addr2">Address Line 2 <span style="color:var(--gray);font-weight:400">(optional)</span></label><input class="finput" type="text" id="addr2" placeholder="Apt, Suite, Unit, etc."></div>
+    <div class="frow">
+      <div class="fgroup"><label class="flabel" for="city">City <span class="req">*</span></label><input class="finput" type="text" id="city" aria-required="true"><div id="city-err" class="ferr" role="alert">Please enter the city.</div></div>
+      <div class="fgroup"><label class="flabel" for="state">State <span class="req">*</span></label>
+        <select class="fselect" id="state" aria-required="true">
+          <option value="">Select state</option>
+          <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option><option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+        </select>
+        <div id="state-err" class="ferr" role="alert">Please select the state.</div>
+      </div>
+    </div>
+    <div class="fgroup"><label class="flabel" for="zip">Zip Code <span class="req">*</span></label><input class="finput" type="text" id="zip" inputmode="numeric" maxlength="5" placeholder="19103" style="max-width:160px"><div id="zip-err" class="ferr" role="alert">Please enter a valid 5-digit zip.</div></div>
+    <div class="fgroup"><label class="flabel" for="sqft-val">Square Feet <span class="req">*</span></label><input class="finput" type="number" id="sqft-val" min="1" placeholder="e.g. 2400" style="max-width:200px" aria-required="true"><div id="sqft-val-err" class="ferr" role="alert">Please enter the square footage.</div></div>
+    <div class="slide" id="bedbath-wrap">
+      <div class="frow" style="padding-top:4px">
+        <div class="fgroup"><label class="flabel" for="beds">Bedrooms <span style="color:var(--gray);font-weight:400">(optional)</span></label><input class="finput" type="number" id="beds" min="0" placeholder="3"></div>
+        <div class="fgroup"><label class="flabel" for="baths">Bathrooms <span style="color:var(--gray);font-weight:400">(optional)</span></label><input class="finput" type="number" id="baths" min="0" step="0.5" placeholder="2.5"></div>
+      </div>
+    </div>
+    <div id="map-wrap"><div id="map-canvas"></div></div>
+    <div class="map-note" id="map-note" style="display:none">If the pin looks off, note the correct location in Additional Information.</div>
+    <div id="map-na" style="display:none;font-size:13px;color:var(--gray);margin-top:10px;font-style:italic">Map preview unavailable.</div>
+    <div class="travel-fee-banner" id="travel-fee-banner"></div>
+    <div class="travel-fee-banner" id="travel-outside-banner"></div>
+    <div class="continue-wrap"><button class="continue-btn" id="cont-sec12" type="button">Continue →</button></div>
+  </div>
+</div>
+
+<!-- SECTION 14 — ACCOUNT INFORMATION -->
+<div class="section-card locked" id="sec14">
+  <div class="section-header">
+    <div class="section-title">Account Information</div>
+    <div class="lock-hint"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="2" y="5" width="6" height="7" rx="1" fill="#bbb"></rect><path d="M3 5V4a2 2 0 014 0v1" stroke="#bbb" stroke-width="1.2" fill="none"></path></svg>Complete previous section</div>
+  </div>
+  <div class="section-body">
+    <div class="fgroup"><label class="flabel" for="fullname">Name <span class="req">*</span></label><input class="finput" type="text" id="fullname" autocomplete="name" placeholder="Jane Smith" aria-required="true"><div id="name-err" class="ferr" role="alert">Please enter your name.</div></div>
+    <div class="fgroup"><label class="flabel" for="phone">Phone <span class="req">*</span></label><input class="finput" type="tel" id="phone" autocomplete="tel" placeholder="(555) 555-5555" aria-required="true"><div id="phone-err" class="ferr" role="alert">Please enter a valid phone number.</div></div>
+    <div class="fgroup"><label class="flabel" for="company">Company <span style="color:var(--gray);font-weight:400">(optional)</span></label><input class="finput" type="text" id="company" autocomplete="organization" placeholder="Keller Williams Realty"></div>
+    <div class="fgroup"><label class="flabel" for="referral">Referral Code <span style="color:var(--gray);font-weight:400">(optional)</span></label><input class="finput" type="text" id="referral" placeholder="Enter referral code"></div>
+    <div class="continue-wrap"><button class="continue-btn" id="cont-sec14" type="button">Continue →</button></div>
+  </div>
+</div>
+
+<!-- SECTION 15 — PROPERTY DETAILS -->
+<div class="section-card locked" id="sec15">
+  <div class="section-header">
+    <div class="section-title">Property Details</div>
+    <div class="section-sub">Information we need before the appointment.</div>
+    <div class="lock-hint"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="2" y="5" width="6" height="7" rx="1" fill="#bbb"></rect><path d="M3 5V4a2 2 0 014 0v1" stroke="#bbb" stroke-width="1.2" fill="none"></path></svg>Complete previous section</div>
+  </div>
+  <div class="section-body">
+    <div class="fgroup"><label class="flabel" for="access">How will we access the property? <span class="req">*</span></label><select class="fselect" id="access" aria-required="true"><option value="">(Choose one)</option><option>Lockbox</option><option>Agent Will Meet You</option><option>Owner/Tenant Will Meet You</option></select><div id="access-err" class="ferr" role="alert">Please select an access method.</div></div>
+    <div class="fgroup"><label class="flabel" for="lockcode">If YES to lockbox, what is the code?</label><input class="finput" type="text" id="lockcode" placeholder="Enter lockbox code or N/A"></div>
+    <div class="fgroup"><label class="flabel" for="vacancy">Is this property Vacant or Occupied? <span class="req">*</span></label><select class="fselect" id="vacancy" aria-required="true"><option value="">(Choose one)</option><option>Vacant – Shoot anytime on the scheduled date</option><option>Vacant – Shoot at SCHEDULED time; someone may meet you</option><option>Occupied</option></select><div id="vacancy-err" class="ferr" role="alert">Please select the vacancy status.</div></div>
+    <div class="fgroup">
+      <label class="flabel">Shoot date contact number</label>
+      <label class="check-wrap" style="margin-bottom:10px;font-size:13px">
+        <input type="checkbox" id="shoot-same-phone" style="width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;margin-top:1px;cursor:pointer">
+        <span>Use the phone number provided above</span>
+      </label>
+      <input class="finput" type="tel" id="shoot-contact" placeholder="(555) 555-5555">
+      <div class="fhelper">Who should our photographer contact on the day of the shoot?</div>
+      <div id="shoot-err" class="ferr" role="alert">Please enter a day-of contact number.</div>
+    </div>
+    <div class="fgroup"><label class="flabel" for="features">Specific Features/Photos <span style="color:var(--gray);font-weight:400">(optional)</span></label><textarea class="ftextarea" id="features" placeholder="List any specific rooms, features, or areas you want us to capture." rows="3"></textarea></div>
+    <div class="continue-wrap"><button class="continue-btn" id="cont-sec15" type="button">Continue →</button></div>
+  </div>
+</div>
+
+<!-- SECTION 16 — ADDITIONAL INFORMATION -->
+<div class="section-card locked" id="sec16">
+  <div class="section-header">
+    <div class="section-title">Additional Information</div>
+    <div class="lock-hint"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="2" y="5" width="6" height="7" rx="1" fill="#bbb"></rect><path d="M3 5V4a2 2 0 014 0v1" stroke="#bbb" stroke-width="1.2" fill="none"></path></svg>Complete previous section</div>
+  </div>
+  <div class="section-body">
+    <div class="fgroup"><label class="flabel" for="addl">Anything else we should know? <span style="color:var(--gray);font-weight:400">(optional)</span></label><textarea class="ftextarea" id="addl" placeholder="Please enter anything else we may need to know." rows="4"></textarea></div>
+    <div class="continue-wrap"><button class="continue-btn" id="cont-sec16" type="button">Continue →</button></div>
+  </div>
+</div>
+
+<!-- SECTION 17 — TERMS & CONDITIONS -->
+<div class="section-card locked" id="sec17">
+  <div class="section-header">
+    <div class="section-title">Terms &amp; Conditions</div>
+    <div class="lock-hint"><svg width="10" height="12" viewBox="0 0 10 12"><rect x="2" y="5" width="6" height="7" rx="1" fill="#bbb"></rect><path d="M3 5V4a2 2 0 014 0v1" stroke="#bbb" stroke-width="1.2" fill="none"></path></svg>Complete previous section</div>
+  </div>
+  <div class="section-body">
+    <div class="terms-box" tabindex="0">
+      <p>To cancel or reschedule, please notify us at least 24 hours before your scheduled appointment. A $100 fee applies to appointments canceled or rescheduled inside this window. If we arrive and the property cannot be accessed or is not ready to be photographed, a fee of 25% of the booked order total (minimum $100) applies before we can reschedule. A travel fee may also be charged if we are provided with an incorrect address.</p>
+      <p>Travel is included for properties within 30 miles (about 45 minutes) of our Manayunk, Philadelphia base. Beyond that, a travel fee of $1.25 per one-way mile is calculated automatically when you enter the property address and appears on your order summary and invoice.</p>
+      <p>Properties over 8,000 sq ft, Full Walkthrough Videos for those properties, and video edits over 3 minutes are quoted individually. Selecting one of these on this form is a request for a quote, not a charge &mdash; we will contact you before any work is scheduled.</p>
+      <p>Standard listing media is delivered within 48 hours of the end of the appointment. Technical files (MatterPak, CAD, BIM, etc.) follow the business-day turnaround listed with each item on the order form.</p>
+      <p>You will receive the exact number of photos ordered. Please use the fields above to note any specific features or areas you'd like photographed. We typically skip closets, unfinished areas, storage rooms, and garage interiors unless otherwise specified.</p>
+      <p>Media Mansion retains copyright of all photos, videos, floor plans, and digital media produced. In exchange for payment, you are granted a limited, non-transferable license to use the media for marketing and promoting the property and your real estate business. Media may not be used by third parties to create new media without express written consent from Media Mansion.</p>
+    </div>
+    <label class="check-wrap" id="terms-lbl"><input type="checkbox" id="terms-cb" aria-required="true"><span>I have read and agree to the Terms &amp; Conditions <span class="req">*</span></span></label>
+    <div id="terms-err" class="ferr" role="alert">You must agree to the Terms &amp; Conditions to submit.</div>
+  </div>
+</div>
+
+<!-- MOBILE ORDER SUMMARY -->
+<div class="section-card" id="mob-summary" style="display:none;margin-top:14px">
+  <div class="section-title" style="margin-bottom:14px">Order Summary</div>
+  <div id="s-items-mob" class="summary-items"><div class="s-empty">No items selected yet.</div></div>
+  <hr class="s-divider">
+  <div class="s-line"><span>Sub-Total</span><span id="sub-mob">$0</span></div>
+  <div class="s-line tax"><span>Sales Tax</span><span><em>Pending — added to invoice</em></span></div>
+  <div class="s-line total"><span>Order Total</span><span id="tot-mob">$0</span></div>
+  <div class="s-usd">All amounts are in USD</div>
+  <button class="submit-btn submit-locked" id="submit-mob" type="button">Select Appointment Date/Time →</button>
+</div>
+
+</div><!-- end form-col -->
+
+<!-- SIDEBAR -->
+<div class="sidebar-wrap" id="sidebar">
+  <div class="summary-card">
+    <div class="summary-title">Order Summary</div>
+    <div id="s-items-sb" class="summary-items"><div class="s-empty">No items selected yet.</div></div>
+    <hr class="s-divider">
+    <div class="s-line"><span>Sub-Total</span><span id="sub-sb">$0</span></div>
+    <div class="s-line tax"><span>Sales Tax</span><span><em>Pending — added to invoice</em></span></div>
+    <div class="s-line total"><span>Order Total</span><span id="tot-sb">$0</span></div>
+    <div class="s-usd">All amounts are in USD</div>
+    <button class="submit-btn submit-locked" id="submit-sb" type="button">Select Appointment Date/Time →</button>
+  </div>
+</div>
+
+</div><!-- end page-wrap -->
+
+<div class="mob-bar" id="mob-bar">
+  <div><div class="mb-label">Order Total</div><div class="mb-amt" id="mob-total">$0</div></div>
+  <div style="font-size:12px;opacity:.6">Tax: Pending</div>
+</div>
+
+<!-- APPOINTMENT SUCCESS SCREEN -->
+<div id="appt-screen">
+  <img src="https://static.showit.com/file/TKs8wocQwMHG7R-6VQMwFA/273321/asdadsdasdf.png" alt="Media Mansion" class="success-logo" onerror="this.style.display='none'">
+  <div class="success-icon">✅</div>
+  <div class="appt-title">Your Information Has Been Recorded!</div>
+  <div class="appt-body">
+    Thanks — we've got everything we need on our end. There's just one final step to lock in your booking:<br><br>
+    <strong>Choose your appointment date &amp; time.</strong><br><br>
+    Your final invoice — reflecting the full total of your order — will be sent within 24 hours after your scan appointment is complete.<br><br>
+    <span id="appt-quote-note" style="display:none">Because part of your order is a custom quote, we'll contact you first to confirm pricing before the appointment goes ahead.<br><br></span>
+    Click below to select your date and time.
+  </div>
+  <a href="https://calendar.app.google/cDoFe9VKMFCKTW1K6" target="_top" class="appt-cta">Select Date &amp; Time →</a>
+  <div class="appt-note">Questions? Email us at <a href="mailto:hello@mediamansion.com" style="color:var(--accent)">hello@mediamansion.com</a></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+// ⚠ REPLACE THESE BEFORE GOING LIVE
+const EMAILJS_PUBLIC_KEY   = 'JDEolgk7OF3CsNckp';
+const EMAILJS_SERVICE_ID   = 'service_sv0w5hd';
+const EMAILJS_TEMPLATE_ID  = 'template_hs6yvic';
+const EMAILJS_SMS_TEMPLATE = 'template_oh4lr7z';
+// ⚠ Update if you change carriers
+// Verizon: @vtext.com | AT&T: @txt.att.com | T-Mobile (current): @tmomail.net
+const SMS_GATEWAY   = '2157797235@tmomail.net';
+// Business address — never expose a personal inbox here (this file is public via view-source).
+// Also restrict the EmailJS public key to your domain in the EmailJS dashboard (Account → Security → Allowed origins).
+const BUSINESS_EMAIL = 'hello@mediamansion.com';
+
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
+// ============================================================
+// PRICING DATA
+// Package prices scale by property size (own table below per package).
+// ============================================================
+const CUSTOM_KEY = '8001-15000'; // every package at this tier is a custom quote
+const VVT_PRICE = {'200-2000':110,'2001-4000':120,'4001-6000':130,'6001-8000':140,'8001-15000':160};
+const VVT_BOTH_FMT_FEE = 45; // vertical + horizontal cuts
+const FWV_PRICE = {'200-2000':265,'2001-4000':315,'4001-6000':390,'6001-8000':475}; // 8,001+ = custom quote
+const PHOTO_PRICE = {
+  15:{'200-2000':99,'2001-4000':105,'4001-6000':110,'6001-8000':115,'8001-15000':125},
+  25:{'200-2000':120,'2001-4000':130,'4001-6000':140,'6001-8000':150,'8001-15000':160},
+  35:{'200-2000':145,'2001-4000':155,'4001-6000':165,'6001-8000':175,'8001-15000':185},
+  50:{'200-2000':200,'2001-4000':210,'4001-6000':220,'6001-8000':235,'8001-15000':250},
+  65:{'200-2000':250,'2001-4000':260,'4001-6000':275,'6001-8000':290,'8001-15000':310},
+};
+// null = custom quote (we reach out). PKG_FLOOR is the internal starting floor shown in the order email only.
+const PKG = {
+  ess:  {'200-2000':220,'2001-4000':240,'4001-6000':260,'6001-8000':285,'8001-15000':null},
+  escan:{'200-2000':230,'2001-4000':340,'4001-6000':490,'6001-8000':700,'8001-15000':null},
+  // Premier Combo ≈ Essential Scan + 35 photos + website, less a bundle discount; Deluxe ≈ Premier + kit + 2 dusk + reel, less ~$25–45
+  sig:  {'200-2000':360,'2001-4000':470,'4001-6000':600,'6001-8000':790,'8001-15000':null},
+  del:  {'200-2000':590,'2001-4000':705,'4001-6000':840,'6001-8000':1030,'8001-15000':null},
+};
+const PKG_FLOOR = {ess:310, escan:999, sig:1050, del:1300};
+const PKG_NAME = {ess:'Essential Photos', escan:'Essential Scan', sig:'Premier Combo', del:'Deluxe Bundle'};
+// À la carte flat prices
+const PRICE = {
+  fp:40, matterpak:80, e57:160, cad:180, bim:300, trueplan:140, pireport:40,
+  kit:85, website:40, kitBundle:110,
+  vdusk:30, stage:35, clutter:25, stageClutter:50,
+  videdit:{short60:80,'1to3':150,'4to10':250},
+  album:159,
+  rush:75, holiday:100,
+};
+// ============================================================
+// TIME DATA (hours)
+// ============================================================
+const T = {
+  ess:  {'200-2000':[1,3],'2001-4000':[1,3],'4001-6000':[2,4],'6001-8000':[2,4],'8001-15000':[2,4]},
+  escan:{'200-2000':[1,2],'2001-4000':[2,3.5],'4001-6000':[2.5,4],'6001-8000':[4,7],'8001-15000':[5,9]},
+  sig:  {'200-2000':[0.5,2],'2001-4000':[1,3.5],'4001-6000':[1.5,4],'6001-8000':[2.5,5],'8001-15000':[3,7]},
+  del:  {'200-2000':[2.5,5],'2001-4000':[3.5,7],'4001-6000':[4,8],'6001-8000':[5.5,9.5],'8001-15000':[6.5,12]},
+  photo:{'200-2000':[1,3],'2001-4000':[1,3],'4001-6000':[2,4],'6001-8000':[2,4],'8001-15000':[2,4]},
+};
+
+// ============================================================
+// STATE
+// ============================================================
+const S = {
+  sqftKey:null, pkg:null,
+  essAddon:false, photos:null, photoKit:false,
+  vvt:false, vvtFmt:'', vidCine:false, vidLargeInterest:false,
+  rush:false, holiday:false,
+  fp:false, vdusk:false, vduskQty:1,
+  stageOnly:false, stageOnlyQty:1, clutterOnly:false, clutterOnlyQty:1, stageClutter:false, stageClutterQty:1,
+  matterpak:false, e57:false, cad:false, bim:false, trueplan:false, pireport:false,
+  videdit:null,
+  mktOption:null, aerial:false, giftSig:false, terms:false,
+  travelMiles:0, travelFee:0, travelNotify:false,
+};
+
+// ============================================================
+// SEQUENTIAL UNLOCK
+// ============================================================
+const SEC_ORDER = ['sec1','sec2','sec3','sec4','sec5','sec6','sec7','sec8','sec9','sec10','sec11','sec12','sec14','sec15','sec16','sec17'];
+const LAST_ALACARTE_IDX = SEC_ORDER.indexOf('sec11');   // everything up to here opens at once
+const SUBMIT_UNLOCK_IDX = SEC_ORDER.indexOf('sec14');   // submit buttons activate here
+let unlockedTo = 0; // index into SEC_ORDER
+
+// Called when sqft is selected — opens packages + all à la carte at once, no scroll
+function unlockAlaCarteGroup(){
+  for(let i=1; i<=LAST_ALACARTE_IDX; i++){
+    const card = document.getElementById(SEC_ORDER[i]);
+    if(card) card.classList.remove('locked');
+  }
+  unlockedTo = LAST_ALACARTE_IDX; // now pointing at sec11
+  const ah = document.getElementById('alacarte-header');
+  if(ah) ah.classList.add('visible');
+  const bcw = document.getElementById('big-continue-outer');
+  if(bcw) bcw.style.display='';
+  const ms = document.getElementById('mob-summary'); if(ms) ms.style.display='';
+  updateProgress();
+}
+
+// Called by Continue buttons from sec11 onward — one-at-a-time
+function unlockNext(){
+  if(unlockedTo >= SEC_ORDER.length-1) return;
+  unlockedTo++;
+  const id = SEC_ORDER[unlockedTo];
+  const card = document.getElementById(id);
+  if(!card) return;
+  card.classList.remove('locked');
+  // Activate submit buttons once Account Information (sec14) is reached
+  if(unlockedTo >= SUBMIT_UNLOCK_IDX){
+    document.querySelectorAll('.submit-btn').forEach(b=>b.classList.remove('submit-locked'));
+  }
+  setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'start'}),80);
+  updateProgress();
+}
+
+// Wire continue buttons (only sec11 onward now)
+['sec11','sec12','sec14','sec16'].forEach(id=>{
+  const btn = document.getElementById('cont-'+id);
+  if(btn) btn.addEventListener('click', unlockNext);
+});
+// Property Details continue skips the extra click on Additional Information
+const cont15 = document.getElementById('cont-sec15');
+if(cont15) cont15.addEventListener('click', ()=>{ unlockNext(); unlockNext(); });
+
+
+// ============================================================
+// HELPERS
+// ============================================================
+function fmt(n){ return '$'+Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+function fmtH(h){ return h===Math.floor(h) ? h+(h===1?' hr':' hrs') : h+' hrs'; }
+function slide(el,on){ if(!el)return; on?el.classList.add('open'):el.classList.remove('open'); }
+function chkHi(cb,lbl){ if(!cb||!lbl)return; cb.addEventListener('change',()=>cb.checked?lbl.classList.add('selected'):lbl.classList.remove('selected')); }
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast'+(type?' '+type:'');
+  void t.offsetWidth; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+function autoResize(ta){ ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }
+function setErr(inpId,errId,on){
+  const i=document.getElementById(inpId), e=document.getElementById(errId);
+  if(!i||!e)return;
+  on?(i.classList.add('err'),e.classList.add('show')):(i.classList.remove('err'),e.classList.remove('show'));
+}
+function updateProgress(){}
+// Reusable qty-spinner + optional gating checkbox (Virtual Dusk, Virtual Staging rows)
+function setupQty(minId,plusId,inpId,totId,unit,cbId,lblId,wrapId,stateBoolKey,stateQtyKey){
+  const inp=document.getElementById(inpId), tot=document.getElementById(totId);
+  const cb=cbId?document.getElementById(cbId):null, lbl=lblId?document.getElementById(lblId):null, wrap=wrapId?document.getElementById(wrapId):null;
+  function upd(v){
+    v=Math.max(parseInt(inp.min)||1,Math.min(parseInt(inp.max)||99,v));
+    inp.value=v; S[stateQtyKey]=v;
+    if(tot) tot.textContent='= '+fmt(v*unit);
+    render();
+  }
+  document.getElementById(minId).addEventListener('click',()=>upd(parseInt(inp.value)-1));
+  document.getElementById(plusId).addEventListener('click',()=>upd(parseInt(inp.value)+1));
+  inp.addEventListener('input',()=>upd(parseInt(inp.value)||1));
+  if(cb){
+    chkHi(cb,lbl);
+    cb.addEventListener('change',function(){ S[stateBoolKey]=this.checked; slide(wrap,this.checked); render(); });
+  }
+}
+
+// ============================================================
+// MARKETING DEDUP (Property Website is in Essential/Signature/Deluxe;
+// Social Media Kit is only in Deluxe)
+// ============================================================
+function isCustomTier(){ return S.sqftKey===CUSTOM_KEY; }
+function pkgIsCustom(){ return !!S.pkg && isCustomTier(); }
+function pkgHasWebsite(){ return S.pkg==='ess'||S.pkg==='sig'||S.pkg==='del'; }
+function pkgHasKit(){ return S.pkg==='del'; }
+function pkgPhotoInfo(){
+  if(S.pkg==='ess') return {count:30,name:'Essential Photos'};
+  if(S.pkg==='sig') return {count:35,name:'Premier Combo'};
+  if(S.pkg==='del') return {count:35,name:'Deluxe Bundle'};
+  return null;
+}
+
+function updatePhotoPkgNote(){
+  const note = document.getElementById('photo-pkg-note');
+  if(!note) return;
+  const info = pkgPhotoInfo();
+  if(info){
+    note.textContent = `✓ You already have ${info.count} photos included with your ${info.name} package — any photos selected below will be added on top of those.`;
+    note.style.display='block';
+  } else {
+    note.style.display='none';
+  }
+}
+
+function updateKitUI(){
+  // Section 3 add-on — only fully redundant when the package already has BOTH kit + website
+  const psLbl = document.getElementById('photo-social-lbl');
+  const psDup = document.getElementById('photo-social-dedup');
+  if(pkgHasKit()){
+    psLbl.classList.add('already-inc');
+    if(psDup) psDup.style.display='block';
+    const cb=document.getElementById('photo-social'); if(cb){cb.checked=false;S.photoKit=false;psLbl.classList.remove('selected');}
+  } else {
+    psLbl.classList.remove('already-inc'); if(psDup) psDup.style.display='none';
+  }
+  updateMktUI();
+}
+
+function updateMktUI(){
+  const haveKit = pkgHasKit()||S.photoKit;
+  const haveWebsite = pkgHasWebsite()||S.photoKit;
+  const kitOpt=document.getElementById('mkt-kit-opt'), webOpt=document.getElementById('mkt-website-opt'), bunOpt=document.getElementById('mkt-bundle-opt');
+  const dedup=document.getElementById('mkt-dedup');
+  if(!kitOpt||!webOpt||!bunOpt) return;
+  [kitOpt,webOpt,bunOpt].forEach(o=>o.classList.remove('already-inc'));
+  let any=false;
+  if(haveKit){ kitOpt.classList.add('already-inc'); any=true; if(S.mktOption==='kit'){S.mktOption=null;kitOpt.classList.remove('selected');} }
+  if(haveWebsite){ webOpt.classList.add('already-inc'); any=true; if(S.mktOption==='website'){S.mktOption=null;webOpt.classList.remove('selected');} }
+  if(haveKit||haveWebsite){ bunOpt.classList.add('already-inc'); if(S.mktOption==='bundle'){S.mktOption=null;bunOpt.classList.remove('selected');} }
+  if(dedup) dedup.style.display = any ? 'block' : 'none';
+}
+
+// ============================================================
+// FLOOR PLAN DEDUP
+// ============================================================
+function fpIncluded(){ return ['ess','sig','del'].includes(S.pkg); }
+
+function updateFPUI(){
+  const inc = fpIncluded();
+  const fpLbl = document.getElementById('fp-lbl');
+  const fpDup = document.getElementById('fp-dedup');
+  const fpCb  = document.getElementById('fp-cb');
+  if(inc){
+    fpLbl.classList.add('already-inc'); if(fpDup) fpDup.style.display='block';
+    if(fpCb){fpCb.checked=false;S.fp=false;fpLbl.classList.remove('selected');}
+  } else {
+    fpLbl.classList.remove('already-inc'); if(fpDup) fpDup.style.display='none';
+  }
+}
+
+// ============================================================
+// DYNAMIC PRICING UPDATE (on sqft selection) — package prices scale by tier
+// ============================================================
+function pkgPriceText(k,key){ const v=PKG[k][key]; return v==null ? 'Custom Quote' : fmt(v); }
+function applyPricing(key){
+  document.getElementById('pkg-ess-price').textContent  = pkgPriceText('ess',key);
+  document.getElementById('pkg-escan-price').textContent = pkgPriceText('escan',key);
+  document.getElementById('pkg-sig-price').textContent  = pkgPriceText('sig',key);
+  document.getElementById('pkg-del-price').textContent  = pkgPriceText('del',key);
+  document.getElementById('vvt-price').textContent      = fmt(VVT_PRICE[key]);
+  const fwvEl=document.getElementById('fwv-price'); if(fwvEl&&FWV_PRICE[key]) fwvEl.textContent = fmt(FWV_PRICE[key]);
+  [15,25,35,50,65].forEach(c=>{ const el=document.getElementById(`photo-${c}-price`); if(el) el.textContent = fmt(PHOTO_PRICE[c][key]); });
+  const cn=document.getElementById('pkg-custom-note'); if(cn) cn.style.display = key===CUSTOM_KEY ? 'block' : 'none';
+  updateVideoSizeUI(key);
+  if(S.pkg) selPkg(S.pkg); // re-evaluate add-on visibility for the new tier
+  render();
+}
+
+// ============================================================
+// CALC TOTAL
+// ============================================================
+function calcTotal(){
+  const items=[], key=S.sqftKey;
+
+  const PKG_DESC = {
+    ess:'Essential Photos Package (30 Photos + Floor Plan + Property Website)',
+    escan:'Essential Scan Package (3D Matterport Scan + 5 Exterior 360s, 90-day hosting)',
+    sig:'Premier Combo Package (35 Photos + Floor Plan + Matterport 3D Tour + Property Website, 90-day hosting)',
+    del:'Deluxe Bundle Package (35 Photos + Floor Plan + Matterport 3D Tour + Property Website + Social Media Kit + 2 Virtual Dusk Photos + 1 Vertical Property Walkthrough Reel, 90-day hosting)',
+  };
+  if(S.pkg&&key){
+    const price = PKG[S.pkg][key];
+    if(price==null) items.push({n:PKG_DESC[S.pkg]+' &mdash; 8,001+ sq ft',p:0,label:'Custom Quote'});
+    else {
+      items.push({n:PKG_DESC[S.pkg],p:price});
+      if(S.essAddon&&S.pkg!=='escan') items.push({n:`Add 15 Photos (${S.pkg==='ess'?45:50} total)`,p:75,a:true});
+    }
+  }
+
+  if(S.photos&&key){
+    const pinfo = pkgPhotoInfo();
+    const pPrice = PHOTO_PRICE[S.photos.c][key];
+    items.push({n: pinfo ? `${S.photos.c} Additional Photos (beyond ${pinfo.name} package)` : `${S.photos.c} Photos (Listing)`, p:pPrice});
+  }
+
+  if(!pkgHasKit()&&S.photoKit) items.push({n:'Social Media Kit & Property Website',p:PRICE.kitBundle});
+
+  const haveKitForCalc = pkgHasKit()||S.photoKit;
+  const haveWebsiteForCalc = pkgHasWebsite()||S.photoKit;
+  if(S.mktOption==='kit'&&!haveKitForCalc) items.push({n:'Social Media Kit',p:PRICE.kit});
+  else if(S.mktOption==='website'&&!haveWebsiteForCalc) items.push({n:'Property Website',p:PRICE.website});
+  else if(S.mktOption==='bundle'&&!(haveKitForCalc&&haveWebsiteForCalc)) items.push({n:'Social Media Kit & Property Website',p:PRICE.kitBundle});
+
+  if(S.vvt&&key){
+    items.push({n:'Simple Walk-Through Video (30&ndash;60 Sec)',p:VVT_PRICE[key]});
+    if(S.vvtFmt==='Both') items.push({n:'Vertical + Horizontal cuts',p:VVT_BOTH_FMT_FEE,a:true});
+  }
+  if(S.vidCine&&key&&FWV_PRICE[key]) items.push({n:'Full Walkthrough Video',p:FWV_PRICE[key]});
+  if(S.vidLargeInterest) items.push({n:'Full Walkthrough Video &mdash; 8,001+ sq ft',p:0,label:'Custom Quote'});
+
+  if(S.rush) items.push({n:'Rush Delivery (Under 24 Hours)',p:PRICE.rush});
+  if(S.holiday) items.push({n:'Holiday Booking',p:PRICE.holiday});
+
+  if(S.fp) items.push({n:'Floor Plans',p:PRICE.fp});
+  if(S.matterpak) items.push({n:'MatterPak Bundle',p:PRICE.matterpak});
+  if(S.e57) items.push({n:'E57 Point Cloud Export',p:PRICE.e57});
+  if(S.cad) items.push({n:'CAD File (DWG/DXF)',p:PRICE.cad,label:'Starting at '+fmt(PRICE.cad)});
+  if(S.bim) items.push({n:'BIM File (Revit/IFC)',p:PRICE.bim,label:'Starting at '+fmt(PRICE.bim)});
+  if(S.trueplan) items.push({n:'TruePlan (Xactimate Sketch File)',p:PRICE.trueplan,label:'Starting at '+fmt(PRICE.trueplan)});
+  if(S.pireport) items.push({n:'Property Intelligence Report',p:PRICE.pireport});
+  if(S.vdusk) items.push({n:`Virtual Dusk &times; ${S.vduskQty}`,p:S.vduskQty*PRICE.vdusk});
+  if(S.stageOnly) items.push({n:`Virtual Staging &times; ${S.stageOnlyQty} image${S.stageOnlyQty>1?'s':''}`,p:S.stageOnlyQty*PRICE.stage});
+  if(S.clutterOnly) items.push({n:`Clutter Removal &times; ${S.clutterOnlyQty} image${S.clutterOnlyQty>1?'s':''}`,p:S.clutterOnlyQty*PRICE.clutter});
+  if(S.stageClutter) items.push({n:`Virtual Staging + Clutter Removal &times; ${S.stageClutterQty} image${S.stageClutterQty>1?'s':''}`,p:S.stageClutterQty*PRICE.stageClutter});
+  if(S.videdit==='short60') items.push({n:'Video Editing (Up to 60 Seconds)',p:PRICE.videdit.short60});
+  else if(S.videdit==='1to3') items.push({n:'Video Editing (1&ndash;3 Minutes)',p:PRICE.videdit['1to3']});
+  else if(S.videdit==='4to10') items.push({n:'Video Editing (4&ndash;10 Minutes)',p:PRICE.videdit['4to10'],label:'Starting at '+fmt(PRICE.videdit['4to10'])});
+  if(S.giftSig) items.push({n:'The Signature Album',p:PRICE.album});
+  if(S.travelFee>0) items.push({n:`Travel Fee (${S.travelMiles} mi one-way)`,p:S.travelFee});
+
+  return {items, total:items.reduce((s,i)=>s+i.p,0)};
+}
+
+// ============================================================
+// CALC TIME ESTIMATE
+// ============================================================
+function calcTime(){
+  const key=S.sqftKey; if(!key) return null;
+  let mn=0, mx=0;
+  if(S.pkg==='ess'&&T.ess[key]){mn+=T.ess[key][0];mx+=T.ess[key][1];}
+  else if(S.pkg==='escan'&&T.escan[key]){mn+=T.escan[key][0];mx+=T.escan[key][1];}
+  else if(S.pkg==='del'&&T.del[key]){mn+=T.del[key][0];mx+=T.del[key][1];}
+  else if(S.pkg==='sig'&&T.sig[key]){mn+=T.sig[key][0];mx+=T.sig[key][1];}
+  else if(S.photos&&T.photo[key]){mn+=T.photo[key][0];mx+=T.photo[key][1];}
+  if(S.vvt){mn+=0.5;mx+=0.5;}
+  if(S.vidCine||S.vidLargeInterest){mn+=1.5;mx+=1.5;}
+  if(mn===0&&mx===0) return null;
+  return fmtH(mn)+' &ndash; '+fmtH(mx);
+}
+
+// ============================================================
+// RENDER SUMMARY + TIME
+// ============================================================
+function render(){
+  const {items,total}=calcTotal();
+  const html=items.length?items.map(i=>`<div class="s-item${i.a?' addon':''}"><span class="s-item-name">${i.a?'&#x21B3; ':''}${i.n}</span><span class="s-item-price">${i.label||fmt(i.p)}</span></div>`).join(''):'<div class="s-empty">No items selected yet.</div>';
+  const tf=fmt(total);
+  ['sb','mob'].forEach(s=>{
+    const el=document.getElementById(`s-items-${s}`); if(el) el.innerHTML=html;
+    const sub=document.getElementById(`sub-${s}`); if(sub) sub.textContent=tf;
+    const tot=document.getElementById(`tot-${s}`); if(tot) tot.textContent=tf;
+  });
+  const mb=document.getElementById('mob-total'); if(mb) mb.textContent=tf;
+
+
+  updateFPUI();
+  updateKitUI();
+  updatePhotoPkgNote();
+}
+
+// ============================================================
+// SECTION 1 — SQFT
+// ============================================================
+(function(){
+  const group=document.getElementById('sqft-group');
+  const labels=group.querySelectorAll('.radio-option');
+  labels.forEach(lbl=>{
+    const inp=lbl.querySelector('input');
+    lbl.addEventListener('click',()=>{
+      labels.forEach(l=>l.classList.remove('selected')); lbl.classList.add('selected');
+      S.sqftKey=inp.value;
+      document.getElementById('sqft-error').classList.remove('show');
+      applyPricing(inp.value);
+      if(unlockedTo < 1) unlockAlaCarteGroup();
+    });
+  });
+})();
+
+// ============================================================
+// SECTION 2 — PACKAGES
+// ============================================================
+function selPkg(pkg){
+  S.pkg=pkg;
+  const map={ess:'pkg-essential',escan:'pkg-escan',sig:'pkg-signature',del:'pkg-deluxe'};
+  Object.entries(map).forEach(([k,id])=>{
+    const c=document.getElementById(id), cl=document.getElementById('clear-'+k);
+    if(pkg===k){c.classList.add('selected');c.setAttribute('aria-pressed','true');if(cl)cl.style.display='block';}
+    else if(!pkg){c.classList.remove('selected','disabled-pkg');c.setAttribute('aria-pressed','false');if(cl)cl.style.display='none';}
+    else{c.classList.remove('selected');c.classList.add('disabled-pkg');c.setAttribute('aria-pressed','false');if(cl)cl.style.display='none';}
+  });
+  const addonPkgs = (pkg==='ess'||pkg==='sig'||pkg==='del') && !isCustomTier();
+  slide(document.getElementById('ess-addon-wrap'),addonPkgs);
+  if(!addonPkgs){S.essAddon=false; const cb=document.getElementById('ess-addon'); if(cb){cb.checked=false;document.getElementById('ess-addon-lbl').classList.remove('selected');}}
+  updateKitUI(); updateFPUI(); render();
+}
+
+['ess','escan','sig','del'].forEach(k=>{
+  const id={ess:'pkg-essential',escan:'pkg-escan',sig:'pkg-signature',del:'pkg-deluxe'}[k];
+  const c=document.getElementById(id);
+  c.addEventListener('click',e=>{if(e.target.classList.contains('pkg-clear'))return; selPkg(S.pkg===k?null:k);});
+  c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selPkg(S.pkg===k?null:k);}});
+  const cl=document.getElementById('clear-'+k); if(cl) cl.addEventListener('click',e=>{e.stopPropagation();selPkg(null);});
+});
+chkHi(document.getElementById('ess-addon'),document.getElementById('ess-addon-lbl'));
+document.getElementById('ess-addon').addEventListener('change',function(){S.essAddon=this.checked;render();});
+
+// ============================================================
+// SECTION 3 — LISTING PHOTOS (deselectable, full-row click via divs)
+// ============================================================
+(function(){
+  const group=document.getElementById('photo-group');
+  const opts=group.querySelectorAll('.photo-opt');
+  function selectPhoto(div){
+    if(S.photos&&S.photos.c===div.dataset.value){
+      // deselect
+      S.photos=null;
+      opts.forEach(d=>d.classList.remove('selected'));
+      slide(document.getElementById('photo-social-wrap'),false);
+      S.photoKit=false;
+      const pcb=document.getElementById('photo-social'), plbl=document.getElementById('photo-social-lbl');
+      if(pcb)pcb.checked=false; if(plbl)plbl.classList.remove('selected');
+      updateKitUI(); render();
+    } else {
+      opts.forEach(d=>d.classList.remove('selected')); div.classList.add('selected');
+      S.photos={c:div.dataset.value};
+      slide(document.getElementById('photo-social-wrap'),true); render();
+    }
+  }
+  opts.forEach(div=>{
+    div.addEventListener('click',()=>selectPhoto(div));
+    div.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectPhoto(div);}});
+  });
+  chkHi(document.getElementById('photo-social'),document.getElementById('photo-social-lbl'));
+  document.getElementById('photo-social').addEventListener('change',function(){S.photoKit=this.checked;updateKitUI();render();});
+})();
+
+// ============================================================
+// SECTION 4 — VIDEO
+// ============================================================
+chkHi(document.getElementById('vid-vvt'),document.getElementById('vvt-lbl'));
+document.getElementById('vid-vvt').addEventListener('change',function(){S.vvt=this.checked;slide(document.getElementById('vvt-fmt-wrap'),this.checked);render();});
+document.getElementById('vvt-fmt').addEventListener('change',function(){S.vvtFmt=this.value;render();});
+chkHi(document.getElementById('vid-cine'),document.getElementById('cine-lbl'));
+document.getElementById('vid-cine').addEventListener('change',function(){S.vidCine=this.checked;render();});
+chkHi(document.getElementById('fwv-large-cb'),document.getElementById('fwv-large-lbl'));
+document.getElementById('fwv-large-cb').addEventListener('change',function(){S.vidLargeInterest=this.checked;render();});
+
+// Full Walkthrough Video options are conditional on property size
+function updateVideoSizeUI(key){
+  const large = key===CUSTOM_KEY;
+  document.getElementById('fwv-priced-wrap').style.display = large?'none':'';
+  document.getElementById('fwv-large-wrap').style.display = large?'':'none';
+  if(large){ S.vidCine=false; const cb=document.getElementById('vid-cine'); if(cb){cb.checked=false;} document.getElementById('cine-lbl').classList.remove('selected'); }
+  else { S.vidLargeInterest=false; const cb=document.getElementById('fwv-large-cb'); if(cb){cb.checked=false;} document.getElementById('fwv-large-lbl').classList.remove('selected'); }
+}
+
+// ============================================================
+// SECTION 5 — SCHEDULING & RUSH OPTIONS
+// ============================================================
+[['rush-cb','rush-lbl','rush'],['holiday-cb','holiday-lbl','holiday']].forEach(([cbId,lblId,k])=>{
+  const cb=document.getElementById(cbId), lbl=document.getElementById(lblId);
+  chkHi(cb,lbl);
+  cb.addEventListener('change',function(){S[k]=this.checked;render();});
+});
+
+// ============================================================
+// SECTION 6 — FLOOR PLANS & ADDITIONAL FILES
+// ============================================================
+chkHi(document.getElementById('fp-cb'),document.getElementById('fp-lbl'));
+document.getElementById('fp-cb').addEventListener('change',function(){S.fp=this.checked;render();});
+chkHi(document.getElementById('matterpak-cb'),document.getElementById('matterpak-lbl'));
+document.getElementById('matterpak-cb').addEventListener('change',function(){S.matterpak=this.checked;render();});
+chkHi(document.getElementById('e57-cb'),document.getElementById('e57-lbl'));
+document.getElementById('e57-cb').addEventListener('change',function(){S.e57=this.checked;render();});
+chkHi(document.getElementById('cad-cb'),document.getElementById('cad-lbl'));
+document.getElementById('cad-cb').addEventListener('change',function(){S.cad=this.checked;render();});
+chkHi(document.getElementById('bim-cb'),document.getElementById('bim-lbl'));
+document.getElementById('bim-cb').addEventListener('change',function(){S.bim=this.checked;render();});
+chkHi(document.getElementById('trueplan-cb'),document.getElementById('trueplan-lbl'));
+document.getElementById('trueplan-cb').addEventListener('change',function(){S.trueplan=this.checked;render();});
+chkHi(document.getElementById('pireport-cb'),document.getElementById('pireport-lbl'));
+document.getElementById('pireport-cb').addEventListener('change',function(){S.pireport=this.checked;render();});
+
+// ============================================================
+// SECTION 7 — EDITING (Virtual Dusk + flat-tier Video Editing)
+// ============================================================
+setupQty('vdusk-minus','vdusk-plus','vdusk-qty','vdusk-total',PRICE.vdusk,'virt-dusk','vdusk-lbl','vdusk-qty-wrap','vdusk','vduskQty');
+
+(function(){
+  const group=document.getElementById('videdit-group');
+  const opts=group.querySelectorAll('.videdit-opt');
+  const infoWrap=document.getElementById('videdit-info-wrap');
+  const infoText=document.getElementById('videdit-info-text');
+  const MSGS={
+    short60:"Once your booking is confirmed, we'll reach out within 48 hours to gather your footage and begin editing your up-to-60-second video.",
+    '1to3':"Once your booking is confirmed, we'll reach out within 48 hours to gather your footage and begin editing your 1–3 minute video.",
+    '4to10':"Once your booking is confirmed, we'll reach out within 48 hours to gather your footage. Edits over 3 minutes start at $250 — we'll confirm the final price after reviewing the footage, before any editing begins."
+  };
+  function select(div){
+    if(S.videdit===div.dataset.value){
+      S.videdit=null; opts.forEach(d=>d.classList.remove('selected')); slide(infoWrap,false);
+    } else {
+      opts.forEach(d=>d.classList.remove('selected')); div.classList.add('selected');
+      S.videdit=div.dataset.value;
+      infoText.textContent=MSGS[S.videdit];
+      slide(infoWrap,true);
+    }
+    render();
+  }
+  opts.forEach(div=>{
+    div.addEventListener('click',()=>select(div));
+    div.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(div);}});
+  });
+})();
+
+// ============================================================
+// SECTION 8 — AERIAL SERVICES (referral checkbox)
+// ============================================================
+chkHi(document.getElementById('aerial-cb'),document.getElementById('aerial-lbl'));
+document.getElementById('aerial-cb').addEventListener('change',function(){S.aerial=this.checked;});
+
+// ============================================================
+// SECTION 9 — VIRTUAL STAGING / CLUTTER REMOVAL
+// ============================================================
+setupQty('stage-only-minus','stage-only-plus','stage-only-qty','stage-only-total',PRICE.stage,'stage-only-cb','stage-only-lbl','stage-only-qty-wrap','stageOnly','stageOnlyQty');
+setupQty('clutter-only-minus','clutter-only-plus','clutter-only-qty','clutter-only-total',PRICE.clutter,'clutter-only-cb','clutter-only-lbl','clutter-only-qty-wrap','clutterOnly','clutterOnlyQty');
+setupQty('stage-clutter-minus','stage-clutter-plus','stage-clutter-qty','stage-clutter-total',PRICE.stageClutter,'stage-clutter-cb','stage-clutter-lbl','stage-clutter-qty-wrap','stageClutter','stageClutterQty');
+
+// ============================================================
+// SECTION 10 — MARKETING PACKAGE (Kit / Website / Bundle — single-select)
+// ============================================================
+(function(){
+  const group=document.getElementById('mkt-group');
+  const opts=group.querySelectorAll('.mkt-opt');
+  function select(div){
+    if(div.classList.contains('already-inc')) return;
+    if(S.mktOption===div.dataset.value){
+      S.mktOption=null; opts.forEach(d=>d.classList.remove('selected'));
+    } else {
+      opts.forEach(d=>d.classList.remove('selected')); div.classList.add('selected');
+      S.mktOption=div.dataset.value;
+    }
+    render();
+  }
+  opts.forEach(div=>{
+    div.addEventListener('click',()=>select(div));
+    div.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(div);}});
+  });
+})();
+
+// ============================================================
+// SECTION 11 — CLOSING GIFT
+// ============================================================
+document.getElementById('gift-sig').addEventListener('change',function(){
+  S.giftSig=this.checked;
+  const l=this.closest('.check-option');if(l)this.checked?l.classList.add('selected'):l.classList.remove('selected');render();
+});
+
+// ============================================================
+// TERMS
+// ============================================================
+document.getElementById('terms-cb').addEventListener('change',function(){
+  S.terms=this.checked;
+  document.getElementById('terms-lbl').style.color=this.checked?'var(--green)':'';
+});
+
+// ============================================================
+// PHONE FORMAT
+// ============================================================
+function fmtPhone(el){
+  let v=el.value.replace(/\D/g,'').substring(0,10);
+  if(v.length>=6)v=`(${v.substring(0,3)}) ${v.substring(3,6)}-${v.substring(6)}`;
+  else if(v.length>=3)v=`(${v.substring(0,3)}) ${v.substring(3)}`;
+  else if(v.length>0)v=`(${v}`;
+  el.value=v;
+}
+['phone','shoot-contact'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>fmtPhone(el));});
+
+// ZIP numeric
+document.getElementById('zip').addEventListener('input',function(){this.value=this.value.replace(/\D/g,'').substring(0,5);});
+
+// Auto-resize textareas
+document.querySelectorAll('.ftextarea').forEach(ta=>ta.addEventListener('input',()=>autoResize(ta)));
+
+// Sqft value → show bed/bath
+document.getElementById('sqft-val').addEventListener('input',function(){slide(document.getElementById('bedbath-wrap'),this.value.trim().length>0);});
+
+// Shoot-same-phone checkbox
+document.getElementById('shoot-same-phone').addEventListener('change',function(){
+  const sc=document.getElementById('shoot-contact');
+  if(this.checked){
+    sc.value=document.getElementById('phone').value;
+    sc.disabled=true;
+    sc.classList.remove('err');
+    document.getElementById('shoot-err').classList.remove('show');
+  } else {
+    sc.disabled=false;
+  }
+});
+
+// ============================================================
+// LEAFLET MAP (OpenStreetMap)
+// ============================================================
+let leafMap=null, leafMark=null;
+function initMap(){
+  if(leafMap)return;
+  leafMap=L.map(document.getElementById('map-canvas'),{zoomControl:true,scrollWheelZoom:false}).setView([39.95,-75.16],13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'}).addTo(leafMap);
+}
+function showPin(lat,lon,label){
+  initMap();
+  if(leafMark)leafMap.removeLayer(leafMark);
+  leafMark=L.marker([lat,lon]).addTo(leafMap).bindPopup(label,{maxWidth:220}).openPopup();
+  leafMap.setView([lat,lon],17);
+  document.getElementById('map-wrap').classList.add('visible');
+  document.getElementById('map-note').style.display='block';
+  document.getElementById('map-na').style.display='none';
+  setTimeout(()=>leafMap.invalidateSize(),120);
+  checkTravelFee(lat,lon);
+}
+
+// ============================================================
+// OSRM TRAVEL DISTANCE CHECK (from Manayunk, Philadelphia PA)
+// ============================================================
+const ORIGIN_LAT=40.0247, ORIGIN_LON=-75.2271; // Manayunk, Philadelphia
+const TRAVEL_FREE_MILES=30;            // free zone: within 30 miles ...
+const TRAVEL_FREE_SEC=2700;            // ... or about 45 minutes, whichever is exceeded first
+const TRAVEL_RATE_PER_MILE=1.25;       // charged on the full one-way distance — no credit, no discount
+const TRAVEL_MAX_SEC=16200;            // 4.5 hours — outside service range
+
+function calcTravelFeeAmount(miles){
+  return Math.ceil((miles*TRAVEL_RATE_PER_MILE)/5)*5; // rounded up to nearest $5
+}
+
+function checkTravelFee(destLat,destLon){
+  fetch(`https://router.project-osrm.org/route/v1/driving/${ORIGIN_LON},${ORIGIN_LAT};${destLon},${destLat}?overview=false`,{headers:{'Accept-Language':'en'}})
+    .then(r=>r.json())
+    .then(data=>{
+      if(!data.routes||!data.routes.length) return;
+      const route=data.routes[0];
+      const miles=Math.ceil(route.distance/1609.34);
+      const banner=document.getElementById('travel-fee-banner');
+      const outsideBanner=document.getElementById('travel-outside-banner');
+
+      if(route.duration>TRAVEL_MAX_SEC){
+        // Outside service range
+        S.travelMiles=0; S.travelFee=0;
+        if(banner) banner.classList.remove('show');
+        if(outsideBanner){
+          outsideBanner.innerHTML=`&#x1F4CD; <strong>We're sorry, but this address is outside of our service range at this time.</strong> We're always working to expand the areas we cover, so check back soon!
+            <label class="check-wrap"><input type="checkbox" id="travel-notify-cb" onchange="S.travelNotify=this.checked"><span>Please check this box if you'd like to be notified in the future if we're able to service this area.</span></label>`;
+          outsideBanner.classList.add('show');
+        }
+      } else if(route.duration>TRAVEL_FREE_SEC || miles>TRAVEL_FREE_MILES){
+        // Within range but travel fee applies
+        const fee=calcTravelFeeAmount(miles);
+        S.travelMiles=miles; S.travelFee=fee;
+        if(banner){banner.innerHTML=`&#x1F4CD; <strong>This address is about ${miles} miles from us &mdash; a travel fee of $${fee} has been added.</strong> Travel is free within ${TRAVEL_FREE_MILES} miles; beyond that it's $${TRAVEL_RATE_PER_MILE.toFixed(2)} per one-way mile. The fee appears in your order summary and on your invoice.`;banner.classList.add('show');}
+        if(outsideBanner) outsideBanner.classList.remove('show');
+      } else {
+        S.travelMiles=0; S.travelFee=0;
+        if(banner) banner.classList.remove('show');
+        if(outsideBanner) outsideBanner.classList.remove('show');
+      }
+      render();
+    })
+    .catch(err=>{ console.error('Travel fee check failed:',err); }); // OSRM unavailable — no fee applied, but logged for debugging
+}
+
+let geoTimer=null;
+function geocodeAndPin(){
+  const a=document.getElementById('addr1').value.trim(), c=document.getElementById('city').value.trim(), st=document.getElementById('state').value, z=document.getElementById('zip').value.trim();
+  if(!a||!c||!st||z.length!==5)return;
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q=${encodeURIComponent(a+', '+c+', '+st+' '+z+', USA')}`,{headers:{'Accept-Language':'en'}})
+    .then(r=>r.json()).then(d=>{
+      if(d&&d.length>0) showPin(parseFloat(d[0].lat),parseFloat(d[0].lon),d[0].display_name);
+      else document.getElementById('map-na').style.display='block';
+    })
+    .catch(err=>{ console.error('Geocoding failed:',err); document.getElementById('map-na').style.display='block'; });
+}
+['addr1','city','state','zip'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('change',()=>{clearTimeout(geoTimer);geoTimer=setTimeout(geocodeAndPin,600);}); });
+
+// ============================================================
+// NOMINATIM AUTOCOMPLETE
+// ============================================================
+const SA={'Alabama':'AL','Alaska':'AK','Arizona':'AZ','Arkansas':'AR','California':'CA','Colorado':'CO','Connecticut':'CT','Delaware':'DE','Florida':'FL','Georgia':'GA','Hawaii':'HI','Idaho':'ID','Illinois':'IL','Indiana':'IN','Iowa':'IA','Kansas':'KS','Kentucky':'KY','Louisiana':'LA','Maine':'ME','Maryland':'MD','Massachusetts':'MA','Michigan':'MI','Minnesota':'MN','Mississippi':'MS','Missouri':'MO','Montana':'MT','Nebraska':'NE','Nevada':'NV','New Hampshire':'NH','New Jersey':'NJ','New Mexico':'NM','New York':'NY','North Carolina':'NC','North Dakota':'ND','Ohio':'OH','Oklahoma':'OK','Oregon':'OR','Pennsylvania':'PA','Rhode Island':'RI','South Carolina':'SC','South Dakota':'SD','Tennessee':'TN','Texas':'TX','Utah':'UT','Vermont':'VT','Virginia':'VA','Washington':'WA','West Virginia':'WV','Wisconsin':'WI','Wyoming':'WY'};
+let acTimer=null, acRes=[];
+const addrInp=document.getElementById('addr1'), addrDrop=document.getElementById('addr-drop');
+addrInp.addEventListener('input',function(){
+  clearTimeout(acTimer);
+  const q=this.value.trim();
+  if(q.length<4){addrDrop.classList.remove('open');return;}
+  acTimer=setTimeout(async()=>{
+    try{
+      const r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=5&countrycodes=us&addressdetails=1&q=${encodeURIComponent(q+' USA')}`,{headers:{'Accept-Language':'en'}});
+      acRes=await r.json();
+      if(!acRes.length){addrDrop.classList.remove('open');return;}
+      addrDrop.innerHTML=acRes.map((res,i)=>{
+        const a=res.address||{};
+        const road=(a.house_number?a.house_number+' ':'')+(a.road||'');
+        const sub=`${a.city||a.town||a.village||''}, ${a.state||''} ${a.postcode||''}`.replace(/^,\s*/,'').trim();
+        return `<div class="addr-item" data-i="${i}"><div class="addr-item-main">${road||res.display_name.split(',')[0]}</div><div class="addr-item-sub">${sub}</div></div>`;
+      }).join('');
+      addrDrop.classList.add('open');
+    }catch(e){addrDrop.classList.remove('open');}
+  },450);
+});
+addrDrop.addEventListener('click',function(e){
+  const item=e.target.closest('.addr-item');if(!item)return;
+  const r=acRes[parseInt(item.dataset.i)];if(!r)return;
+  const a=r.address||{};
+  const road=(a.house_number?a.house_number+' ':'')+(a.road||'');
+  if(road)addrInp.value=road;
+  if(a.city||a.town||a.village)document.getElementById('city').value=a.city||a.town||a.village;
+  if(a.state){const abbr=SA[a.state]||a.state;const sel=document.getElementById('state');for(let i=0;i<sel.options.length;i++){if(sel.options[i].value===abbr){sel.selectedIndex=i;break;}}}
+  if(a.postcode)document.getElementById('zip').value=a.postcode.substring(0,5);
+  addrDrop.classList.remove('open');addrDrop.innerHTML='';
+  setTimeout(()=>geocodeAndPin(),100);
+});
+document.addEventListener('click',e=>{if(!e.target.closest('.addr-wrap'))addrDrop.classList.remove('open');});
+
+// ============================================================
+// VALIDATION + CYCLING ERROR QUEUE
+// ============================================================
+let errQueue=[], errIdx=0;
+
+function collectErrors(){
+  const errs=[];
+  function add(test,inpId,errId,secId){
+    if(!test){
+      const el=document.getElementById(inpId); const sec=document.getElementById(secId);
+      if(el)el.classList.add('err'); const ee=document.getElementById(errId); if(ee)ee.classList.add('show');
+      errs.push(el||sec||document.getElementById(errId));
+    } else {
+      const el=document.getElementById(inpId); if(el)el.classList.remove('err');
+      const ee=document.getElementById(errId); if(ee)ee.classList.remove('show');
+    }
+  }
+  // Sqft
+  if(!S.sqftKey){document.getElementById('sqft-error').classList.add('show');errs.push(document.getElementById('sec1'));}
+  else{document.getElementById('sqft-error').classList.remove('show');}
+  // Property info
+  add(document.getElementById('addr1').value.trim(),'addr1','addr1-err','sec12');
+  add(document.getElementById('city').value.trim(),'city','city-err','sec12');
+  add(document.getElementById('state').value,'state','state-err','sec12');
+  add(/^\d{5}$/.test(document.getElementById('zip').value),'zip','zip-err','sec12');
+  add(document.getElementById('sqft-val').value.trim(),'sqft-val','sqft-val-err','sec12');
+  // Account
+  add(document.getElementById('fullname').value.trim(),'fullname','name-err','sec14');
+  add(document.getElementById('phone').value.replace(/\D/g,'').length===10,'phone','phone-err','sec14');
+  // Video format
+  if(S.vvt&&!document.getElementById('vvt-fmt').value){
+    document.getElementById('vvt-fmt').classList.add('err');document.getElementById('vvt-fmt-err').classList.add('show');
+    errs.push(document.getElementById('vvt-fmt'));
+  } else {document.getElementById('vvt-fmt').classList.remove('err');document.getElementById('vvt-fmt-err').classList.remove('show');}
+  // Property details
+  add(document.getElementById('access').value,'access','access-err','sec15');
+  add(document.getElementById('vacancy').value,'vacancy','vacancy-err','sec15');
+  const shootSame=document.getElementById('shoot-same-phone').checked;
+  if(!shootSame) add(document.getElementById('shoot-contact').value.replace(/\D/g,'').length===10,'shoot-contact','shoot-err','sec15');
+  // Terms
+  if(!S.terms){document.getElementById('terms-err').classList.add('show');errs.push(document.getElementById('terms-cb'));}
+  else{document.getElementById('terms-err').classList.remove('show');}
+  return errs.filter(Boolean);
+}
+
+// ============================================================
+// SUBMIT
+// ============================================================
+function doSubmit(){
+  const btns=[document.getElementById('submit-sb'),document.getElementById('submit-mob')];
+  btns.forEach(b=>{if(b){b.disabled=true;b.innerHTML='<span class="spinner"></span>Submitting&hellip;';}});
+  document.getElementById('err-banner').classList.remove('show');
+
+  const {items,total}=calcTotal();
+  const lines=items.map(i=>`  ${i.a?'  &#x21B3; ':''}${i.n}: ${i.label||fmt(i.p)}`).join('\n');
+  const a1=document.getElementById('addr1').value.trim();
+  const ci=document.getElementById('city').value.trim();
+  const st=document.getElementById('state').value;
+  const zp=document.getElementById('zip').value.trim();
+  const name=document.getElementById('fullname').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const company=document.getElementById('company').value.trim()||'N/A';
+  const bedsVal=document.getElementById('beds').value.trim();
+  const bathsVal=document.getElementById('baths').value.trim();
+  const bedbathLine=(bedsVal||bathsVal)?`Bed/Bath: ${bedsVal||'N/A'} bed / ${bathsVal||'N/A'} bath\n`:'';
+  const shootContact=document.getElementById('shoot-same-phone').checked?phone:document.getElementById('shoot-contact').value.trim();
+  const fullAddr=[a1,document.getElementById('addr2').value.trim(),`${ci}, ${st} ${zp}`].filter(Boolean).join(', ');
+  const ts=new Date().toLocaleString('en-US',{dateStyle:'full',timeStyle:'short'});
+  const subject=`&#x1F3E0; New Media Mansion Order &mdash; ${name} &mdash; ${a1}`;
+  const body=`NEW ORDER &mdash; MEDIA MANSION\n=========================\nSubmitted: ${ts}\n\nCLIENT\nName: ${name}\nEmail: See Google Calendar appointment booking\nPhone: ${phone}\nCompany: ${company}\nReferral: ${document.getElementById('referral').value.trim()||'None'}\n\nPROPERTY\nAddress: ${fullAddr}\nSq Ft: ${document.getElementById('sqft-val').value}\n${bedbathLine}\nAPPOINTMENT\nSelected via Google Calendar &mdash; check calendar for confirmed time.\n\nACCESS\nMethod: ${document.getElementById('access').value}\nLockbox: ${document.getElementById('lockcode').value||'N/A'}\nVacancy: ${document.getElementById('vacancy').value}\nDay-of Contact: ${shootContact}\n\nSPECIFIC FEATURES\n${document.getElementById('features').value||'None'}\n\nAERIAL SERVICES INTEREST (not yet available): ${S.aerial?'Yes — notify when launched':'No'}\n\nCUSTOM QUOTE REQUESTED — PACKAGE (8,001+ sq ft): ${pkgIsCustom()?`Yes — ${PKG_NAME[S.pkg]} (internal starting floor ${fmt(PKG_FLOOR[S.pkg])})`:'No'}
+
+CUSTOM QUOTE REQUESTED — FULL WALKTHROUGH VIDEO (8,001+ sq ft): ${S.vidLargeInterest?'Yes':'No'}
+
+CUSTOM QUOTE REQUESTED — VIDEO EDIT 4–10 MIN (starting $250): ${S.videdit==='4to10'?'Yes':'No'}
+
+SIMPLE WALK-THROUGH FORMAT: ${S.vvt?(S.vvtFmt||'Not selected'):'N/A'}
+TRAVEL: ${S.travelFee>0?`${S.travelMiles} mi one-way — ${fmt(S.travelFee)} fee`:'Within free zone / not calculated'}\n\nOUTSIDE SERVICE RANGE — NOTIFY IF EXPANDED: ${S.travelNotify?'Yes':'No'}\n\nORDER\n${lines||'(No items selected)'}\n\nSUBTOTAL: ${fmt(total)}\nSALES TAX: Pending\nORDER TOTAL: ${fmt(total)}\n\nNOTES\n${document.getElementById('addl').value||'None'}\n\n=========================\nReply to contact client.`;
+  const sms=`MM Order: ${name} | ${phone} | ${a1} ${ci} | ${fmt(total)}${(pkgIsCustom()||S.vidLargeInterest)?' + CUSTOM QUOTE':''} | Appt TBD | Check email`;
+
+  emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{to_email:BUSINESS_EMAIL,from_name:name,from_email:BUSINESS_EMAIL,subject,message:body})
+  .then(()=>emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_SMS_TEMPLATE,{to_email:SMS_GATEWAY,from_name:'Media Mansion',subject:'New MM Order',message:sms}))
+  .then(()=>{
+    document.getElementById('page-wrap').style.display='none';
+    document.getElementById('mob-bar').style.display='none';
+    const qn=document.getElementById('appt-quote-note'); if(qn) qn.style.display=(pkgIsCustom()||S.vidLargeInterest||S.videdit==='4to10')?'':'none';
+    document.getElementById('appt-screen').classList.add('show');
+    window.scrollTo({top:0,behavior:'smooth'});
+  })
+  .catch(err=>{
+    console.error('EmailJS:',err);
+    document.getElementById('err-banner').classList.add('show');
+    document.getElementById('err-banner').scrollIntoView({behavior:'smooth',block:'center'});
+    btns.forEach(b=>{if(b){b.disabled=false;b.innerHTML='Select Appointment Date/Time →';}});
+  });
+}
+
+function handleSubmit(){
+  const sb=document.getElementById('submit-sb');
+  if(sb&&sb.classList.contains('submit-locked')){
+    showToast('Please complete all sections before submitting.','err');
+    return;
+  }
+  const errs=collectErrors();
+  if(errs.length===0){ doSubmit(); return; }
+  // Cycle to next error
+  if(errIdx>=errs.length) errIdx=0;
+  const el=errs[errIdx];
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  if(el.focus) try{el.focus();}catch(e){}
+  errIdx++;
+  if(errIdx>=errs.length) errIdx=0;
+}
+
+['submit-sb','submit-mob'].forEach(id=>{const b=document.getElementById(id);if(b)b.addEventListener('click',handleSubmit);});
+// Reset error cycling when user makes changes
+document.addEventListener('change',()=>{errIdx=0;});
+document.addEventListener('input',()=>{errIdx=0;});
+
+// ============================================================
+// INIT
+// ============================================================
+render();
+</script>
