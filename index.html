@@ -145,7 +145,7 @@
   .page-loader.fade-out{opacity:0;pointer-events:none;visibility:hidden}
   .loader-content{text-align:center;transition:opacity .35s ease;transform:translateY(-10%)}
   .loader-content.hidden{opacity:0}
-  .loader-logo{width:101px;max-width:41vw;height:auto;margin:0 auto 22px;display:block}
+  .loader-logo{width:202px;max-width:82vw;height:auto;margin:0 auto 22px;display:block}
   .loader-bar{width:172px;height:3px;background:#e2e0da;overflow:hidden;border-radius:2px;margin:0 auto}
   .loader-fill{width:0;height:100%;background:var(--gold-dk);animation:loadBar 1.2s .15s ease-in-out forwards}
   @keyframes loadBar{to{width:100%}}
@@ -154,15 +154,24 @@
   .reveal{opacity:0;transform:translateY(14px);transition:opacity 1.05s ease,transform 1.05s cubic-bezier(.16,1,.3,1)}
   .reveal.in{opacity:1;transform:none}
   /* these elements carry their own hover transitions — make the reveal one win while revealing */
-  .tile.reveal,.capab .cap-item.reveal,.svc .svc-tile.reveal,.who-tile.reveal,.pro3-feat.reveal{transition:opacity 1.05s ease,transform 1.05s cubic-bezier(.16,1,.3,1)}
-  @keyframes heroIn{to{opacity:1;transform:none}}
-  .hero .wrap > *{opacity:0;transform:translateY(8px);animation:heroIn 1.15s ease forwards}
-  .hero .wrap > *:nth-child(1){animation-delay:1.6s}
-  .hero .wrap > *:nth-child(2){animation-delay:1.74s}
-  .hero .wrap > *:nth-child(3){animation-delay:1.88s}
-  .hero .wrap > *:nth-child(4){animation-delay:2.02s}
-  /* return visits this session skip the loader -> show the hero right away */
-  html.loaded-before .hero .wrap > *{animation:none;opacity:1;transform:none}
+  .tile.reveal,.capab .cap-item.reveal,.svc .svc-tile.reveal,.who-tile.reveal{transition:opacity 1.05s ease,transform 1.05s cubic-bezier(.16,1,.3,1)}
+  @keyframes heroRise{from{opacity:0;transform:translateY(46px) scale(.985);filter:blur(11px)}to{opacity:1;transform:none;filter:blur(0)}}
+  .hero .wrap > *{opacity:0;animation:heroRise 1.35s cubic-bezier(.16,1,.3,1) forwards}
+  .hero .wrap > *:nth-child(1){animation-delay:1.8s}
+  .hero .wrap > *:nth-child(2){animation-delay:2.02s}
+  .hero .wrap > *:nth-child(3){animation-delay:2.24s}
+  .hero .wrap > *:nth-child(4){animation-delay:2.46s}
+  @keyframes headIn{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+  header .logo,header .links{opacity:0;animation:headIn 1s cubic-bezier(.16,1,.3,1) forwards}
+  header .logo{animation-delay:1.55s}
+  header .links{animation-delay:1.72s}
+  /* return visits this session skip the loader -> show the hero + header right away */
+  html.loaded-before .hero .wrap > *,
+  html.loaded-before header .logo,
+  html.loaded-before header .links{animation:none;opacity:1;transform:none;filter:none}
+  @media (prefers-reduced-motion:reduce){
+    .hero .wrap > *,header .logo,header .links{animation:none!important;opacity:1;transform:none;filter:none}
+  }
 
   /* ---------- header ---------- */
   header{position:fixed;inset:0 0 auto 0;z-index:50;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
@@ -217,35 +226,37 @@
   @media (max-width:700px){.hero h1{font-size:clamp(38px,11vw,72px)}.hero .wrap{padding-bottom:11vh}}
 
   /* ---------- who we serve ---------- */
-  .who{padding:118px 0 74px}
-  .who .sec-head{margin-bottom:52px}
-  .who .sec-head h2{font-size:clamp(30px,4.6vw,56px);line-height:1.02;max-width:22ch;margin:0 auto}
+  .who{padding:58px 0 74px}
+  .who .sec-head{margin-bottom:44px}
+  .who .sec-head h2{font-size:clamp(24px,4.4vw,52px);line-height:1.08;margin:0 auto}
   .who-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
   .who-tile{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;color:inherit;transition:border-color .25s,transform .25s ease}
   .who-tile:hover,.who-tile:focus-visible{border-color:rgba(201,161,92,.6);transform:translateY(-5px)}
   .who-tile .ph{position:relative;aspect-ratio:4/3;overflow:hidden;background:linear-gradient(135deg,#2a2723,#4a443c)}
   .who-tile .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.16,1,.3,1)}
   .who-tile:hover .ph img{transform:scale(1.05)}
-  .who-tile .who-body{padding:20px 20px 22px;display:flex;flex-direction:column;gap:9px;flex:1}
-  .who-tile h3{font-size:22px;line-height:1.05}
-  .who-tile p{font-size:13px;line-height:1.6;color:var(--taupe-lt);margin:0}
-  .who-tile .who-go{margin-top:auto;padding-top:12px;font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+  .who-tile .who-body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .who-tile h3{font-size:21px;line-height:1.05}
+  .who-tile p{font-size:11.7px;line-height:1.6;color:var(--taupe-lt);margin:0}
   @media (max-width:900px){.who-grid{grid-template-columns:repeat(2,1fr);gap:16px}}
   @media (max-width:560px){
-    .who{padding:70px 0 34px}
+    .who{padding:34px 0 30px}
     .who-grid{grid-template-columns:repeat(2,1fr);gap:11px}
-    .who-tile .who-body{padding:14px 14px 16px;gap:7px}
-    .who-tile h3{font-size:15px}
-    .who-tile p{font-size:11px;line-height:1.5}
-    .who-tile .who-go{font-size:8.5px;padding-top:9px;letter-spacing:.12em}
+    .who-tile .who-body{padding:13px 14px 15px;gap:6px}
+    .who-tile h3{font-size:14px}
+    .who-tile p{font-size:10px;line-height:1.5}
   }
 
   /* ---------- matterport loop ---------- */
   .tour{padding:0;margin-top:-30px;background:var(--black);text-align:center}
-  .tour video{width:66vw;max-width:832px;height:auto;display:inline-block;background:#000;vertical-align:middle;border-radius:6px}
+  .tour video{width:66vw;max-width:832px;height:auto;display:inline-block;background:#000;vertical-align:middle;
+    -webkit-mask-image:linear-gradient(to right,transparent 0,#000 8%,#000 92%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 10%,#000 90%,transparent 100%);
+    -webkit-mask-composite:source-in;
+    mask-image:linear-gradient(to right,transparent 0,#000 8%,#000 92%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 10%,#000 90%,transparent 100%);
+    mask-composite:intersect}
   @media (max-width:820px){
     .tour{margin-top:-22px}
-    .tour video{width:100%;max-width:none;display:block;border-radius:0}
+    .tour video{width:100%;max-width:none;display:block}
   }
   @media (max-width:600px){.tour + .about{padding-top:56px}}
 
@@ -309,28 +320,36 @@
   .tile .more{margin-top:auto;padding-top:16px;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
 
   /* ---------- pro3 difference ---------- */
-  .pro3{background:linear-gradient(180deg,#0b1113 0%,#060a0c 100%)}
-  .pro3 .wrap{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
-  .pro3 .eyebrow{display:flex;align-items:center;gap:11px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--taupe-lt);margin-bottom:18px;font-weight:400}
-  .pro3 .eyebrow .dot{width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px 2px rgba(201,161,92,.55);flex:none}
-  .pro3 h2{font-size:clamp(40px,6vw,84px);margin-bottom:20px}
-  .pro3 .lead{font-size:16px;color:var(--taupe-lt);line-height:1.75;max-width:54ch;margin-bottom:36px}
-  .pro3-feats{display:grid;gap:26px}
-  .pro3-feat{display:grid;grid-template-columns:38px 1fr;gap:18px;align-items:start}
-  .pro3-feat svg{width:32px;height:32px;stroke:var(--gold);fill:none;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;margin-top:2px}
-  .pro3-feat h3{font-size:22px;margin-bottom:6px;letter-spacing:.02em}
-  .pro3-feat p{font-size:14px;color:var(--taupe-lt);line-height:1.6;margin:0}
-  .pro3-media{display:flex;flex-direction:column;gap:18px;position:sticky;top:120px}
-  .pro3-tour{position:relative;aspect-ratio:16/10;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000}
+  .pro3{padding:76px 0;background:linear-gradient(158deg,#26383f 0%,#1a282e 44%,#101a1f 78%,#0b1216 100%)}
+  .pro3 .wrap{display:grid;grid-template-columns:1fr 1.14fr;gap:40px;align-items:start}
+  .pro3-head{display:flex;align-items:flex-start;gap:22px;margin-bottom:20px}
+  .pro3-head-text{flex:none}
+  .pro3 .eyebrow{display:flex;align-items:center;gap:9px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--taupe-lt);margin-bottom:9px;font-weight:700}
+  .pro3 .eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px 2px rgba(201,161,92,.55);flex:none}
+  .pro3-head h2{font-size:clamp(34px,4.8vw,62px);margin:0;line-height:.88}
+  .pro3-cam{width:150px;height:150px;flex:none;position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#000}
+  .pro3-cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .pro3 .lead{font-size:14.5px;color:var(--taupe-lt);line-height:1.7;max-width:56ch;margin:0 0 22px}
+  .pro3-feats{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:15px 24px}
+  .pro3-feats li{display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:400;font-size:18px;letter-spacing:.03em;text-transform:uppercase;line-height:1.05;color:#fff}
+  .pro3-feats svg{width:26px;height:26px;flex:none;stroke:var(--gold);fill:none;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+  .pro3-media{display:flex;flex-direction:column;gap:12px}
+  .pro3-tour{position:relative;aspect-ratio:16/11.5;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000}
   .pro3-tour iframe{width:100%;height:100%;border:0;display:block}
-  .pro3-link{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
-  .pro3-cam{width:100%;max-width:340px;aspect-ratio:1/1;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000;align-self:center}
-  .pro3-cam video{width:100%;height:100%;object-fit:cover;display:block}
-  @media (max-width:960px){
-    .pro3 .wrap{grid-template-columns:1fr;gap:44px}
-    .pro3-media{position:static}
+  .pro3-link{align-self:flex-start;display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+  @media (max-width:860px){
+    .pro3 .wrap{grid-template-columns:1fr;gap:26px}
+    .pro3-head{margin-bottom:16px}
+    .pro3-feats{gap:13px 20px}
   }
-  @media (max-width:560px){.pro3-feat h3{font-size:19px}.pro3 .lead{font-size:15px}}
+  @media (max-width:560px){
+    .pro3 .lead{font-size:13.5px}
+    .pro3-head{gap:8px}
+    .pro3-head h2{font-size:clamp(56px,16vw,68px)}
+    .pro3-cam{width:clamp(52px,15vw,72px);height:clamp(52px,15vw,72px)}
+    .pro3-feats{grid-template-columns:1fr;gap:12px}
+    .pro3-feats li{font-size:16px}
+  }
 
   /* ---------- services ---------- */
   .svc{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel)}
@@ -443,10 +462,10 @@
       <a href="#portfolio">Portfolio</a>
       <a href="#about">About</a>
       <a href="#contact">Contact</a>
-      <a class="book-m" href="https://nate.amberandmeade.com/booking">Book a shoot</a>
+      <a class="book-m" href="https://mediamansion.com/booking">Book a shoot</a>
     </nav>
     <div class="nav-right">
-      <a class="btn" href="https://nate.amberandmeade.com/booking">Book a shoot</a>
+      <a class="btn" href="https://mediamansion.com/booking">Book a shoot</a>
       <button class="burger" id="burger" aria-label="Menu" aria-expanded="false">&#9776;</button>
     </div>
   </div>
@@ -461,7 +480,7 @@
     <h1>We create&hellip;<br><span class="type" id="typed">Real Estate Media</span><span class="cursor" aria-hidden="true"></span><span class="sr-only"> &mdash; Matterport 3D tours, real estate photography &amp; video in Philadelphia, PA</span></h1>
     <p class="tagline">Make your listing unforgettable&hellip;</p>
     <div class="actions">
-      <a class="btn" href="https://nate.amberandmeade.com/booking">Book a shoot
+      <a class="btn" href="https://mediamansion.com/booking">Book a shoot
         <svg viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M0 6h22M17 1l5 5-5 5"/></svg>
       </a>
     </div>
@@ -472,72 +491,64 @@
 <section class="who" id="who-we-serve">
   <div class="wrap">
     <div class="sec-head">
-      <h2>3D Tours &amp; Real Estate Media for Every Property Type</h2>
-      <p class="sec-sub">Serving Philadelphia, the Main Line, Bucks, Montgomery, Chester &amp; Delaware County</p>
+      <h2>3D Tours &amp; Real Estate Media<br>for Every Property Type</h2>
+      <p class="sec-sub">Pennsylvania, New Jersey, Delaware &amp; Maryland</p>
     </div>
     <div class="who-grid">
       <a class="who-tile" href="#services">
         <div class="ph"><img src="https://static.showit.com/file/OKbr1MRvnoXI1sLOXsQddw/273321/chatgpt_image_sep_6_2026_11_31_24_am.png" alt="Residential real estate listing photography and Matterport 3D tour in Philadelphia" loading="lazy"></div>
         <div class="who-body">
           <h3>Residential Real Estate</h3>
-          <p>Impress sellers and win more listings with HDR MLS photography, Matterport 3D tours, Zillow 3D Home and aerial imagery. 24-hour delivery guaranteed on every shoot.</p>
-          <span class="who-go">See services &rarr;</span>
+          <p>HDR photography, Matterport 3D tours, Zillow 3D Home and aerial imagery, delivered in 24-48 hours.</p>
         </div>
       </a>
       <a class="who-tile" href="#services">
         <div class="ph"><img src="https://static.showit.com/file/zHr3DK3uWBbhyfxzw90K9w/273321/chatgpt_image_sep_6_2026_11_32_20_am.png" alt="Apartment community pool and amenity photography in Greater Philadelphia" loading="lazy"></div>
         <div class="who-body">
           <h3>Multi-Family &amp; Apartments</h3>
-          <p>We capture apartment communities across Philadelphia, the Main Line and the surrounding counties with 3D virtual tours, photography and aerial imagery. Let's cover your portfolio floor plan by floor plan.</p>
-          <span class="who-go">See services &rarr;</span>
+          <p>3D tours, photography and aerial imagery for apartment communities, captured floor plan by floor plan.</p>
         </div>
       </a>
       <a class="who-tile" href="#services">
         <div class="ph"><img src="https://static.showit.com/file/29LCvNIXyCgYHbXvt9sBug/273321/chatgpt_image_sep_6_2026_11_40_00_am.png" alt="Commercial real estate exterior photography in Philadelphia" loading="lazy"></div>
         <div class="who-body">
           <h3>Commercial Real Estate</h3>
-          <p>Photography and 3D virtual tours for restaurants, hotels, retail, office and industrial space across Greater Philadelphia. We support every stage of the CRE lifecycle, from lease-up to sale.</p>
-          <span class="who-go">See services &rarr;</span>
+          <p>Photography and 3D virtual tours for restaurants, hotels, retail, office and industrial space.</p>
         </div>
       </a>
       <a class="who-tile" href="#services">
         <div class="ph"><img src="https://static.showit.com/file/PkzT4w5Fz22wpK3ZwkWwOg/273321/chatgpt_image_sep_6_2026_11_37_16_am.png" alt="Aerial photography of a new construction home development near Philadelphia" loading="lazy"></div>
         <div class="who-body">
           <h3>Home Builders &amp; Developers</h3>
-          <p>Showcase your model homes and new construction in 3D. Custom Matterport tours, HDR photography, aerial imagery and Google Maps updates for new developments across the Philadelphia region.</p>
-          <span class="who-go">See services &rarr;</span>
+          <p>Matterport tours, HDR photography and aerial imagery for model homes and new construction.</p>
         </div>
       </a>
       <a class="who-tile" href="#services">
         <div class="ph"><img src="https://static.showit.com/file/ZprZTGceIJ3RYNVi-5MCPw/273321/chatgpt_image_sep_6_2026_11_35_31_am.png" alt="Xactimate floor plan and dollhouse view from a Matterport insurance scan" loading="lazy"></div>
         <div class="who-body">
           <h3>Insurance &amp; Restoration</h3>
-          <p>Whether you're a carrier, a claims adjuster or a property owner, we deliver accurate Xactimate documentation built from Matterport 3D reality capture you can rely on.</p>
-          <span class="who-go">See services &rarr;</span>
+          <p>Accurate Xactimate documentation from Matterport 3D capture for carriers, adjusters &amp; owners.</p>
         </div>
       </a>
       <a class="who-tile" href="#services">
         <div class="ph"><img src="https://static.showit.com/file/MS0YXmsRAGdCqXpxFrEAPg/273321/chatgpt_image_sep_6_2026_11_39_28_am.png" alt="Matterport Pro3 LiDAR camera used for survey-grade 3D capture" loading="lazy"></div>
         <div class="who-body">
           <h3>Architecture &amp; Engineering</h3>
-          <p>Reality capture and survey-grade 3D assets for architects, engineers and CAD professionals. Point clouds, CAD floor plans and BIM-ready deliverables from a single Pro3 scan.</p>
-          <span class="who-go">See services &rarr;</span>
+          <p>Point clouds, CAD floor plans and BIM-ready deliverables from a single survey-grade Pro3 scan.</p>
         </div>
       </a>
       <a class="who-tile" href="#services">
         <div class="ph"><img src="https://static.showit.com/file/Etr-vnO15aJ-oE49NxgSJA/273321/chatgpt_image_sep_6_2026_11_37_53_am.png" alt="Interior of a room mid-renovation documented with a 3D scan" loading="lazy"></div>
         <div class="who-body">
-          <h3>Renovation &amp; Construction Progress</h3>
-          <p>Document every phase of a build or remodel with scheduled 3D scans and photography. Ideal for before-and-after records, lender draw requests and remote stakeholder walkthroughs.</p>
-          <span class="who-go">See services &rarr;</span>
+          <h3>Renovation &amp; Construction</h3>
+          <p>Scheduled 3D scans and photography documenting every phase of a build or remodel.</p>
         </div>
       </a>
       <a class="who-tile" href="#services">
         <div class="ph"><img src="https://static.showit.com/file/QtYCbPczQrwZ4vRFt6V5qA/273321/chatgpt_image_sep_6_2026_11_40_25_am.png" alt="Retail storefront interior photographed for a Google Street View 3D tour in Philadelphia" loading="lazy"></div>
         <div class="who-body">
           <h3>Local Business &amp; Storefronts</h3>
-          <p>Get your business on Google with Street View&ndash;ready 3D tours, interior photography and Business Profile updates so Philly customers can step inside before they visit.</p>
-          <span class="who-go">See services &rarr;</span>
+          <p>Street View&ndash;ready 3D tours, interior photos and Google Business Profile updates for local storefronts.</p>
         </div>
       </a>
     </div>
@@ -599,45 +610,31 @@
 <section class="pro3" id="pro3">
   <div class="wrap">
     <div class="pro3-copy">
-      <div class="eyebrow"><span class="dot" aria-hidden="true"></span>Shot on Matterport Pro3</div>
-      <h2>The Pro3 Difference</h2>
-      <p class="lead">Most 3D tours are captured on phone lenses or entry-level cameras, and it shows &mdash; soft edges, warped rooms, measurements you can't trust. The Pro3 is a survey-grade LiDAR camera, and it's what every Media Mansion scan is built on. Sharper imagery, accurate dimensions, and spaces that actually feel like the property.</p>
-      <div class="pro3-feats">
-        <div class="pro3-feat">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>
-          <div><h3>Indoor and outdoor in one tour</h3><p>Walk a buyer from the curb, through the front door and out to the backyard without the tour ever breaking.</p></div>
+      <div class="pro3-head">
+        <div class="pro3-head-text">
+          <div class="eyebrow"><span class="dot" aria-hidden="true"></span>Shot on Matterport Pro3</div>
+          <h2>The Pro3<br>Difference</h2>
         </div>
-        <div class="pro3-feat">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="8" width="20" height="8" rx="1"/><path d="M7 8v3M11 8v4M15 8v3M19 8v4"/></svg>
-          <div><h3>Up to 100m of range</h3><p>Warehouses, vaulted ceilings, atriums and open industrial floors captured in a single continuous scan.</p></div>
-        </div>
-        <div class="pro3-feat">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/></svg>
-          <div><h3>Survey-grade accuracy</h3><p>LiDAR measurements you can hand to an adjuster, a contractor or a CAD team without re-measuring.</p></div>
-        </div>
-        <div class="pro3-feat">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
-          <div><h3>Sharper, truer color</h3><p>20MP stills and better low-light performance, so dim interiors don't turn muddy or blue.</p></div>
-        </div>
-        <div class="pro3-feat">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>
-          <div><h3>Higher-quality 3D visuals</h3><p>Denser point capture builds cleaner dollhouse and floor-plan views, crisper mesh and walkthroughs that hold up on a 4K display.</p></div>
-        </div>
-        <div class="pro3-feat">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5M3 17l9 5 9-5"/></svg>
-          <div><h3>Better architectural assets</h3><p>Export BIM-ready files, OBJ and point clouds, and scaled CAD floor plans for insurance, design and engineering teams from the same scan.</p></div>
+        <div class="pro3-cam">
+          <video src="https://static.showit.com/file/wmXhIvlMU6v-tbGDaKcCyw/273321/snapinsta_to_aqoinlvew33j9xnirvmhh_dzymebycg7fg365w_5yb5yv-evl3r5rpiiu3of6noqm03wi_9kso2rn0f50t9j8837ntr34zq8dkswica_1.mp4"
+                 autoplay muted loop playsinline preload="metadata" aria-label="Matterport Pro3 camera, slowly rotating"></video>
         </div>
       </div>
+      <p class="lead">Most 3D tours are captured on phone lenses or entry-level cameras, and it shows &mdash; soft edges, warped rooms, measurements you can't trust. The Pro3 is a survey-grade LiDAR camera, and it's what every Media Mansion scan is built on. Sharper imagery, accurate dimensions, and spaces that actually feel like the property.</p>
+      <ul class="pro3-feats">
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Indoor and outdoor in one tour</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="8" width="20" height="8" rx="1"/><path d="M7 8v3M11 8v4M15 8v3M19 8v4"/></svg><span>Up to 100m of range</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M1 12h3M20 12h3"/></svg><span>Survey-grade accuracy</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span>Sharper, truer color</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg><span>Higher-quality 3D visuals</span></li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5M3 17l9 5 9-5"/></svg><span>Better architectural assets</span></li>
+      </ul>
     </div>
     <div class="pro3-media">
       <div class="pro3-tour">
         <iframe src="https://my.matterport.com/show/?m=ZdSGdvSfuin&play=1&qs=1" title="Interactive Matterport Pro3 3D tour" allow="fullscreen; xr-spatial-tracking; gyroscope; accelerometer" allowfullscreen loading="lazy"></iframe>
       </div>
       <a class="pro3-link" href="https://discover.matterport.com/space/ZdSGdvSfuin" target="_blank" rel="noopener">Open the full tour &#8599;</a>
-      <div class="pro3-cam">
-        <video src="https://static.showit.com/file/wmXhIvlMU6v-tbGDaKcCyw/273321/snapinsta_to_aqoinlvew33j9xnirvmhh_dzymebycg7fg365w_5yb5yv-evl3r5rpiiu3of6noqm03wi_9kso2rn0f50t9j8837ntr34zq8dkswica_1.mp4"
-               autoplay muted loop playsinline preload="metadata" aria-label="Matterport Pro3 camera, slowly rotating"></video>
-      </div>
     </div>
   </div>
 </section>
@@ -649,7 +646,7 @@
       <h2>Services</h2>
     </div>
     <div class="svc">
-      <a class="svc-tile" href="https://nate.amberandmeade.com/booking">
+      <a class="svc-tile" href="https://mediamansion.com/booking">
         <h3>Property Photography</h3>
         <ul><li>HDR interior and exterior stills</li><li>15–50 edited photos</li><li>24hr delivery</li></ul>
         <div class="foot">
@@ -657,7 +654,7 @@
           <span class="go">Book this →</span>
         </div>
       </a>
-      <a class="svc-tile" href="https://nate.amberandmeade.com/booking">
+      <a class="svc-tile" href="https://mediamansion.com/booking">
         <h3>3D Matterport Tours</h3>
         <ul><li>Full 3D Matterport scan</li><li>Exterior 360s</li><li>Floor plans</li><li>24–48hr delivery</li></ul>
         <div class="foot">
@@ -665,7 +662,7 @@
           <span class="go">Book this →</span>
         </div>
       </a>
-      <a class="svc-tile" href="https://nate.amberandmeade.com/booking">
+      <a class="svc-tile" href="https://mediamansion.com/booking">
         <h3>Simple Walkthrough Reel</h3>
         <ul><li>Single continuous property walkthrough</li><li>30–60 seconds, vertical or horizontal</li><li>Shot and edited for social media</li></ul>
         <div class="foot">
@@ -673,7 +670,7 @@
           <span class="go">Book this →</span>
         </div>
       </a>
-      <a class="svc-tile" href="https://nate.amberandmeade.com/booking">
+      <a class="svc-tile" href="https://mediamansion.com/booking">
         <h3>Full Property Videos</h3>
         <ul><li>Multi-room, professionally edited</li><li>Transitions, color grading, and music</li></ul>
         <div class="foot">
@@ -681,7 +678,7 @@
           <span class="go">Book this →</span>
         </div>
       </a>
-      <a class="svc-tile" href="https://nate.amberandmeade.com/booking">
+      <a class="svc-tile" href="https://mediamansion.com/booking">
         <h3>Deluxe Bundles</h3>
         <ul><li>Photos, floor plan, and 3D Matterport tour</li><li>Exterior 360s and property website</li><li>Social media kit, 2 virtual dusk photos, vertical walkthrough reel</li><li>48hr delivery</li></ul>
         <div class="foot">
@@ -710,7 +707,7 @@
       <h2>Get in touch</h2>
       <a class="email" href="mailto:hello@mediamansion.com">hello@mediamansion.com</a>
       <div class="cta">
-        <a class="btn solid" href="https://nate.amberandmeade.com/booking">Book an appointment</a>
+        <a class="btn solid" href="https://mediamansion.com/booking">Book an appointment</a>
         <a href="mailto:hello@mediamansion.com">or email anytime</a>
       </div>
     </div>
@@ -778,7 +775,7 @@ if (location.hash) { try { history.replaceState(null, '', location.pathname + lo
 window.scrollTo(0, 0);
 
 /* ---------- shared assets ---------- */
-const BOOKING = "https://nate.amberandmeade.com/booking";
+const BOOKING = "https://mediamansion.com/booking";
 const VIDEO_THUMB = "https://static.showit.com/file/w8Y1NwZUFs_pC94v6KJZJA/273321/number4.jpg";
 const vimeoEmbed = id => `https://player.vimeo.com/video/${id}?title=0&byline=0&portrait=0&badge=0&autopause=0&player_id=0&app_id=58479`;
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -812,7 +809,7 @@ if (typed) {
     else if (del && txt === '') { del = false; i = (i + 1) % phrases.length; wait = 320; }
     setTimeout(tick, wait);
   }
-  setTimeout(tick, 2600);   // start once the loader has cleared, from the phrase already on screen
+  setTimeout(tick, 3400);   // start once the loader + hero intro have cleared, from the phrase already on screen
 }
 
 /* ---------- trusted-by marquee ---------- */
@@ -1174,7 +1171,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && legalModal
   document.querySelectorAll('.capab .cap-item').forEach((el, n) => { el.style.transitionDelay = n * 90 + 'ms'; els.push(el); });
   document.querySelectorAll('.who-tile').forEach((el, n) => { el.style.transitionDelay = (n % 4) * 60 + 'ms'; els.push(el); });
   document.querySelectorAll('#work .tile').forEach((el, n) => { el.style.transitionDelay = (n % 3) * 80 + 'ms'; els.push(el); });
-  document.querySelectorAll('.pro3-feat').forEach((el, n) => { el.style.transitionDelay = (n % 2) * 80 + 'ms'; els.push(el); });
   document.querySelectorAll('.svc-tile').forEach((el, n) => { el.style.transitionDelay = (n % 3) * 70 + 'ms'; els.push(el); });
   els.forEach(el => el.classList.add('reveal'));
   if (!('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('in')); return; }
