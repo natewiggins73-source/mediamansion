@@ -283,9 +283,10 @@
   @media (max-width:700px){.hero h1{font-size:clamp(38px,11vw,72px)}.hero .wrap{padding-bottom:11vh}}
 
   /* ---------- who we serve ---------- */
-  .who{padding:58px 0 74px}
+  .who{padding:75px 0 74px}
   .who .sec-head{margin-bottom:44px}
-  .who .sec-head h2{font-size:clamp(24px,4.4vw,52px);line-height:1.08;margin:0 auto}
+  .who .sec-head h2{font-size:clamp(24px,5.3vw,62px);line-height:1.08;margin:0 auto}
+  .who .sec-head .sec-sub{font-size:11.7px}
   .who-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
   .who-tile{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;color:inherit;transition:border-color .25s,transform .25s ease}
   .who-tile:hover,.who-tile:focus-visible{border-color:rgba(201,161,92,.6);transform:translateY(-5px)}
@@ -297,7 +298,7 @@
   .who-tile p{font-size:11.7px;line-height:1.6;color:var(--taupe-lt);margin:0}
   @media (max-width:900px){.who-grid{grid-template-columns:repeat(2,1fr);gap:16px}}
   @media (max-width:560px){
-    .who{padding:34px 0 30px}
+    .who{padding:44px 0 30px}
     .who-grid{grid-template-columns:repeat(2,1fr);gap:11px}
     .who-tile .who-body{padding:13px 14px 15px;gap:6px}
     .who-tile h3{font-size:14px}
@@ -338,9 +339,11 @@
   @media (max-width:860px){.about .wrap{grid-template-columns:1fr;gap:48px}}
 
   /* ---------- trusted by strip ---------- */
-  .trusted{background:#a98c59;padding:52px 0;overflow:hidden}
+  .trusted{background:#a98c59;padding:52px 0;overflow:hidden;position:relative;isolation:isolate;transform:translateZ(0)}
   .trusted .label{text-align:center;font-size:22px;letter-spacing:.22em;text-transform:uppercase;color:#fff;opacity:.92;margin-bottom:34px}
-  .trusted .track{display:flex;align-items:center;gap:104px;width:max-content;animation:marquee 35s linear infinite;will-change:transform;transform:translateZ(0)}
+  /* keep the marquee on a single stable compositor layer — will-change here made iOS
+     drop and repaint the strip while scrolling (froze, vanished, flashed back) */
+  .trusted .track{display:flex;align-items:center;gap:104px;width:max-content;animation:marquee 35s linear infinite;transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
   .trusted .logo{flex:none;width:150px;height:52px;display:flex;align-items:center;justify-content:center}
   .trusted .logo img{max-height:100%;width:auto;max-width:100%;object-fit:contain}
   @keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
@@ -441,11 +444,12 @@
   }
 
   /* ---------- team / brokerage note ---------- */
-  .team-note{margin-top:26px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:32px 34px;display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap}
+  .team-note{margin-top:26px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:32px 34px;display:flex;align-items:center;justify-content:space-between;gap:26px;flex-wrap:wrap}
+  .team-note > div{flex:1 1 300px;min-width:0}
   .team-note h3{font-size:26px;line-height:1.05;margin-bottom:10px}
-  .team-note p{font-size:14.5px;color:var(--taupe-lt);line-height:1.65;margin:0;max-width:62ch}
-  .team-note .btn{flex:none}
-  @media (max-width:640px){.team-note{padding:26px 24px;gap:22px}.team-note h3{font-size:22px}}
+  .team-note p{font-size:14.5px;color:var(--taupe-lt);line-height:1.65;margin:0}
+  .team-note .btn{flex:none;max-width:100%;white-space:normal}
+  @media (max-width:640px){.team-note{padding:26px 24px;gap:20px}.team-note h3{font-size:22px}.team-note .btn{width:100%;justify-content:center;text-align:center}}
 
   /* ---------- faq ---------- */
   .faq-list{max-width:840px;margin:0 auto;border-top:1px solid var(--line)}
@@ -858,7 +862,7 @@
       </div>
     </div>
     <div class="founder">
-      <img class="founder-photo" src="https://static.showit.co/400/FgBUND7oUy-5EFEtrIEJKg/273321/natew.jpg" alt="Nate Wiggins, founder of Media Mansion" loading="lazy">
+      <img class="founder-photo" src="https://static.showit.com/file/-POISTHL8ZsRZsKtcRHMTA/273321/natwiggins.png" alt="Nate Wiggins, founder of Media Mansion" loading="lazy">
       <div class="founder-name">Nate Wiggins</div>
       <div class="founder-title">Founder &amp; Photographer</div>
       <p class="founder-bio clamped" id="founderBio">Hi, I'm Nate, founder of Media Mansion. With six years of specialized experience in photography, 3D scanning, and videography, I help realtors and property owners create compelling visual presentations that drive buyer engagement and faster sales. From immersive Matterport tours to professional listing photography and video, we deliver the media solutions that make properties stand out in a competitive market. Whether you're looking to elevate your listings or document a renovation project, we're here to help. Let's talk about what works best for your needs.</p>
@@ -970,7 +974,8 @@ const TRUSTED_LOGOS = [
   "https://static.showit.com/file/SaTwnQtRY99Ul17-m779Zw/273321/2345235243.png",
   "https://static.showit.com/file/G96auXzoJyoTnM229PZBBw/273321/chatgpt_image_sep_3_2026_02_45_22_pm.png",
   "https://static.showit.com/file/stus7PXxKbpedL9jTT58eA/273321/chatgpt_image_sep_3_2026_02_47_25_pm.png",
-  "https://static.showit.com/file/HrqSyGuXs22AJL5mDeJ_Nw/273321/chatgpt_image_sep_3_2026_02_46_27_pm.png"
+  "https://static.showit.com/file/HrqSyGuXs22AJL5mDeJ_Nw/273321/chatgpt_image_sep_3_2026_02_46_27_pm.png",
+  "https://static.showit.com/file/aL76lgyG87m3N_Y-6MMMnQ/273321/chatgpt_image_sep_3_2026_02_48_21_pm.png"
 ];
 const trackEl = document.getElementById('trusted-track');
 if (trackEl) {
