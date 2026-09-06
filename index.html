@@ -351,10 +351,11 @@
   }
   @media (max-width:560px){
     .pro3 .lead{font-size:13.5px}
-    /* head row: shrink the title ~25%, grow the camera clip ~60%, push it all right */
-    .pro3-head{gap:14px;justify-content:flex-end;align-items:center}
-    .pro3-head-text{text-align:right;min-width:0}
-    .pro3 .eyebrow{justify-content:flex-end;font-size:9.5px;letter-spacing:.14em;margin-bottom:7px}
+    /* head row: shrink the title ~25%, grow the camera clip ~60%.
+       Eyebrow + heading stay left-aligned; only the camera clip is pushed to the right. */
+    .pro3-head{gap:14px;justify-content:space-between;align-items:center}
+    .pro3-head-text{min-width:0}
+    .pro3 .eyebrow{font-size:9.5px;letter-spacing:.14em;margin-bottom:7px}
     .pro3-head h2{font-size:clamp(42px,12vw,51px)}
     .pro3-cam{width:clamp(83px,24vw,115px);height:clamp(83px,24vw,115px)}
     .pro3-feats{grid-template-columns:1fr;gap:12px}
