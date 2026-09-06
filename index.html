@@ -339,14 +339,15 @@
   @media (max-width:860px){.about .wrap{grid-template-columns:1fr;gap:48px}}
 
   /* ---------- trusted by strip ---------- */
-  .trusted{background:#a98c59;padding:52px 0;overflow:hidden;position:relative;isolation:isolate;transform:translateZ(0)}
+  .trusted{background:#a98c59;padding:52px 0;overflow:hidden;position:relative}
   .trusted .label{text-align:center;font-size:22px;letter-spacing:.22em;text-transform:uppercase;color:#fff;opacity:.92;margin-bottom:34px}
-  /* keep the marquee on a single stable compositor layer — will-change here made iOS
-     drop and repaint the strip while scrolling (froze, vanished, flashed back) */
-  .trusted .track{display:flex;align-items:center;gap:104px;width:max-content;animation:marquee 35s linear infinite;transform:translateZ(0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
+  /* The scroll distance (one logo set) is measured in JS and set as --mq-shift in px.
+     A % translate on this max-content track is mis-resolved by iOS Safari, so the strip
+     only jumped a few px instead of scrolling — a pixel value fixes it. */
+  .trusted .track{display:flex;align-items:center;gap:104px;width:max-content;animation:marquee 35s linear infinite;will-change:transform;-webkit-backface-visibility:hidden;backface-visibility:hidden}
   .trusted .logo{flex:none;width:150px;height:52px;display:flex;align-items:center;justify-content:center}
   .trusted .logo img{max-height:100%;width:auto;max-width:100%;object-fit:contain}
-  @keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+  @keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(calc(-1 * var(--mq-shift,50%)),0,0)}}
   @media (max-width:600px){.trusted{padding:34px 0}.trusted .label{font-size:16px;margin-bottom:22px}.trusted .track{gap:64px}.trusted .logo{width:104px;height:38px}}
   @media (prefers-reduced-motion:reduce){.trusted .track{animation-duration:80s}}
   /* mobile only: run the logo marquee 50% faster (desktop unchanged) */
@@ -862,7 +863,7 @@
       </div>
     </div>
     <div class="founder">
-      <img class="founder-photo" src="https://static.showit.com/file/-POISTHL8ZsRZsKtcRHMTA/273321/natwiggins.png" alt="Nate Wiggins, founder of Media Mansion" loading="lazy">
+      <img class="founder-photo" src="https://static.showit.com/file/WLnWgq2ywX7QFoNq2Rht1Q/273321/natewiggins2.jpg" alt="Nate Wiggins, founder of Media Mansion" loading="lazy">
       <div class="founder-name">Nate Wiggins</div>
       <div class="founder-title">Founder &amp; Photographer</div>
       <p class="founder-bio clamped" id="founderBio">Hi, I'm Nate, founder of Media Mansion. With six years of specialized experience in photography, 3D scanning, and videography, I help realtors and property owners create compelling visual presentations that drive buyer engagement and faster sales. From immersive Matterport tours to professional listing photography and video, we deliver the media solutions that make properties stand out in a competitive market. Whether you're looking to elevate your listings or document a renovation project, we're here to help. Let's talk about what works best for your needs.</p>
@@ -982,12 +983,20 @@ if (trackEl) {
   const one = TRUSTED_LOGOS
     .map(u => `<span class="logo"><img src="${u}" alt="Real estate company that trusts Media Mansion for Matterport and photography" loading="eager" decoding="async"></span>`)
     .join('');
-  trackEl.innerHTML = one + one;   // two identical halves -> -50% loop is seamless
+  trackEl.innerHTML = one + one;   // two identical halves -> shifting by one half is seamless
   // keep the strip at least ~2x the viewport so the loop never exposes a gap on wide screens
   let pass = 0;
   while (trackEl.scrollWidth < window.innerWidth * 2 && pass++ < 4) {
     trackEl.innerHTML += trackEl.innerHTML;
   }
+  // Measure one repeating segment in px and feed it to the keyframe. A percentage
+  // translate on a max-content flex track is mis-resolved on iOS Safari (it moved a
+  // few px and looked frozen); an explicit pixel distance scrolls correctly everywhere.
+  const setShift = () => trackEl.style.setProperty('--mq-shift', (trackEl.scrollWidth / 2) + 'px');
+  setShift();
+  window.addEventListener('load', setShift);
+  let rzT;
+  window.addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(setShift, 200); }, {passive: true});
 }
 
 /* ---------- portfolio data ----------
