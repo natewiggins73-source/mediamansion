@@ -294,6 +294,8 @@
   @keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
   @media (max-width:600px){.trusted{padding:34px 0}.trusted .label{font-size:16px;margin-bottom:22px}.trusted .track{gap:64px}.trusted .logo{width:104px;height:38px}}
   @media (prefers-reduced-motion:reduce){.trusted .track{animation-duration:80s}}
+  /* mobile only: run the logo marquee 50% faster (desktop unchanged) */
+  @media (max-width:600px){.trusted .track{animation-duration:23s}}
 
   /* ---------- section heading ---------- */
   .sec-head{text-align:center;margin-bottom:60px}
@@ -349,9 +351,12 @@
   }
   @media (max-width:560px){
     .pro3 .lead{font-size:13.5px}
-    .pro3-head{gap:8px}
-    .pro3-head h2{font-size:clamp(56px,16vw,68px)}
-    .pro3-cam{width:clamp(52px,15vw,72px);height:clamp(52px,15vw,72px)}
+    /* head row: shrink the title ~25%, grow the camera clip ~60%, push it all right */
+    .pro3-head{gap:14px;justify-content:flex-end;align-items:center}
+    .pro3-head-text{text-align:right;min-width:0}
+    .pro3 .eyebrow{justify-content:flex-end;font-size:9.5px;letter-spacing:.14em;margin-bottom:7px}
+    .pro3-head h2{font-size:clamp(42px,12vw,51px)}
+    .pro3-cam{width:clamp(83px,24vw,115px);height:clamp(83px,24vw,115px)}
     .pro3-feats{grid-template-columns:1fr;gap:12px}
     .pro3-feats li{font-size:16px}
   }
@@ -395,6 +400,10 @@
   .founder-name{font-family:var(--display);font-size:27px;letter-spacing:.03em;text-transform:uppercase;line-height:1;color:#fff}
   .founder-title{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-top:7px}
   .founder-bio{font-size:14.5px;line-height:1.75;color:var(--taupe-lt);margin-top:20px}
+  .founder-bio.clamped{display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden;position:relative}
+  .founder-bio.clamped::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3em;background:linear-gradient(180deg,transparent,var(--panel));pointer-events:none}
+  .founder-more{margin-top:14px;background:none;border:0;padding:0;font:inherit;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:opacity .2s}
+  .founder-more:hover{opacity:.7}
   @media (max-width:860px){.founder{padding:30px 26px}}
 
   /* ---------- footer ---------- */
@@ -725,7 +734,8 @@
       <img class="founder-photo" src="https://static.showit.co/400/FgBUND7oUy-5EFEtrIEJKg/273321/natew.jpg" alt="Nate Wiggins, founder of Media Mansion" loading="lazy">
       <div class="founder-name">Nate Wiggins</div>
       <div class="founder-title">Founder &amp; Photographer</div>
-      <p class="founder-bio">Hi, I'm Nate, founder of Media Mansion. With six years of specialized experience in photography, 3D scanning, and videography, I help realtors and property owners create compelling visual presentations that drive buyer engagement and faster sales. From immersive Matterport tours to professional listing photography and video, we deliver the media solutions that make properties stand out in a competitive market. Whether you're looking to elevate your listings or document a renovation project, we're here to help. Let's talk about what works best for your needs.</p>
+      <p class="founder-bio clamped" id="founderBio">Hi, I'm Nate, founder of Media Mansion. With six years of specialized experience in photography, 3D scanning, and videography, I help realtors and property owners create compelling visual presentations that drive buyer engagement and faster sales. From immersive Matterport tours to professional listing photography and video, we deliver the media solutions that make properties stand out in a competitive market. Whether you're looking to elevate your listings or document a renovation project, we're here to help. Let's talk about what works best for your needs.</p>
+      <button class="founder-more" id="founderMore" type="button" aria-expanded="false">Show more</button>
     </div>
   </div>
 </section>
@@ -963,6 +973,17 @@ if (workMore) {
   });
 }
 
+/* ---------- founder bio "show more" (all viewports) ---------- */
+const founderBio = document.getElementById('founderBio');
+const founderMore = document.getElementById('founderMore');
+if (founderBio && founderMore) {
+  founderMore.addEventListener('click', () => {
+    const clamped = founderBio.classList.toggle('clamped');
+    founderMore.textContent = clamped ? 'Show more' : 'Show less';
+    founderMore.setAttribute('aria-expanded', clamped ? 'false' : 'true');
+  });
+}
+
 /* ---------- modal ---------- */
 const modal = document.getElementById('modal');
 let lastFocus;
@@ -1149,10 +1170,10 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && legalModal
     ran = true;
     // bar fills -> logo+bar fade -> white screen fades out, and the hero starts fading UP
     // while that white is still clearing, so there's no dead beat of bare photo.
-    const T_CONTENT = 1400;                 // progress bar has visibly reached 100%
-    const T_WHITE   = T_CONTENT + 250;      // 1650 — white screen starts fading (.45s)
-    const T_REVEAL  = T_WHITE + 110;        // 1760 — hero + header begin fading up through the clearing white (no bare-photo beat)
-    const T_GONE    = T_WHITE + 600;        // 2250 — white fully transparent, drop it from the DOM
+    const T_CONTENT = 1300;                 // progress bar has visibly reached 100%
+    const T_WHITE   = T_CONTENT + 190;      // 1490 — white screen starts fading (.45s)
+    const T_REVEAL  = T_WHITE + 40;         // 1530 — hero + header begin fading up almost immediately, through the clearing white
+    const T_GONE    = T_WHITE + 520;        // 2010 — white fully transparent, drop it from the DOM
     setTimeout(() => content && content.classList.add('hidden'), T_CONTENT);
     setTimeout(() => loader.classList.add('fade-out'), T_WHITE);
     setTimeout(() => {
