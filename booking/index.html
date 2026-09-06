@@ -222,6 +222,16 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
 .terms-full .inner p:last-child{margin-bottom:0}
 .terms-toggle{background:none;border:none;color:var(--gold-dk);font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;padding:0;margin-bottom:12px}
 
+/* ---------- PROMO ---------- */
+.promo-row{display:flex;gap:10px;align-items:stretch;max-width:420px}
+.promo-row .fi{flex:1}
+.promo-row .btn{white-space:nowrap;padding:12px 20px}
+.promo-msg{font-size:13.5px;font-weight:500;margin-top:10px;display:none}
+.promo-msg.ok{display:block;color:var(--green)}
+.promo-msg.bad{display:block;color:var(--red)}
+.promo-msg.ok::before{content:'\2713  '}
+.promo-msg.bad::before{content:'\26A0  '}
+
 /* ---------- REVIEW ---------- */
 .review-grid{display:grid;gap:12px}
 .rev{border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;background:var(--white)}
@@ -917,6 +927,15 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
   <div class="review-grid" id="review-grid"></div>
 
   <div class="block" style="margin-top:14px">
+    <div class="bh"><h3>Promo code</h3><div class="bhs">Have a code? Enter it here.</div></div>
+    <div class="promo-row">
+      <input class="fi" type="text" id="promo-code" placeholder="Enter promo code" autocomplete="off" spellcheck="false">
+      <button class="btn ghost" type="button" id="promo-apply">Apply</button>
+    </div>
+    <div class="promo-msg" id="promo-msg"></div>
+  </div>
+
+  <div class="block">
     <div class="bh"><h3>Before you book</h3></div>
     <ul class="checklist" id="checklist">
       <li data-k="size">Property size selected</li>
@@ -968,12 +987,13 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
     <div class="s-addons" id="s-addons"><div class="s-empty">Nothing selected yet.</div></div>
     <hr class="s-div">
     <div class="s-line"><span>Subtotal</span><span id="s-sub">$0</span></div>
+    <div class="s-line" id="s-promo-line" style="display:none;color:var(--gold)"><span id="s-promo-label">Promo</span><span id="s-promo-amt">−$0</span></div>
     <div class="s-line tax"><span>Sales tax</span><span>Calculated on invoice</span></div>
     <div class="s-line total"><span>Estimated total</span><span id="s-total">$0</span></div>
     <div class="s-usd">All amounts in USD</div>
     <div class="s-quote" id="s-quote" style="display:none"></div>
   </div>
-  <div class="bid-card">
+  <div class="bid-card" id="bid-card" hidden>
     <span class="micro">Booking ID</span>
     <div class="bid-code-sm" id="bid-code-sb">—</div>
     <p>Enter this in the Booking ID field when you schedule your appointment.</p>
@@ -998,10 +1018,11 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
     <div class="s-addons" id="s-addons-m"><div class="s-empty">Nothing selected yet.</div></div>
     <hr class="s-div">
     <div class="s-line"><span>Subtotal</span><span id="s-sub-m">$0</span></div>
+    <div class="s-line" id="s-promo-line-m" style="display:none;color:var(--gold)"><span id="s-promo-label-m">Promo</span><span id="s-promo-amt-m">−$0</span></div>
     <div class="s-line tax"><span>Sales tax</span><span>Calculated on invoice</span></div>
     <div class="s-line total"><span>Estimated total</span><span id="s-total-m">$0</span></div>
     <div class="s-quote" id="s-quote-m" style="display:none"></div>
-    <div style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)">
+    <div id="bid-block-m" hidden style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)">
       <span class="micro" style="color:var(--gold);display:block;margin-bottom:6px">Booking ID</span>
       <div class="bid-code-sm" id="bid-code-m">—</div>
     </div>
@@ -1038,6 +1059,9 @@ const EMAILJS_SMS_TEMPLATE = 'template_oh4lr7z';
 const SMS_GATEWAY   = '2157797235@tmomail.net';
 const BUSINESS_EMAIL = 'hello@mediamansion.com';
 try{ emailjs.init(EMAILJS_PUBLIC_KEY); }catch(e){ console.error('EmailJS init failed', e); }
+
+/* Promo codes — code : fraction off the discountable subtotal (services only, not travel fee) */
+const PROMO_CODES = { '50PERCENT': 0.5 };
 
 /* ============================================================
    PRICING DATA  (identical values to prior form)
@@ -1107,6 +1131,7 @@ const S = {
   mktOption:null, aerial:false, giftSig:false,
   billing:'same', recipient:'me',
   occ:null, pets:null,
+  promoCode:'', promoRate:0,
   terms:false, apptConfirmed:false,
   travelMiles:0, travelFee:0, travelNotify:false, travelTimeSec:0,
 };
@@ -1155,6 +1180,9 @@ function showStep(n, skipValidate){
   document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
   $('step'+n).classList.add('active');
   setProgress();
+  const showBid = (n===3);
+  $('bid-card').hidden = !showBid;
+  $('bid-block-m').hidden = !showBid;
   if(n===6) renderReview();
   window.scrollTo({top:0, behavior:'smooth'});
 }
@@ -1507,10 +1535,14 @@ function calcTotal(){
   else if(S.videdit==='4to10'){ addons.push({n:'Video editing (4–10 min)', p:PRICE.videdit['4to10'], label:'From '+fmt(PRICE.videdit['4to10'])}); custom.push('Video editing (4–10 min, from $250)'); }
 
   if(S.giftSig) addons.push({n:'The Signature Album', p:PRICE.album});
-  if(S.travelFee>0) addons.push({n:`Travel fee (${S.travelMiles} mi one-way)`, p:S.travelFee});
+  if(S.travelFee>0) addons.push({n:`Travel fee (${S.travelMiles} mi one-way)`, p:S.travelFee, noPromo:true});
 
-  const total = (pkgItem?pkgItem.p:0) + addons.reduce((s,i)=>s+i.p,0);
-  return {pkgItem, includes, addons, total, custom};
+  const subtotal = (pkgItem?pkgItem.p:0) + addons.reduce((s,i)=>s+i.p,0);
+  // promo applies to service items only — excludes the travel fee (noPromo)
+  const discountable = (pkgItem?pkgItem.p:0) + addons.reduce((s,i)=>s+(i.noPromo?0:i.p),0);
+  const discount = S.promoRate>0 ? Math.round(discountable*S.promoRate) : 0;
+  const total = subtotal - discount;
+  return {pkgItem, includes, addons, subtotal, discount, total, custom};
 }
 
 /* ============================================================
@@ -1518,7 +1550,7 @@ function calcTotal(){
    ============================================================ */
 function render(){
   updateFPUI(); updateMatterportUI(); updateMktUI(); updatePhotoPkgNote();
-  const {pkgItem,includes,addons,total,custom}=calcTotal();
+  const {pkgItem,includes,addons,subtotal,discount,total,custom}=calcTotal();
   const anySel = !!pkgItem || addons.length>0;
 
   const pkgHtml = pkgItem ? (
@@ -1533,13 +1565,16 @@ function render(){
     ? `<strong>Custom quote required.</strong> ${custom.join('; ')}. We'll review the details and send your exact price before charging you.`
     : '';
 
-  [['s-pkg-wrap','s-addons','s-sub','s-total','s-quote'],
-   ['s-pkg-wrap-m','s-addons-m','s-sub-m','s-total-m','s-quote-m']].forEach(([pw,aw,sub,tot,q])=>{
+  [['s-pkg-wrap','s-addons','s-sub','s-total','s-quote','s-promo-line','s-promo-label','s-promo-amt'],
+   ['s-pkg-wrap-m','s-addons-m','s-sub-m','s-total-m','s-quote-m','s-promo-line-m','s-promo-label-m','s-promo-amt-m']].forEach(([pw,aw,sub,tot,q,pl,plab,pamt])=>{
     $(pw).innerHTML=pkgHtml;
     $(aw).innerHTML=addHtml;
-    $(sub).textContent=fmt(total);
+    $(sub).textContent=fmt(subtotal);
     $(tot).textContent=fmt(total);
     const qe=$(q); qe.style.display = quoteHtml?'block':'none'; qe.innerHTML=quoteHtml;
+    const ple=$(pl);
+    if(discount>0){ ple.style.display='flex'; $(plab).textContent='Promo ('+S.promoCode+')'; $(pamt).textContent='−'+fmt(discount); }
+    else ple.style.display='none';
   });
   $('mob-total').textContent=fmt(total);
 }
@@ -1755,6 +1790,29 @@ $('terms-cb').addEventListener('change',function(){
   fieldErr(null,'terms-err',false);
 });
 
+/* ---- Promo code ---- */
+function applyPromo(){
+  const raw=$('promo-code').value.trim();
+  const key=raw.toUpperCase();
+  const msg=$('promo-msg');
+  if(!raw){
+    S.promoCode=''; S.promoRate=0;
+    msg.className='promo-msg'; msg.textContent='';
+  } else if(PROMO_CODES.hasOwnProperty(key)){
+    S.promoCode=key; S.promoRate=PROMO_CODES[key];
+    msg.className='promo-msg ok';
+    msg.textContent=`${Math.round(S.promoRate*100)}% promo applied to your service items (travel and any pass-through costs excluded).`;
+  } else {
+    S.promoCode=''; S.promoRate=0;
+    msg.className='promo-msg bad';
+    msg.textContent="That code isn't valid.";
+  }
+  render();
+  if(currentStep===6) renderReview();
+}
+$('promo-apply').addEventListener('click',applyPromo);
+$('promo-code').addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); applyPromo(); } });
+
 /* ============================================================
    VALIDATION (per step)
    ============================================================ */
@@ -1843,7 +1901,7 @@ function occupancySummary(){
 }
 function renderReview(){
   render();
-  const {pkgItem,includes,addons,total,custom}=calcTotal();
+  const {pkgItem,includes,addons,subtotal,discount,total,custom}=calcTotal();
   const svcLines = [];
   if(pkgItem) svcLines.push(`<strong>${pkgItem.n}</strong> — ${pkgItem.label||fmt(pkgItem.p)}<br><span class="muted">${includes.join(' · ')}</span>`);
   addons.forEach(a=>svcLines.push(`${a.n} — ${a.label||fmt(a.p)}`));
@@ -1868,7 +1926,7 @@ function renderReview(){
     {k:'Services', step:1, body: svcLines.join('<br>')},
     {k:'Travel', step:2, body: travelLine},
     {k:'Your details', step:5, body:`${$('fullname').value.trim()||'—'} · ${$('email').value.trim()||'—'} · ${$('phone').value.trim()||'—'}${$('company').value.trim()?' · '+$('company').value.trim():''}<br><span class="muted">Billing: ${billingLine}</span><br><span class="muted">Media to: ${recipientLine}</span>`},
-    {k:'Estimated total', step:1, body:`<strong style="font-size:18px">${fmt(total)}</strong>${custom.length?`<br><span class="muted">Plus custom-quote items: ${custom.join('; ')}</span>`:''}<br><span class="muted">Sales tax calculated on your invoice. Applicable taxes or custom-quote adjustments will be reflected in your final invoice.</span>`},
+    {k:'Estimated total', step:1, body:`${discount>0?`<span class="muted">Subtotal ${fmt(subtotal)}</span><br><span class="muted">Promo (${S.promoCode}) −${fmt(discount)}</span><br>`:''}<strong style="font-size:18px">${fmt(total)}</strong>${custom.length?`<br><span class="muted">Plus custom-quote items: ${custom.join('; ')}</span>`:''}<br><span class="muted">Sales tax calculated on your invoice. Applicable taxes or custom-quote adjustments will be reflected in your final invoice.</span>`},
   ];
   $('review-grid').innerHTML = cards.map(c=>
     `<div class="rev"><div class="rh"><h4>${c.k}</h4><button type="button" data-goto="${c.step}">Edit</button></div><div class="rb">${c.body}</div></div>`
@@ -1892,7 +1950,7 @@ function renderReview(){
    SUBMIT
    ============================================================ */
 function buildEmail(){
-  const {pkgItem,includes,addons,total,custom}=calcTotal();
+  const {pkgItem,includes,addons,subtotal,discount,total,custom}=calcTotal();
   const orderLines = [];
   if(pkgItem){
     orderLines.push(`  ${PKG_DESC[S.pkg]}: ${pkgItem.label||fmt(pkgItem.p)}`);
@@ -1964,8 +2022,8 @@ Day-of contact: ${shootContact}
 ORDER
 ${orderLines.join('\n')||'  (No items selected)'}
 
-SUBTOTAL: ${fmt(total)}
-SALES TAX: Pending — added to invoice
+SUBTOTAL: ${fmt(subtotal)}
+${discount>0?`PROMO CODE: ${S.promoCode} — ${Math.round(S.promoRate*100)}% off service items = -${fmt(discount)}\n`:'PROMO CODE: None\n'}SALES TAX: Pending — added to invoice
 ESTIMATED TOTAL: ${fmt(total)}
 
 CUSTOM QUOTE ITEMS: ${custom.length?custom.join('; '):'None'}
@@ -1994,7 +2052,7 @@ function doSubmit(){
   emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{to_email:BUSINESS_EMAIL,from_name:$('fullname').value.trim(),from_email:BUSINESS_EMAIL,subject,message:body})
     .then(()=>emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_SMS_TEMPLATE,{to_email:SMS_GATEWAY,from_name:'Media Mansion',subject:'New MM Booking',message:sms}))
     .then(()=>{
-      const {pkgItem,addons,total,custom}=calcTotal();
+      const {pkgItem,addons,subtotal,discount,total,custom}=calcTotal();
       $('page-wrap').style.display='none';
       $('progress').style.display='none';
       $('mob-bar').style.display='none';
@@ -2009,7 +2067,7 @@ function doSubmit(){
         {k:'Property', b:`${fullAddress()}<br><span class="muted">${$('sqft-val').value} sq ft</span>`},
         {k:'Appointment', b:'Scheduled through the Google Calendar scheduler'},
         {k:'Order', b: svc.join('<br>')||'—'},
-        {k:'Estimated total', b:`<strong>${fmt(total)}</strong> <span class="muted">— sales tax &amp; any custom-quote adjustments shown on your invoice</span>`},
+        {k:'Estimated total', b:`${discount>0?`<span class="muted">Subtotal ${fmt(subtotal)} · Promo (${S.promoCode}) −${fmt(discount)}</span><br>`:''}<strong>${fmt(total)}</strong> <span class="muted">— sales tax &amp; any custom-quote adjustments shown on your invoice</span>`},
       ].map(c=>`<div class="rev"><div class="rh"><h4>${c.k}</h4></div><div class="rb">${c.b}</div></div>`).join('');
       $('success').classList.add('show');
       window.scrollTo({top:0,behavior:'smooth'});
