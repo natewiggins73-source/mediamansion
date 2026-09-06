@@ -529,8 +529,9 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
     <div class="acc" id="acc-3d">
       <button class="acc-h" type="button"><span class="al"><span class="at">3D Tours &amp; Floor Plans</span><span class="ax">Matterport &amp; measured plans</span></span><span class="ai">+</span></button>
       <div class="acc-b">
-        <div class="block-note" style="margin-top:0;margin-bottom:10px">Matterport 3D tours come with the Essential Scan, Premier Combo, and Deluxe packages above.</div>
+        <div class="block-note" style="margin-top:0;margin-bottom:10px">The Matterport 3D tour is also part of the Essential Scan, Premier Combo, and Deluxe packages above.</div>
         <div class="opt-group">
+          <label class="opt" id="matterport-opt"><input type="checkbox" id="matterport-cb"><span class="ol"><span class="on">Matterport 3D tour</span><span class="od">Interactive 3D walkthrough of the property, plus exterior 360° shots. Hosted 90 days — $20/mo after.</span></span><span class="op" id="matterport-price">$230</span></label>
           <label class="opt" id="fp-opt"><input type="checkbox" id="fp-cb"><span class="ol"><span class="on">Measured floor plan</span><span class="od">Professional measured plan of the property. Delivered in 24–48 hrs. Rush available below.</span></span><span class="op">$40</span></label>
         </div>
       </div>
@@ -1098,7 +1099,7 @@ const S = {
   photos:null,
   vvt:false, vvtFmt:'', vidCine:false, vidLargeInterest:false,
   rush:false, holiday:false,
-  fp:false,
+  fp:false, matterport:false,
   matterpak:false, e57:false, cad:false, bim:false, trueplan:false, pireport:false,
   vdusk:false, vduskQty:1,
   staging:null, stagingQty:1,
@@ -1270,9 +1271,10 @@ function updateVideoSizeUI(key){
 }
 
 /* ============================================================
-   STEP 1 — FLOOR PLAN
+   STEP 1 — 3D TOUR & FLOOR PLAN
    ============================================================ */
 $('fp-cb').addEventListener('change',function(){ S.fp=this.checked; optToggleSelected(this); render(); });
+$('matterport-cb').addEventListener('change',function(){ S.matterport=this.checked; optToggleSelected(this); render(); });
 
 /* ============================================================
    STEP 1 — EDITING
@@ -1415,6 +1417,12 @@ function updateFPUI(){
   lbl.classList.toggle('already-inc',inc);
   if(inc){ cb.checked=false; S.fp=false; lbl.classList.remove('selected'); }
 }
+function matterportIncluded(){ return ['escan','sig','del'].includes(S.pkg); }
+function updateMatterportUI(){
+  const inc=matterportIncluded(), lbl=$('matterport-opt'), cb=$('matterport-cb');
+  lbl.classList.toggle('already-inc',inc);
+  if(inc){ cb.checked=false; S.matterport=false; lbl.classList.remove('selected'); }
+}
 
 /* ============================================================
    DYNAMIC PRICING  (package prices scale by size tier)
@@ -1428,6 +1436,7 @@ function applyPricing(key){
   $('vvt-price').textContent      = fmt(VVT_PRICE[key]);
   const fwvEl=$('fwv-price'); if(fwvEl && FWV_PRICE[key]) fwvEl.textContent = fmt(FWV_PRICE[key]);
   [15,25,35,50,65].forEach(c=>{ const el=$('photo-'+c+'-price'); if(el) el.textContent = fmt(PHOTO_PRICE[c][key]); });
+  $('matterport-price').textContent = PKG.escan[key]==null ? 'Custom quote' : fmt(PKG.escan[key]);
   updateCustomNote();
   updateVideoSizeUI(key);
   if(S.pkg) selPkg(S.pkg);
@@ -1477,6 +1486,11 @@ function calcTotal(){
   if(S.rush) addons.push({n:'Rush delivery — under 24 hrs', p:PRICE.rush});
   if(S.holiday) addons.push({n:'Holiday booking', p:PRICE.holiday});
 
+  if(S.matterport && key){
+    const mp = PKG.escan[key];
+    if(mp==null){ addons.push({n:'Matterport 3D tour (over 8,000 sq ft)', label:'Custom quote', p:0}); custom.push('Matterport 3D tour (over 8,000 sq ft)'); }
+    else addons.push({n:'Matterport 3D tour', p:mp});
+  }
   if(S.fp) addons.push({n:'Measured floor plan', p:PRICE.fp});
   if(S.matterpak) addons.push({n:'MatterPak bundle', p:PRICE.matterpak});
   if(S.e57) addons.push({n:'E57 point cloud export', p:PRICE.e57});
@@ -1503,7 +1517,7 @@ function calcTotal(){
    RENDER SUMMARY
    ============================================================ */
 function render(){
-  updateFPUI(); updateMktUI(); updatePhotoPkgNote();
+  updateFPUI(); updateMatterportUI(); updateMktUI(); updatePhotoPkgNote();
   const {pkgItem,includes,addons,total,custom}=calcTotal();
   const anySel = !!pkgItem || addons.length>0;
 
