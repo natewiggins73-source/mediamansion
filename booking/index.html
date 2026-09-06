@@ -210,17 +210,22 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
 .checkrow.big{border:1.5px solid var(--line);border-radius:var(--r);padding:15px 16px;transition:var(--t)}
 .checkrow.big.on{border-color:var(--gold);background:var(--gold-tint)}
 
-/* ---------- TERMS ---------- */
-.terms-summary{display:grid;gap:12px;margin-bottom:14px}
-.terms-summary .ti{border-left:2px solid var(--gold);padding-left:14px}
-.terms-summary .ti h4{font-family:var(--display);font-size:15px;letter-spacing:.08em;color:var(--black);margin-bottom:3px}
-.terms-summary .ti p{font-size:14px;color:var(--taupe);line-height:1.55}
-.terms-full{max-height:0;overflow:hidden;transition:max-height .35s ease}
-.terms-full.open{max-height:1600px}
-.terms-full .inner{background:var(--cream);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;font-size:14px;line-height:1.7;color:var(--ink);margin:6px 0 14px}
-.terms-full .inner p{margin-bottom:10px}
-.terms-full .inner p:last-child{margin-bottom:0}
-.terms-toggle{background:none;border:none;color:var(--gold-dk);font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;padding:0;margin-bottom:12px}
+/* ---------- TERMS MODAL ---------- */
+.tc-link{background:none;border:none;padding:0;margin:0;font:inherit;color:var(--gold-dk);font-weight:600;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.tc-link:hover{color:var(--gold)}
+.tc-modal{position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(6,10,12,.62)}
+.tc-modal[hidden]{display:none}
+.tc-modal-panel{background:var(--white);border-radius:var(--r);border-top:3px solid var(--gold);max-width:640px;width:100%;max-height:86vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.tc-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 22px;border-bottom:1px solid var(--line);flex-shrink:0}
+.tc-modal-head h3{font-family:var(--display);font-size:24px;letter-spacing:.04em;color:var(--black);line-height:1}
+.tc-modal-close{background:none;border:none;font-size:26px;line-height:1;color:var(--taupe);cursor:pointer;padding:0 4px}
+.tc-modal-close:hover{color:var(--ink)}
+.tc-modal-body{padding:18px 22px;overflow-y:auto;font-size:14px;line-height:1.7;color:var(--ink)}
+.tc-modal-body h4{font-family:var(--display);font-size:15px;letter-spacing:.08em;color:var(--black);margin:16px 0 4px}
+.tc-modal-body h4:first-child{margin-top:0}
+.tc-modal-body p{margin-bottom:4px;color:var(--taupe)}
+.tc-modal-foot{padding:14px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;flex-shrink:0}
+@media(max-width:560px){.tc-modal{padding:0}.tc-modal-panel{max-height:100vh;height:100vh;border-radius:0;border-top:none}}
 
 /* ---------- PROMO ---------- */
 .promo-row{display:flex;gap:10px;align-items:stretch;max-width:420px}
@@ -371,13 +376,14 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
     <span class="micro">Estimated time</span>
     <span class="v">3–5 min</span>
   </div>
+  <p style="margin-top:16px;max-width:580px;color:var(--taupe);font-size:15px;line-height:1.6">Pick your services, choose a time, and share access details in one place. Nothing is charged today — we'll email you within 12 hours to confirm your appointment.</p>
 </section>
 
 <nav class="progress" id="progress" aria-label="Booking progress">
   <div class="inner" id="progress-inner">
-    <button class="pstep active" data-step="1" type="button"><span class="n"><span class="lbl">1</span></span><span class="t">Order</span></button>
-    <button class="pstep" data-step="2" type="button"><span class="n"><span class="lbl">2</span></span><span class="t">Property</span></button>
-    <button class="pstep" data-step="3" type="button"><span class="n"><span class="lbl">3</span></span><span class="t">Appointment</span></button>
+    <button class="pstep active" data-step="1" type="button"><span class="n"><span class="lbl">1</span></span><span class="t">Services</span></button>
+    <button class="pstep" data-step="2" type="button"><span class="n"><span class="lbl">2</span></span><span class="t">Appointment</span></button>
+    <button class="pstep" data-step="3" type="button"><span class="n"><span class="lbl">3</span></span><span class="t">Property</span></button>
     <button class="pstep" data-step="4" type="button"><span class="n"><span class="lbl">4</span></span><span class="t">Access</span></button>
     <button class="pstep" data-step="5" type="button"><span class="n"><span class="lbl">5</span></span><span class="t">Details</span></button>
     <button class="pstep" data-step="6" type="button"><span class="n"><span class="lbl">6</span></span><span class="t">Review</span></button>
@@ -394,7 +400,8 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
 <!-- ============================================================ STEP 1 — BUILD YOUR ORDER ============================================================ -->
 <section class="step active" id="step1">
   <div class="step-head">
-    <div class="sk"><span class="num">01</span><h2>Build Your Order</h2></div>
+    <div class="sk"><span class="num">01</span><h2>What do you need?</h2></div>
+    <p class="sub">Choose a package, or build your own order from individual services below.</p>
   </div>
 
   <!-- Property size -->
@@ -665,11 +672,11 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
   </div>
 </section>
 
-<!-- ============================================================ STEP 2 — YOUR PROPERTY ============================================================ -->
-<section class="step" id="step2">
+<!-- ============================================================ STEP 3 — WHERE'S THE PROPERTY? ============================================================ -->
+<section class="step" id="step3">
   <div class="step-head">
-    <div class="sk"><span class="num">02</span><h2>Your Property</h2></div>
-    <p class="sub">Where we're shooting, and a few details for the property record.</p>
+    <div class="sk"><span class="num">03</span><h2>Where's the property?</h2></div>
+    <p class="sub">The address we're shooting, plus a few quick details for the property record.</p>
   </div>
 
   <div class="block">
@@ -727,15 +734,15 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
   </div>
 
   <div class="step-nav">
-    <button class="btn ghost" type="button" data-back="2">&larr; Back</button>
-    <button class="btn solid" type="button" data-next="2">Continue &rarr;</button>
+    <button class="btn ghost" type="button" data-back="3">&larr; Back</button>
+    <button class="btn solid" type="button" data-next="3">Continue &rarr;</button>
   </div>
 </section>
 
-<!-- ============================================================ STEP 3 — APPOINTMENT ============================================================ -->
-<section class="step" id="step3">
+<!-- ============================================================ STEP 2 — WHEN SHOULD WE COME? ============================================================ -->
+<section class="step" id="step2">
   <div class="step-head">
-    <div class="sk"><span class="num">03</span><h2>Choose Your Appointment</h2></div>
+    <div class="sk"><span class="num">02</span><h2>When should we come?</h2></div>
     <p class="sub">Pick an available date and time below. When the calendar asks for a <strong>Booking ID</strong>, paste the one shown under the calendar — it links your appointment to this order.</p>
   </div>
 
@@ -767,17 +774,21 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
     <div class="fe" id="appt-confirm-err" style="margin-top:10px">Please confirm you've selected an appointment time.</div>
   </div>
 
+  <div class="block">
+    <div class="block-note" style="margin-top:0"><strong>Weather:</strong> Exterior and aerial work may be rescheduled when weather conditions make safe operation or a quality capture impractical. If that happens, we'll coordinate a new time with you right away — no rescheduling fee.</div>
+  </div>
+
   <div class="step-nav">
-    <button class="btn ghost" type="button" data-back="3">&larr; Back</button>
-    <button class="btn solid" type="button" data-next="3">Continue &rarr;</button>
+    <button class="btn ghost" type="button" data-back="2">&larr; Back</button>
+    <button class="btn solid" type="button" data-next="2">Continue &rarr;</button>
   </div>
 </section>
 
-<!-- ============================================================ STEP 4 — ACCESS & ARRIVAL ============================================================ -->
+<!-- ============================================================ STEP 4 — TELL US ANYTHING IMPORTANT ============================================================ -->
 <section class="step" id="step4">
   <div class="step-head">
-    <div class="sk"><span class="num">04</span><h2>Access &amp; Arrival</h2></div>
-    <p class="sub">Everything our photographer needs to get to the property and inside.</p>
+    <div class="sk"><span class="num">04</span><h2>Tell us anything important</h2></div>
+    <p class="sub">How our photographer gets in, where to park, and what to expect on site.</p>
   </div>
 
   <div class="block">
@@ -847,8 +858,8 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
 <!-- ============================================================ STEP 5 — YOUR DETAILS ============================================================ -->
 <section class="step" id="step5">
   <div class="step-head">
-    <div class="sk"><span class="num">05</span><h2>Your Details</h2></div>
-    <p class="sub">Contact info, plus where the invoice and finished media should go.</p>
+    <div class="sk"><span class="num">05</span><h2>Where should we send everything?</h2></div>
+    <p class="sub">Your contact info, where the invoice goes, and who receives the finished media.</p>
   </div>
 
   <div class="block">
@@ -920,8 +931,8 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
 <!-- ============================================================ STEP 6 — REVIEW & BOOK ============================================================ -->
 <section class="step" id="step6">
   <div class="step-head">
-    <div class="sk"><span class="num">06</span><h2>Review &amp; Book</h2></div>
-    <p class="sub">Check everything over, agree to the terms, and confirm your booking.</p>
+    <div class="sk"><span class="num">06</span><h2>Review &amp; book</h2></div>
+    <p class="sub">See your final pricing, agree to the terms, and confirm your booking.</p>
   </div>
 
   <div class="review-grid" id="review-grid"></div>
@@ -940,8 +951,8 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
     <ul class="checklist" id="checklist">
       <li data-k="size">Property size selected</li>
       <li data-k="order">Services reviewed</li>
-      <li data-k="address">Property address</li>
       <li data-k="appt">Appointment selected</li>
+      <li data-k="address">Property address</li>
       <li data-k="access">Access information</li>
       <li data-k="contact">Contact information</li>
       <li data-k="terms">Terms accepted</li>
@@ -949,32 +960,16 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
   </div>
 
   <div class="block">
-    <div class="bh"><h3>Terms &amp; conditions</h3></div>
-    <div class="terms-summary">
-      <div class="ti"><h4>Cancellation &amp; rescheduling</h4><p>Notify us at least 24 hours ahead. A $50 fee applies to cancellations or reschedules inside that window. If we arrive and the property can't be accessed or isn't ready, a fee of 25% of the order total (minimum $50) applies before we reschedule.</p></div>
-      <div class="ti"><h4>Travel</h4><p>Included within about 90 miles (roughly 2 hrs) of our Philadelphia base. Beyond that, $1.25 per one-way mile, calculated automatically from the address and shown on your order and invoice. An incorrect address may incur a travel fee.</p></div>
-      <div class="ti"><h4>Delivery</h4><p>Standard listing media is delivered within 48 hours of the end of the appointment. Technical files (MatterPak, CAD, BIM, and similar) follow the business-day turnaround listed with each item.</p></div>
-      <div class="ti"><h4>Photos &amp; licensing</h4><p>You receive the exact number of photos ordered; note any specific areas above. We typically skip closets, unfinished areas, storage rooms, and garage interiors unless asked. Media Mansion retains copyright and grants you a limited, non-transferable license to market the property and your real estate business. Third parties may not use the media to create new media without written consent.</p></div>
-    </div>
-    <button class="terms-toggle" type="button" id="terms-toggle">View full terms &amp; conditions +</button>
-    <div class="terms-full" id="terms-full"><div class="inner">
-      <p>To cancel or reschedule, please notify us at least 24 hours before your scheduled appointment. A $50 fee applies to appointments canceled or rescheduled inside this window. If we arrive and the property cannot be accessed or is not ready to be photographed, a fee of 25% of the booked order total (minimum $50) applies before we can reschedule. A travel fee may also be charged if we are provided with an incorrect address.</p>
-      <p>Travel is included for properties within 90 miles (about 2 hours) of our Philadelphia base. Beyond that, a travel fee of $1.25 per one-way mile is calculated automatically when you enter the property address and appears on your order summary and invoice.</p>
-      <p>Properties over 8,000 sq ft, Full Walkthrough Videos for those properties, and video edits over 3 minutes are quoted individually. Selecting one of these on this form is a request for a quote, not a charge — we will contact you before any work is scheduled.</p>
-      <p>Standard listing media is delivered within 48 hours of the end of the appointment. Technical files (MatterPak, CAD, BIM, etc.) follow the business-day turnaround listed with each item on the order form.</p>
-      <p>You will receive the exact number of photos ordered. Please use the fields above to note any specific features or areas you'd like photographed. We typically skip closets, unfinished areas, storage rooms, and garage interiors unless otherwise specified.</p>
-      <p>Media Mansion retains copyright of all photos, videos, floor plans, and digital media produced. In exchange for payment, you are granted a limited, non-transferable license to use the media for marketing and promoting the property and your real estate business. Media may not be used by third parties to create new media without express written consent from Media Mansion.</p>
-    </div></div>
     <label class="checkrow big" id="terms-row">
       <input type="checkbox" id="terms-cb">
-      <span>I have read and agree to Media Mansion's Terms &amp; Conditions. <span class="rq">*</span></span>
+      <span>I agree to Media Mansion's <button type="button" class="tc-link" id="terms-link">Terms &amp; Conditions</button>. <span class="rq">*</span></span>
     </label>
     <div class="fe" id="terms-err" style="margin-top:10px">You must agree to the Terms &amp; Conditions to book.</div>
   </div>
 
   <div class="step-nav">
     <button class="btn ghost" type="button" data-back="6">&larr; Back</button>
-    <button class="btn gold btn-lg" type="button" id="submit-btn">Confirm &amp; Book Shoot &rarr;</button>
+    <button class="btn gold btn-lg" type="button" id="submit-btn">Send Booking Request &rarr;</button>
   </div>
 </section>
 
@@ -1031,19 +1026,65 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
 
 <div id="success">
   <div class="ok">&check;</div>
-  <h2>Booking Received</h2>
+  <h2>Booking Received — Confirmation in Progress</h2>
   <div class="sbody" id="success-body"></div>
   <div class="review-grid" id="success-review"></div>
   <div class="next-steps">
     <h3>What happens next</h3>
     <ol>
-      <li>We review your booking and confirm anything that needs it — including any custom-quote items.</li>
-      <li>You'll get a confirmation, and your invoice is sent within 24 hours of your completed appointment.</li>
+      <li><strong>We'll email you within 12 hours</strong> to confirm your date and time and ask about anything else we need — including any custom-quote items. Your booking isn't final until you receive that confirmation.</li>
       <li>We capture the property at the time you selected in the scheduler.</li>
-      <li>Your media is delivered on the turnaround listed for each item — standard listing media within 48 hours of the shoot.</li>
+      <li>Standard listing media is delivered within 48 hours of the shoot. Technical files (MatterPak, CAD, BIM, and similar) follow the business-day turnaround listed with each item.</li>
+      <li>Payment is collected on the day of the shoot or shortly after — always before your final files are released. Your invoice is sent within 24 hours of the completed appointment.</li>
     </ol>
   </div>
-  <p style="margin-top:22px;font-size:13px;color:var(--taupe)">Questions? Email <a href="mailto:hello@mediamansion.com">hello@mediamansion.com</a></p>
+  <div class="next-steps" style="margin-top:14px">
+    <h3>Before we arrive</h3>
+    <p style="font-size:15px;line-height:1.7;color:var(--ink)">Please make sure the property is accessible, lights are working (where applicable), and rooms are ready to photograph or scan. Pets should be secured, and any special areas you'd like captured should be noted in advance. Exterior and aerial work may be rescheduled if weather makes a safe or quality capture impractical — we'll coordinate a new time with you.</p>
+  </div>
+  <div class="next-steps" style="margin-top:14px">
+    <h3>Media usage</h3>
+    <p style="font-size:15px;line-height:1.7;color:var(--ink)">Your delivered media includes the rights you need for property marketing — MLS, social media, websites, print materials, and brokerage promotion — subject to Media Mansion's service terms. Media Mansion retains copyright except as needed for MLS submission.</p>
+  </div>
+  <div class="next-steps" style="margin-top:14px">
+    <h3>Cancellations &amp; rescheduling</h3>
+    <p style="font-size:15px;line-height:1.7;color:var(--ink)">Need to change plans? Give us at least 24 hours' notice. A $50 fee applies to cancellations or reschedules inside that window, or if the property isn't accessible or ready to photograph when we arrive.</p>
+  </div>
+  <p style="margin-top:22px;font-size:14px;color:var(--ink)">Questions or changes? Email <a href="mailto:hello@mediamansion.com">hello@mediamansion.com</a> or call <a href="tel:+12157797235">(215) 779-7235</a>.</p>
+</div>
+
+<div class="tc-modal" id="tc-modal" hidden>
+  <div class="tc-modal-panel" role="dialog" aria-modal="true" aria-labelledby="tc-modal-title">
+    <div class="tc-modal-head">
+      <h3 id="tc-modal-title">Terms &amp; Conditions</h3>
+      <button type="button" class="tc-modal-close" id="tc-modal-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="tc-modal-body">
+      <h4>Cancellation &amp; rescheduling</h4>
+      <p>Please notify us at least 24 hours before your scheduled appointment to cancel or reschedule. A $50 fee applies to appointments canceled or rescheduled inside this window.</p>
+      <h4>Property access &amp; readiness</h4>
+      <p>If we arrive and the property cannot be accessed or is not ready to be photographed, a fee of 25% of the booked order total (minimum $50) applies before we can reschedule. A travel fee may also apply if we are given an incorrect address.</p>
+      <h4>Payment</h4>
+      <p>Nothing is charged when you submit this form. Payment is collected on the day of the appointment or shortly after, and always before final deliverables are released. Your invoice is sent within 24 hours of the completed appointment. Applicable sales tax and any custom-quote items are reflected on that invoice.</p>
+      <h4>Travel</h4>
+      <p>Travel is included for properties within about 90 miles (roughly 2 hours) of our Philadelphia base. Beyond that, a travel fee of $1.25 per one-way mile is calculated automatically from the property address and appears on your order summary and invoice.</p>
+      <h4>Weather</h4>
+      <p>Exterior and aerial services may be rescheduled when weather conditions make safe operation or quality capture impractical. We will coordinate a replacement date with you, and no rescheduling fee applies in that case.</p>
+      <h4>Custom quotes</h4>
+      <p>Properties over 8,000 sq ft, Full Walkthrough Videos for those properties, and video edits over 3 minutes are quoted individually. Selecting one of these is a request for a quote, not a charge — we will contact you with pricing before any work is scheduled.</p>
+      <h4>Delivery &amp; turnaround</h4>
+      <p>Standard listing media is delivered within 48 hours of the end of the appointment. Technical files (MatterPak, CAD, BIM, and similar) follow the business-day turnaround listed with each item on the order form.</p>
+      <h4>Photos captured</h4>
+      <p>You receive the exact number of photos ordered. Please use the fields on this form to note any specific features or areas you'd like photographed. We typically skip closets, unfinished areas, storage rooms, and garage interiors unless otherwise specified.</p>
+      <h4>Licensing &amp; MLS</h4>
+      <p>Media Mansion retains copyright of all photos, videos, floor plans, and digital media produced, except as needed for submission to the MLS. In exchange for payment, you are granted a license to use the delivered media to market and promote the property and your real estate business.</p>
+      <h4>Media usage</h4>
+      <p>Your delivered media includes the rights you need for property marketing — including MLS, social media, websites, print materials, and brokerage promotion — subject to these service terms. Media may not be resold, sublicensed, or used by third parties to create new media without express written consent from Media Mansion.</p>
+    </div>
+    <div class="tc-modal-foot">
+      <button type="button" class="btn ghost" id="tc-modal-ok">Close</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -1180,7 +1221,7 @@ function showStep(n, skipValidate){
   document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
   $('step'+n).classList.add('active');
   setProgress();
-  const showBid = (n===3);
+  const showBid = (n===2);
   $('bid-card').hidden = !showBid;
   $('bid-block-m').hidden = !showBid;
   if(n===6) renderReview();
@@ -1780,10 +1821,16 @@ document.querySelectorAll('.ft').forEach(ta=>ta.addEventListener('input',()=>aut
 /* ============================================================
    STEP 6 — TERMS
    ============================================================ */
-$('terms-toggle').addEventListener('click',function(){
-  const f=$('terms-full'); const open=f.classList.toggle('open');
-  this.textContent = open ? 'Hide full terms & conditions −' : 'View full terms & conditions +';
-});
+(function(){
+  const modal=$('tc-modal');
+  function openModal(e){ if(e){ e.preventDefault(); e.stopPropagation(); } modal.hidden=false; document.body.style.overflow='hidden'; $('tc-modal-close').focus(); }
+  function closeModal(){ modal.hidden=true; document.body.style.overflow=''; }
+  $('terms-link').addEventListener('click',openModal);
+  $('tc-modal-close').addEventListener('click',closeModal);
+  $('tc-modal-ok').addEventListener('click',closeModal);
+  modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !modal.hidden) closeModal(); });
+})();
 $('terms-cb').addEventListener('change',function(){
   S.terms=this.checked;
   $('terms-row').classList.toggle('on',this.checked);
@@ -1829,15 +1876,15 @@ function validateStep(n){
     if(S.vvt && !S.vvtFmt){ fieldErr('vvt-fmt','vvt-fmt-err',true); e.push({el:$('vvt-fmt'),msg:'Choose a video format.'}); }
   }
   if(n===2){
+    if(!S.apptConfirmed){ $('appt-confirm-err').classList.add('show'); e.push({el:$('appt-confirm-row'),msg:'Confirm you selected an appointment time.'}); }
+  }
+  if(n===3){
     e.push(v($('addr1').value.trim(),$('addr1'),'addr1-err','Enter the property address.'));
     e.push(v($('city').value.trim(),$('city'),'city-err','Enter the city.'));
     e.push(v($('state').value,$('state'),'state-err','Select a state.'));
     e.push(v(/^\d{5}$/.test($('zip').value),$('zip'),'zip-err','Enter a valid 5-digit zip.'));
     e.push(v($('sqft-val').value.trim(),$('sqft-val'),'sqft-val-err','Enter the exact square footage.'));
     e.push(v($('ptype').value,$('ptype'),'ptype-err','Select a property type.'));
-  }
-  if(n===3){
-    if(!S.apptConfirmed){ $('appt-confirm-err').classList.add('show'); e.push({el:$('appt-confirm-row'),msg:'Confirm you selected an appointment time.'}); }
   }
   if(n===4){
     const acc=$('access').value;
@@ -1920,11 +1967,11 @@ function renderReview(){
     : 'Same as contact';
 
   const cards = [
-    {k:'Property', step:2, body:`${fullAddress()||'—'}<br><span class="muted">${$('sqft-val').value||'—'} sq ft${$('ptype').value?' · '+$('ptype').value:''}${$('mls').value.trim()?' · MLS '+$('mls').value.trim():''}</span>`},
-    {k:'Appointment', step:3, body: (S.apptConfirmed ? 'Scheduled through the Google Calendar scheduler.' : '<span class="muted">Not yet confirmed</span>') + `<br><span class="muted">Booking ID: <strong>${BOOKING_ID}</strong></span>`},
+    {k:'Property', step:3, body:`${fullAddress()||'—'}<br><span class="muted">${$('sqft-val').value||'—'} sq ft${$('ptype').value?' · '+$('ptype').value:''}${$('mls').value.trim()?' · MLS '+$('mls').value.trim():''}</span>`},
+    {k:'Appointment', step:2, body: (S.apptConfirmed ? 'Scheduled through the Google Calendar scheduler.' : '<span class="muted">Not yet confirmed</span>') + `<br><span class="muted">Booking ID: <strong>${BOOKING_ID}</strong></span>`},
     {k:'Access &amp; arrival', step:4, body:`${accessSummary()}<br><span class="muted">${occupancySummary()} · Pets: ${petLine}</span>${$('parking').value.trim()?`<br><span class="muted">Parking: ${$('parking').value.trim()}</span>`:''}`},
     {k:'Services', step:1, body: svcLines.join('<br>')},
-    {k:'Travel', step:2, body: travelLine},
+    {k:'Travel', step:3, body: travelLine},
     {k:'Your details', step:5, body:`${$('fullname').value.trim()||'—'} · ${$('email').value.trim()||'—'} · ${$('phone').value.trim()||'—'}${$('company').value.trim()?' · '+$('company').value.trim():''}<br><span class="muted">Billing: ${billingLine}</span><br><span class="muted">Media to: ${recipientLine}</span>`},
     {k:'Estimated total', step:1, body:`${discount>0?`<span class="muted">Subtotal ${fmt(subtotal)}</span><br><span class="muted">Promo (${S.promoCode}) −${fmt(discount)}</span><br>`:''}<strong style="font-size:18px">${fmt(total)}</strong>${custom.length?`<br><span class="muted">Plus custom-quote items: ${custom.join('; ')}</span>`:''}<br><span class="muted">Sales tax calculated on your invoice. Applicable taxes or custom-quote adjustments will be reflected in your final invoice.</span>`},
   ];
@@ -2057,17 +2104,22 @@ function doSubmit(){
       $('progress').style.display='none';
       $('mob-bar').style.display='none';
       document.querySelector('.intro').style.display='none';
-      $('success-body').innerHTML = `Thanks, ${$('fullname').value.trim().split(' ')[0]||'you'} — we've got your booking and everything we need on our end. We'll be in touch to confirm.` +
-        (custom.length?` Because part of your order needs a custom quote (${custom.join('; ')}), we'll confirm pricing with you before the appointment goes ahead.`:'');
+      $('success-body').innerHTML = `Thanks, ${$('fullname').value.trim().split(' ')[0]||'you'} — we've received your booking. <strong>You'll get a confirmation email within 12 hours</strong>${$('email').value.trim()?` at ${$('email').value.trim()}`:''}, confirming your date, time, and any remaining details. Your booking is final once we send that confirmation.` +
+        (custom.length?` Part of your order needs a custom quote (${custom.join('; ')}), so we'll confirm that pricing with you before the appointment goes ahead.`:'');
       const svc=[];
       if(pkgItem) svc.push(pkgItem.n);
       addons.forEach(a=>svc.push(a.n));
+      const mediaTo = S.recipient==='other'
+        ? `${$('rec-name').value.trim()||'—'} · ${$('rec-email').value.trim()||'—'}`
+        : `${$('fullname').value.trim()||'—'} · ${$('email').value.trim()||'—'}`;
       $('success-review').innerHTML = [
         {k:'Booking ID', b:`<strong>${BOOKING_ID}</strong>`},
         {k:'Property', b:`${fullAddress()}<br><span class="muted">${$('sqft-val').value} sq ft</span>`},
-        {k:'Appointment', b:'Scheduled through the Google Calendar scheduler'},
-        {k:'Order', b: svc.join('<br>')||'—'},
-        {k:'Estimated total', b:`${discount>0?`<span class="muted">Subtotal ${fmt(subtotal)} · Promo (${S.promoCode}) −${fmt(discount)}</span><br>`:''}<strong>${fmt(total)}</strong> <span class="muted">— sales tax &amp; any custom-quote adjustments shown on your invoice</span>`},
+        {k:'Appointment', b:'Scheduled through the Google Calendar scheduler — we\'ll confirm it by email within 12 hours'},
+        {k:'Services', b: svc.join('<br>')||'—'},
+        {k:'Estimated total', b:`${discount>0?`<span class="muted">Subtotal ${fmt(subtotal)} · Promo (${S.promoCode}) −${fmt(discount)}</span><br>`:''}<strong>${fmt(total)}</strong> <span class="muted">— no charge today; sales tax &amp; any custom-quote adjustments shown on your invoice</span>`},
+        {k:'Media &amp; invoice to', b: mediaTo},
+        {k:'Media Mansion', b:`<a href="mailto:hello@mediamansion.com">hello@mediamansion.com</a> · <a href="tel:+12157797235">(215) 779-7235</a>`},
       ].map(c=>`<div class="rev"><div class="rh"><h4>${c.k}</h4></div><div class="rb">${c.b}</div></div>`).join('');
       $('success').classList.add('show');
       window.scrollTo({top:0,behavior:'smooth'});
@@ -2076,7 +2128,7 @@ function doSubmit(){
       console.error('EmailJS:',err);
       $('err-banner').classList.add('show');
       $('err-banner').scrollIntoView({behavior:'smooth',block:'center'});
-      btn.disabled=false; btn.innerHTML='Confirm &amp; Book Shoot →';
+      btn.disabled=false; btn.innerHTML='Send Booking Request →';
     });
 }
 
