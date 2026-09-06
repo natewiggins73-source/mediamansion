@@ -141,8 +141,10 @@
   .kicker{font-family:var(--serif);font-style:italic;font-size:clamp(20px,2.2vw,26px);color:var(--taupe-lt)}
 
   /* ---------- page loader ---------- */
-  .page-loader{position:fixed;inset:0;z-index:9999;background:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;opacity:1;transition:opacity .7s ease}
-  .page-loader.fade-out{opacity:0;pointer-events:none;visibility:hidden}
+  .page-loader{position:fixed;inset:0;z-index:9999;background:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;opacity:1;transition:opacity .45s ease}
+  /* no visibility:hidden here — it isn't transitioned, so it would snap the white
+     screen away mid-fade. pointer-events:none + a JS display:none handle removal. */
+  .page-loader.fade-out{opacity:0;pointer-events:none}
   .loader-content{text-align:center;transition:opacity .35s ease;transform:translateY(-10%)}
   .loader-content.hidden{opacity:0}
   .loader-logo{width:202px;max-width:82vw;height:auto;margin:0 auto 22px;display:block}
@@ -155,22 +157,25 @@
   .reveal.in{opacity:1;transform:none}
   /* these elements carry their own hover transitions — make the reveal one win while revealing */
   .tile.reveal,.capab .cap-item.reveal,.svc .svc-tile.reveal,.who-tile.reveal{transition:opacity 1.05s ease,transform 1.05s cubic-bezier(.16,1,.3,1)}
-  @keyframes heroRise{from{opacity:0;transform:translateY(46px) scale(.985);filter:blur(11px)}to{opacity:1;transform:none;filter:blur(0)}}
-  .hero .wrap > *{opacity:0;animation:heroRise 1.35s cubic-bezier(.16,1,.3,1) forwards}
-  .hero .wrap > *:nth-child(1){animation-delay:1.8s}
-  .hero .wrap > *:nth-child(2){animation-delay:2.02s}
-  .hero .wrap > *:nth-child(3){animation-delay:2.24s}
-  .hero .wrap > *:nth-child(4){animation-delay:2.46s}
-  @keyframes headIn{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
-  header .logo,header .links{opacity:0;animation:headIn 1s cubic-bezier(.16,1,.3,1) forwards}
-  header .logo{animation-delay:1.55s}
-  header .links{animation-delay:1.72s}
-  /* return visits this session skip the loader -> show the hero + header right away */
-  html.loaded-before .hero .wrap > *,
-  html.loaded-before header .logo,
-  html.loaded-before header .links{animation:none;opacity:1;transform:none;filter:none}
+  /* ---------- hero + header intro reveal ----------
+     Elements sit hidden until JS adds html.intro-ready (only AFTER the white loader
+     has fully cleared). Uses transitions, not keyframes, so it always animates from
+     the current state the moment the class lands — it can never "finish" while hidden.
+     Runs on every page load. */
+  .hero .wrap > *{opacity:0;transform:translateY(24px);transition:opacity .85s ease,transform 1s cubic-bezier(.16,1,.3,1)}
+  header .logo,header .links{opacity:0;transform:translateY(-14px);transition:opacity .8s ease,transform .8s cubic-bezier(.16,1,.3,1)}
+  html.intro-ready .hero .wrap > *,
+  html.intro-ready header .logo,
+  html.intro-ready header .links{opacity:1;transform:none}
+  html.intro-ready .hero .wrap > *:nth-child(1){transition-delay:.03s}
+  html.intro-ready .hero .wrap > *:nth-child(2){transition-delay:.14s}
+  html.intro-ready .hero .wrap > *:nth-child(3){transition-delay:.26s}
+  html.intro-ready .hero .wrap > *:nth-child(4){transition-delay:.38s}
+  html.intro-ready header .links{transition-delay:.1s}
+  /* Reduce Motion on: no vertical movement, but the opacity cross-fade + stagger stay,
+     so the hero still fades on smoothly instead of snapping in. */
   @media (prefers-reduced-motion:reduce){
-    .hero .wrap > *,header .logo,header .links{animation:none!important;opacity:1;transform:none;filter:none}
+    .hero .wrap > *,header .logo,header .links{transform:none!important}
   }
 
   /* ---------- header ---------- */
@@ -438,6 +443,11 @@
   .modal-close:hover{background:rgba(0,0,0,.92)}
   @media (max-width:600px){.modal-body{padding:24px}.modal-close{top:12px;right:12px}}
 </style>
+<noscript><style>
+  /* JS drives the loader + intro reveal — with it off, show everything immediately */
+  .page-loader{display:none!important}
+  .hero .wrap > *,header .logo,header .links{opacity:1!important;transform:none!important;filter:none!important;animation:none!important}
+</style></noscript>
 </head>
 <body>
 
@@ -798,8 +808,9 @@ loopVideos.forEach(v => {
 /* ---------- hero typing effect ---------- */
 const phrases = ["Real Estate Media","Matterport Tours","Property Photos","Real Estate Videos","3D Scans","Virtual Walkthroughs"];
 const typed = document.getElementById('typed');
+let startTyping = () => {};   // called once the loader hands off (see page-loader block)
 if (typed) {
-  let i = 0, txt = phrases[0], del = false;
+  let i = 0, txt = phrases[0], del = false, started = false;
   function tick(){
     const full = phrases[i];
     txt = del ? full.slice(0, txt.length - 1) : full.slice(0, txt.length + 1);
@@ -809,7 +820,9 @@ if (typed) {
     else if (del && txt === '') { del = false; i = (i + 1) % phrases.length; wait = 320; }
     setTimeout(tick, wait);
   }
-  setTimeout(tick, 3400);   // start once the loader + hero intro have cleared, from the phrase already on screen
+  // begin deleting the phrase already on screen a beat after the headline has risen
+  startTyping = (delay) => { if (started) return; started = true; setTimeout(tick, delay || 900); };
+  setTimeout(() => startTyping(), 6000);   // safety: run even if the loader hand-off never fires
 }
 
 /* ---------- trusted-by marquee ---------- */
@@ -1096,11 +1109,15 @@ document.getElementById('legal-close').addEventListener('click', closeLegal);
 legalModal.addEventListener('click', e => { if (e.target === legalModal) closeLegal(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && legalModal.classList.contains('open')) closeLegal(); });
 
-/* ---------- page loader (plays once per browser session) ---------- */
+/* ---------- page loader ----------
+   The full white loader screen (logo + progress bar) shows once per browser session.
+   The hero + header fade-in plays on EVERY load, right as the white clears.
+------------------------------------------------------------------- */
 (function(){
-  const loader = document.getElementById('pageLoader');
-  if (!loader) return;
   const root = document.documentElement;
+  const reveal = () => root.classList.add('intro-ready');   // -> hero + header fade up (see CSS)
+  const loader = document.getElementById('pageLoader');
+  if (!loader) { reveal(); startTyping(500); return; }
 
   /* if the visitor has already started scrolling, never yank them back to the top */
   let userMoved = false;
@@ -1114,7 +1131,13 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && legalModal
 
   let seen = false;
   try { seen = sessionStorage.getItem('mm_intro') === '1'; } catch (e) {}
-  if (seen) { root.classList.add('loaded-before'); loader.remove(); return; }
+  if (seen) {
+    /* loader already seen this session -> skip the white screen, still fade the hero in */
+    loader.remove();
+    root.style.overflow = '';
+    setTimeout(() => { reveal(); startTyping(700); }, 100);
+    return;
+  }
   try { sessionStorage.setItem('mm_intro', '1'); } catch (e) {}
 
   const content = document.getElementById('loaderContent');
@@ -1124,14 +1147,32 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && legalModal
   const go = () => {
     if (ran) return;                 // the load event and the 4s safety timer must not both run this
     ran = true;
-    setTimeout(() => content && content.classList.add('hidden'), 1500);
-    setTimeout(() => { loader.classList.add('fade-out'); root.style.overflow = ''; safeTop(); }, 1750);
-    setTimeout(() => { loader.style.display = 'none'; }, 2650);
+    // bar fills -> logo+bar fade -> white screen fades out, and the hero starts fading UP
+    // while that white is still clearing, so there's no dead beat of bare photo.
+    const T_CONTENT = 1400;                 // progress bar has visibly reached 100%
+    const T_WHITE   = T_CONTENT + 250;      // 1650 — white screen starts fading (.45s)
+    const T_REVEAL  = T_WHITE + 110;        // 1760 — hero + header begin fading up through the clearing white (no bare-photo beat)
+    const T_GONE    = T_WHITE + 600;        // 2250 — white fully transparent, drop it from the DOM
+    setTimeout(() => content && content.classList.add('hidden'), T_CONTENT);
+    setTimeout(() => loader.classList.add('fade-out'), T_WHITE);
+    setTimeout(() => {
+      root.style.overflow = ''; safeTop();
+      reveal();
+      startTyping(1300);                    // typing starts once the headline has settled
+    }, T_REVEAL);
+    setTimeout(() => { loader.style.display = 'none'; }, T_GONE);
   };
   if (document.readyState === 'complete') go();
   else window.addEventListener('load', go, {once:true});
   setTimeout(go, 4000);   // safety: never trap the page if load stalls
 })();
+/* last-resort safety: never leave the hero hidden if the hand-off above misfires */
+setTimeout(() => {
+  document.documentElement.classList.add('intro-ready');
+  const l = document.getElementById('pageLoader');
+  if (l) l.style.display = 'none';
+  startTyping(300);
+}, 8000);
 
 /* ---------- smooth in-page scrolling ---------- */
 (function(){
