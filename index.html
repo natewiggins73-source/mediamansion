@@ -98,6 +98,58 @@
       "name": "Media Mansion",
       "inLanguage": "en-US",
       "publisher": {"@id": "https://mediamansion.com/#business"}
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://mediamansion.com/#faq",
+      "isPartOf": {"@id": "https://mediamansion.com/#website"},
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How fast will I receive my media?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Most photography is delivered within 24 hours. Matterport 3D tours and floor plans are delivered in 24 to 48 hours, and full bundles within 48 hours. If you have a firm listing date, tell us when you book and we will confirm the timeline."}
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use the photos on MLS?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every delivery includes the rights you need to market the property: MLS listing, brokerage and agent marketing, social media, your website, email, and print. Media Mansion keeps copyright to the original media and grants you the license to use the delivered media for that property, subject to our service terms."}
+        },
+        {
+          "@type": "Question",
+          "name": "Do you provide Matterport links?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Yes. Your Matterport tour is delivered as a hosted link you can add to the MLS, your listing website, and emails. It works on desktop and mobile with no app to install. Ask if you also want the dollhouse view, floor plans, or still frames pulled from the scan."}
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if I need to reschedule?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Plans change. Contact us as early as you can and we will move your shoot to the next available slot. The more notice you can give, the easier it is to offer the original time to someone else."}
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if the property isn't ready?",
+          "acceptedAnswer": {"@type": "Answer", "text": "If the space is not photo-ready when we arrive, we will capture what we can and arrange a return visit for the rest. The prep checklist we send after booking explains what a photo-ready space looks like, so this rarely comes up."}
+        },
+        {
+          "@type": "Question",
+          "name": "Do you travel outside Philadelphia?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Yes. Travel within about 100 miles of Philadelphia, roughly a two-hour drive, is included. Anything beyond that adds a mileage charge. Send the property address when you book and we will confirm any travel cost before the shoot."}
+        },
+        {
+          "@type": "Question",
+          "name": "What should I do before the shoot?",
+          "acceptedAnswer": {"@type": "Answer", "text": "We email a full prep checklist as soon as your shoot is booked. The short version: clean and declutter, turn on every light, replace any dead bulbs, hide cords and trash bins, move cars off the driveway, and let us know about pets."}
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if the weather is bad?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Interior work goes ahead in almost any conditions. Exterior photography and aerial work may be rescheduled when rain, wind, or light make safe operation or a clean capture impractical. We keep an eye on the forecast and coordinate the timing with you."}
+        },
+        {
+          "@type": "Question",
+          "name": "Are you insured?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Yes. Media Mansion is fully insured, with up to $1M in general liability coverage. A certificate of insurance is available on request for your brokerage or property manager."}
+        }
+      ]
     }
   ]
 }
@@ -388,6 +440,26 @@
     .tag{position:static;align-self:flex-start;margin-bottom:18px}
   }
 
+  /* ---------- team / brokerage note ---------- */
+  .team-note{margin-top:26px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:32px 34px;display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap}
+  .team-note h3{font-size:26px;line-height:1.05;margin-bottom:10px}
+  .team-note p{font-size:14.5px;color:var(--taupe-lt);line-height:1.65;margin:0;max-width:62ch}
+  .team-note .btn{flex:none}
+  @media (max-width:640px){.team-note{padding:26px 24px;gap:22px}.team-note h3{font-size:22px}}
+
+  /* ---------- faq ---------- */
+  .faq-list{max-width:840px;margin:0 auto;border-top:1px solid var(--line)}
+  .faq-item{border-bottom:1px solid var(--line)}
+  .faq-item summary{list-style:none;cursor:pointer;padding:26px 46px 26px 0;position:relative;font-family:var(--display);font-weight:400;font-size:22px;letter-spacing:.02em;text-transform:uppercase;line-height:1.16;color:#fff;transition:color .2s}
+  .faq-item summary::-webkit-details-marker{display:none}
+  .faq-item summary:hover,.faq-item[open] summary{color:var(--gold)}
+  .faq-item summary::after{content:"+";position:absolute;right:6px;top:50%;transform:translateY(-50%);font-family:var(--sans);font-size:24px;font-weight:300;color:var(--gold);transition:transform .25s}
+  .faq-item[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+  .faq-item .faq-a{padding:0 46px 28px 0}
+  .faq-item .faq-a p{font-size:14.5px;color:var(--taupe-lt);line-height:1.75;margin:0}
+  .faq-item .faq-a a{color:var(--gold);border-bottom:1px solid rgba(201,161,92,.4)}
+  @media (max-width:600px){.faq-item summary{font-size:18px;padding-right:38px}.faq-item .faq-a{padding-right:0}}
+
   /* ---------- contact ---------- */
   .contact .wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:64px;align-items:center}
   @media (max-width:860px){.contact .wrap{grid-template-columns:1fr}}
@@ -477,7 +549,6 @@
       </picture>
     </a>
     <nav class="links" id="links">
-      <a href="#who-we-serve">Who We Serve</a>
       <a href="#services">Services</a>
       <a href="#portfolio">Portfolio</a>
       <a href="#about">About</a>
@@ -512,7 +583,7 @@
   <div class="wrap">
     <div class="sec-head">
       <h2>3D Tours &amp; Real Estate Media<br>for Every Property Type</h2>
-      <p class="sec-sub">Pennsylvania, New Jersey, Delaware &amp; Maryland</p>
+      <p class="sec-sub">Serving Pennsylvania, New Jersey, Delaware &amp; Maryland</p>
     </div>
     <div class="who-grid">
       <a class="who-tile" href="#services">
@@ -589,7 +660,7 @@
       <span class="kicker">We make properties unforgettable&hellip;</span>
       <p>Media Mansion is a real estate and property media company based in Philadelphia, PA. We create photo, video, and digital property media for listings, rentals, commercial spaces, and design-focused projects across Greater Philadelphia.</p>
       <p>With a background in video production and post-production, we produce property content designed to capture attention, build interest, and help listings stand out.</p>
-      <p class="about-note"><span class="dot" aria-hidden="true"></span>Our post-production background includes campaign work for Netflix, Apple TV, and Hulu — the same high standard every scan and listing gets.</p>
+      <p class="about-note"><span class="dot" aria-hidden="true"></span>Fully insured — up to $1M general liability.</p>
     </div>
     <div class="capab">
       <a class="cap-item" href="#services">
@@ -715,6 +786,61 @@
         </ul>
         <div class="foot"><span class="soon-badge">Coming Soon</span></div>
       </div>
+    </div>
+    <div class="team-note">
+      <div>
+        <h3>Working with a team or multiple listings?</h3>
+        <p>Need media for multiple agents, listings, or properties? Media Mansion can set up longer-term scheduling and delivery to make booking, billing, and turnaround simpler. Email us and we'll put something together.</p>
+      </div>
+      <a class="btn" href="mailto:hello@mediamansion.com">Email hello@mediamansion.com</a>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- FAQ ---------- -->
+<section class="faq" id="faq">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>FAQ</h2>
+      <p class="sec-sub">Turnaround, usage rights, travel &amp; scheduling</p>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>How fast will I receive my media?</summary>
+        <div class="faq-a"><p>Most photography is delivered within 24 hours. Matterport 3D tours and floor plans are delivered in 24 to 48 hours, and full bundles within 48 hours. If you have a firm listing date, tell us when you book and we'll confirm the timeline.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>Can I use the photos on MLS?</summary>
+        <div class="faq-a"><p>Yes. Every delivery includes the rights you need to market the property: MLS listing, brokerage and agent marketing, social media, your website, email, and print. Media Mansion keeps copyright to the original media and grants you the license to use the delivered media for that property, subject to our service terms.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>Do you provide Matterport links?</summary>
+        <div class="faq-a"><p>Yes. Your Matterport tour is delivered as a hosted link you can add to the MLS, your listing website, and emails. It works on desktop and mobile with no app to install. Ask if you also want the dollhouse view, floor plans, or still frames pulled from the scan.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>What happens if I need to reschedule?</summary>
+        <div class="faq-a"><p>Plans change. Contact us as early as you can and we'll move your shoot to the next available slot. The more notice you can give, the easier it is to offer the original time to someone else.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>What happens if the property isn't ready?</summary>
+        <div class="faq-a"><p>If the space isn't photo-ready when we arrive, we'll capture what we can and arrange a return visit for the rest. The prep checklist we send after booking explains what a photo-ready space looks like, so this rarely comes up.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>Do you travel outside Philadelphia?</summary>
+        <div class="faq-a"><p>Yes. Travel within about 100 miles of Philadelphia, roughly a two-hour drive, is included. Anything beyond that adds a mileage charge. Send the property address when you book and we'll confirm any travel cost before the shoot.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>What should I do before the shoot?</summary>
+        <div class="faq-a"><p>We email a full prep checklist as soon as your shoot is booked. The short version: clean and declutter, turn on every light, replace any dead bulbs, hide cords and trash bins, move cars off the driveway, and let us know about pets.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>What happens if the weather is bad?</summary>
+        <div class="faq-a"><p>Interior work goes ahead in almost any conditions. Exterior photography and aerial work may be rescheduled when rain, wind, or light make safe operation or a clean capture impractical. We keep an eye on the forecast and coordinate the timing with you.</p></div>
+      </details>
+      <details class="faq-item">
+        <summary>Are you insured?</summary>
+        <div class="faq-a"><p>Yes. Media Mansion is fully insured, with up to $1M in general liability coverage. A certificate of insurance is available on request for your brokerage or property manager.</p></div>
+      </details>
     </div>
   </div>
 </section>
@@ -1082,28 +1208,32 @@ const legalDocs = {
   terms: {
     title: "Terms & Conditions",
     html: `
-      <p class="eff">Effective Date: September 3, 2026 &nbsp;·&nbsp; Last Updated: September 3, 2026</p>
+      <p class="eff">Effective Date: September 3, 2026 &nbsp;·&nbsp; Last Updated: September 6, 2026</p>
       <p>Welcome to mediamansion.com (the &ldquo;Site&rdquo;). These Terms and Conditions (&ldquo;Terms&rdquo;) govern your access to and use of the Site. By accessing or using the Site, you agree to be bound by these Terms.</p>
       <p>If you do not agree with these Terms, please do not use this Site.</p>
       <h4>1. Intellectual Property</h4>
       <p>All content on this Site&mdash;including videos, designs, text, graphics, logos, and images&mdash;is the intellectual property of Media Mansion or is used with appropriate permissions. All rights are reserved.</p>
       <p>You may not copy, reproduce, republish, upload, post, transmit, distribute, or modify any content from this Site without prior written permission.</p>
-      <h4>2. Portfolio Use</h4>
+      <h4>2. Delivered Media &amp; Usage Rights</h4>
+      <p>For paid projects, Media Mansion retains copyright and ownership of all original and delivered media. Upon receipt of full payment, the client is granted a non-exclusive, non-transferable license to use the delivered media to market and promote the specific property that was photographed or scanned. Permitted uses include:</p>
+      <ul><li>MLS and listing service entries</li><li>Brokerage and agent marketing</li><li>Social media, websites, and email</li><li>Print materials and advertising</li><li>General promotion of that property</li></ul>
+      <p>This license does not transfer copyright. Delivered media may not be resold, sublicensed, or redistributed to third parties (for example, other agents, builders, developers, stagers, or product manufacturers) without prior written permission from Media Mansion. Media Mansion retains the right to use delivered media for its own portfolio, marketing, and promotional purposes. Full service terms are provided with each booking and control in the event of any conflict with this summary.</p>
+      <h4>3. Portfolio Use</h4>
       <p>This Site showcases original creative work, including real estate photography, video, and 3D Matterport tour projects. Some featured work is created in collaboration with clients and companies. Any third-party trademarks, logos, or brand names are displayed solely for the purpose of portfolio demonstration and remain the property of their respective owners.</p>
       <p>If you are a client and would like your work removed from this portfolio, please email <a href="mailto:hello@mediamansion.com">hello@mediamansion.com</a> with your request.</p>
-      <h4>3. No Guarantees</h4>
+      <h4>4. No Guarantees</h4>
       <p>This Site is intended for informational and promotional purposes only. While efforts are made to keep the content accurate and up-to-date, we make no guarantees about the results you may obtain from using or relying on the content or services mentioned here.</p>
-      <h4>4. User Submissions</h4>
+      <h4>5. User Submissions</h4>
       <p>If you submit any content or information through this Site (e.g. via a contact form), you agree not to submit anything unlawful, harmful, or misleading. We reserve the right to ignore or delete submissions at our discretion.</p>
-      <h4>5. Privacy</h4>
+      <h4>6. Privacy</h4>
       <p>We respect your privacy. Any personal information you submit through the contact form or email will be used solely to communicate with you and will not be sold or shared. For more details, please refer to our Privacy Policy.</p>
-      <h4>6. External Links</h4>
+      <h4>7. External Links</h4>
       <p>This Site may contain links to other websites. We are not responsible for the content or accuracy of those third-party sites, and linking does not imply endorsement.</p>
-      <h4>7. Limitation of Liability</h4>
+      <h4>8. Limitation of Liability</h4>
       <p>We are not liable for any direct, indirect, incidental, or consequential damages that result from your use of&mdash;or inability to use&mdash;the Site or any content herein.</p>
-      <h4>8. Changes to These Terms</h4>
+      <h4>9. Changes to These Terms</h4>
       <p>We reserve the right to update or modify these Terms at any time without prior notice. The latest version will always be available on this page.</p>
-      <h4>9. Contact</h4>
+      <h4>10. Contact</h4>
       <p>If you have any questions about these Terms, please contact: <a href="mailto:hello@mediamansion.com">hello@mediamansion.com</a></p>`
   }
 };
