@@ -37,7 +37,6 @@ a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit}
 img{max-width:100%;display:block}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.sr-only{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 .micro{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--taupe)}
 
 /* header */
@@ -53,10 +52,6 @@ img{max-width:100%;display:block}
 /* intro */
 main{max-width:760px;margin:0 auto;padding:36px 20px 140px}
 .intro h1{font-family:var(--display);font-weight:400;font-size:clamp(40px,8vw,64px);line-height:.92;letter-spacing:.01em;text-transform:uppercase;color:var(--black)}
-.intro p{margin-top:12px;color:var(--taupe);font-size:15px;max-width:520px}
-.badges{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:16px}
-.badges span{font-size:12px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:6px}
-.badges span::before{content:'\2713';font-size:11px}
 
 /* sections */
 .q{margin-top:34px;transition:opacity .3s ease}
@@ -64,7 +59,7 @@ main{max-width:760px;margin:0 auto;padding:36px 20px 140px}
 .qh{display:flex;align-items:baseline;gap:12px;margin-bottom:14px}
 .qh .n{font-family:var(--display);font-size:30px;color:var(--gold);line-height:1}
 .qh h2{font-family:var(--display);font-weight:400;font-size:26px;letter-spacing:.03em;text-transform:uppercase;color:var(--black);line-height:1}
-.qh .opt{font-size:12px;color:var(--taupe);font-weight:500;letter-spacing:.04em;margin-left:auto;white-space:nowrap}
+.qh .opt-tag{font-size:12px;color:var(--taupe);font-weight:500;letter-spacing:.04em;margin-left:auto;white-space:nowrap}
 .hint{font-size:13px;color:var(--taupe);margin:-6px 0 14px}
 
 /* size chips */
@@ -80,7 +75,7 @@ main{max-width:760px;margin:0 auto;padding:36px 20px 140px}
 .pkg{position:relative;text-align:left;border:1.5px solid var(--line);background:var(--white);border-radius:var(--r);padding:0;cursor:pointer;transition:var(--t);overflow:hidden;display:flex;flex-direction:column}
 .pkg:hover{border-color:var(--gold)}
 .pkg[aria-checked="true"]{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold);background:var(--gold-tint)}
-.pkg img{width:100%;height:96px;object-fit:cover}
+.pkg img{width:100%;aspect-ratio:4/3;height:auto;object-fit:cover}
 .pkg .pb{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
 .pkg .pt{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .pkg .pn{font-family:var(--display);font-size:20px;letter-spacing:.04em;color:var(--black);line-height:1}
@@ -92,41 +87,56 @@ main{max-width:760px;margin:0 auto;padding:36px 20px 140px}
 .pkg.own[aria-checked="true"]{border-style:solid}
 .pkg.own .pb{padding:0}
 .pkg.own .ic{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--gold-line);display:flex;align-items:center;justify-content:center;color:var(--gold-dk);font-size:22px;flex:none;line-height:1}
+.pkg-note{font-size:13.5px;color:var(--taupe);margin-top:12px;line-height:1.55}
 
-/* service rows */
-.rows{background:var(--white);border:1px solid var(--line);border-radius:var(--r)}
-.row{display:block;padding:15px 16px;border-top:1px solid var(--line-soft)}
-.row:first-child{border-top:none}
-.row[hidden]{display:none}
-.rh{display:flex;align-items:center;gap:12px}
-label.row,.row .rh.tap{cursor:pointer}
-.rt{flex:1;min-width:0}
-.rn{font-size:15px;font-weight:600;color:var(--ink);display:block}
-.rd{font-size:12.5px;color:var(--taupe);display:block;margin-top:2px;line-height:1.45}
-.rp{font-size:14.5px;font-weight:600;color:var(--ink);white-space:nowrap}
-.rp small{font-weight:500;color:var(--taupe)}
-.row.on .rp{color:var(--gold-dk)}
+/* option rows (same look as the booking page) */
+.opt-group{display:flex;flex-direction:column;gap:9px}
+.opt{display:flex;align-items:flex-start;gap:13px;padding:14px 16px;border:1.5px solid var(--line);border-radius:var(--r);cursor:pointer;transition:var(--t);background:var(--white);position:relative}
+.opt:hover{border-color:var(--gold);background:var(--gold-tint)}
+.opt.selected{border-color:var(--gold);background:var(--gold-tint);box-shadow:inset 0 0 0 1px var(--gold)}
+.opt.inc{opacity:.5;pointer-events:none}
+.opt.inc .on::after{content:' — included';color:var(--green);font-weight:500;font-size:13px}
+.opt input{margin-top:2px;width:18px;height:18px;accent-color:var(--gold-dk);flex-shrink:0;cursor:pointer}
+.opt .ol{flex:1;min-width:0}
+.opt .on{font-size:15px;font-weight:500;color:var(--ink)}
+.opt .od{display:block;font-size:13px;color:var(--taupe);margin-top:4px;line-height:1.5}
+.opt .op{font-size:15px;font-weight:600;white-space:nowrap;margin-left:auto;padding-left:12px;flex-shrink:0;color:var(--ink)}
+.opt .op small{font-weight:500;color:var(--taupe)}
+.opt .op .plus{color:var(--gold-dk)}
+.opt .gift-img{width:76px;height:76px;object-fit:cover;border-radius:var(--r);flex-shrink:0;margin-left:4px}
+.note{font-size:13.5px;color:var(--taupe);margin-top:10px;line-height:1.55}
+.note.top{margin:0 0 10px}
+.note.ok{color:var(--green);font-weight:500}
+.note.lbl{font-weight:600;color:var(--ink);margin:18px 0 8px}
+.note.lbl:first-child{margin-top:0}
+.note.info{border-left:2px solid var(--gold);padding-left:12px}
 
-/* switch */
-.sw{appearance:none;-webkit-appearance:none;width:44px;height:26px;border-radius:26px;background:var(--line);position:relative;cursor:pointer;flex:none;transition:var(--t)}
-.sw::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:var(--t)}
-.sw:checked{background:var(--gold-dk)}
-.sw:checked::after{left:21px}
+/* accordions */
+.acc{border:1px solid var(--line);border-radius:var(--r);margin-bottom:10px;background:var(--white);overflow:hidden}
+.acc-h{width:100%;display:flex;align-items:center;gap:12px;padding:16px 18px;background:none;border:none;cursor:pointer;text-align:left}
+.acc-h .al{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.acc-h .at{font-family:var(--display);font-size:26px;letter-spacing:.04em;color:var(--black);line-height:1}
+.acc-h .ax{font-size:13px;color:var(--taupe)}
+.acc-h .badge{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dk);background:var(--gold-tint);border:1px solid var(--gold-line);border-radius:3px;padding:3px 8px;white-space:nowrap}
+.acc-h .badge[hidden]{display:none}
+.acc-h .ai{font-size:22px;color:var(--gold-dk);transition:transform var(--t);flex-shrink:0;line-height:1}
+.acc.open .acc-h .ai{transform:rotate(45deg)}
+.acc-b{display:none;padding:4px 18px 20px}
+.acc.open .acc-b{display:block}
 
-/* segmented choices inside a row */
-.seg{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.seg[hidden]{display:none}
-.seg button{border:1.5px solid var(--line);background:var(--white);border-radius:100px;padding:7px 13px;font-size:13px;font-weight:600;cursor:pointer;transition:var(--t);color:var(--ink)}
-.seg button:hover{border-color:var(--gold)}
-.seg button[aria-pressed="true"]{background:var(--black);border-color:var(--black);color:#fff}
-.seg button small{font-weight:500;opacity:.7;margin-left:4px}
-
-/* stepper */
-.step{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:100px;flex:none;background:var(--white)}
-.step button{width:34px;height:32px;border:none;background:none;cursor:pointer;font-size:18px;line-height:1;color:var(--ink)}
-.step button:disabled{opacity:.3;cursor:default}
-.step output{min-width:24px;text-align:center;font-weight:600;font-size:14.5px}
-.row.on .step{border-color:var(--gold)}
+/* slide-down extras */
+.slide{overflow:hidden;max-height:0;opacity:0;transition:max-height .3s ease,opacity .25s ease}
+.slide.open{max-height:600px;opacity:1}
+.slide-in{padding:12px 0 4px 31px}
+.fl{display:block;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}
+.fs{width:100%;max-width:320px;padding:11px 38px 11px 14px;border:1.5px solid var(--line);border-radius:var(--r);font:inherit;font-size:15px;color:var(--ink);background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238c847a' d='M6 8L0 0h12z'/%3E%3C/svg%3E") no-repeat right 14px center;appearance:none;-webkit-appearance:none;cursor:pointer}
+.fs:focus{outline:none;border-color:var(--gold)}
+.qty{display:flex;align-items:center;gap:8px;margin-top:10px;padding-left:31px;flex-wrap:wrap}
+.qty .ql{font-size:12px;color:var(--taupe);letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.qty button{width:34px;height:34px;border:1.5px solid var(--line);border-radius:var(--r);background:var(--white);cursor:pointer;font-size:18px;line-height:1;transition:var(--t)}
+.qty button:hover{border-color:var(--gold);background:var(--gold-tint)}
+.qty output{min-width:40px;text-align:center;font-weight:600;font-size:15px}
+.qty .qt{font-size:14.5px;font-weight:600;color:var(--gold-dk);margin-left:6px}
 
 /* travel */
 .zip{display:flex;gap:10px;align-items:center;background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
@@ -143,17 +153,18 @@ label.row,.row .rh.tap{cursor:pointer}
 .result .lbl{color:var(--taupe-lt)}
 .big{font-family:var(--display);font-size:clamp(64px,14vw,96px);line-height:.9;color:#fff;letter-spacing:.01em;margin-top:6px}
 .big.small{font-size:clamp(40px,9vw,56px)}
-.big .plus{color:var(--gold);font-size:.5em;vertical-align:.5em;margin-left:6px}
 .sub{font-size:13px;color:var(--taupe-lt);margin-top:6px}
 .lines{list-style:none;margin-top:20px;border-top:1px solid rgba(255,255,255,.12);padding-top:14px;display:flex;flex-direction:column;gap:7px}
 .lines li{display:flex;justify-content:space-between;gap:12px;font-size:14px}
 .lines li span:first-child{color:var(--taupe-lt)}
-.lines li.inc{font-size:12.5px;padding-left:14px;position:relative}
+.lines li span:last-child{white-space:nowrap}
+.lines li.inc,.lines li.sub{font-size:12.5px;padding-left:14px;position:relative}
 .lines li.inc span:first-child{color:var(--taupe)}
 .lines li.inc::before{content:'\2713';position:absolute;left:0;color:var(--gold);font-size:10px;top:2px}
-.lines li.empty span{color:var(--taupe);font-style:italic}
+.lines li.sub::before{content:'\21B3';position:absolute;left:0;color:var(--taupe);font-size:11px}
 .fine{font-size:12px;color:var(--taupe);margin-top:14px;line-height:1.55}
 .custom{margin-top:14px;font-size:13px;color:var(--gold);border:1px solid var(--gold-dk);border-radius:var(--r);padding:10px 12px;line-height:1.5}
+.custom[hidden]{display:none}
 .ctas{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
 .btn{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:600;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;padding:16px 18px;border-radius:var(--r);border:1.5px solid rgba(255,255,255,.25);color:#fff;transition:var(--t);text-align:center}
 .btn:hover{border-color:#fff}
@@ -185,11 +196,15 @@ footer{max-width:760px;margin:0 auto;padding:0 20px 120px;font-size:12px;color:v
   .sizes{grid-template-columns:repeat(2,1fr)}
   .sizes .chip:last-child{grid-column:1/-1}
   .pkgs{grid-template-columns:1fr}
-  .pkg{flex-direction:row}
-  .pkg img{width:96px;height:auto;min-height:100%;flex:none}
-  .pkg .tag{top:6px;left:6px;font-size:9px;padding:3px 6px}
+  .pkg img{aspect-ratio:3/2}
+  .pkg .tag{font-size:9px;letter-spacing:.1em;padding:3px 7px;max-width:calc(100% - 16px);white-space:nowrap}
   .ctas{grid-template-columns:1fr}
   .qh h2{font-size:23px}
+  .acc-h{padding:15px 14px}
+  .acc-h .at{font-size:23px}
+  .acc-b{padding:4px 12px 16px}
+  .opt{padding:13px 13px;gap:11px}
+  .opt .gift-img{width:60px;height:60px}
   .bar .in{padding:10px 16px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
@@ -210,8 +225,6 @@ footer{max-width:760px;margin:0 auto;padding:0 20px 120px;font-size:12px;color:v
 <main>
   <section class="intro">
     <h1>Get your price<br>in 30 seconds</h1>
-    <p>Answer a couple of questions and see your price right away.</p>
-    <div class="badges"><span>No email or phone</span><span>Nothing to sign up for</span><span>Prices update as you go</span></div>
   </section>
 
   <!-- 1 — SIZE -->
@@ -227,7 +240,7 @@ footer{max-width:760px;margin:0 auto;padding:0 20px 120px;font-size:12px;color:v
     </div>
   </section>
 
-  <!-- 2 — START POINT -->
+  <!-- 2 — PACKAGE -->
   <section class="q locked" id="q-pkg">
     <div class="qh"><span class="n">02</span><h2>Pick a package</h2></div>
     <p class="hint">Or build your own from individual services.</p>
@@ -258,68 +271,168 @@ footer{max-width:760px;margin:0 auto;padding:0 20px 120px;font-size:12px;color:v
         <span class="pb"><span class="pn">Build my own</span><span class="pi">Pick just the services you need</span></span>
       </button>
     </div>
+    <p class="pkg-note" id="pkg-custom-note" hidden>This package is quoted individually for properties over 8,000 sq ft. We'll send a custom quote, and nothing is charged until you approve it.</p>
+    <div class="slide" id="extra15-slide">
+      <div style="padding-top:12px">
+        <label class="opt"><input type="checkbox" data-cb="extra15"><span class="ol"><span class="on">Add 15 more photos</span><span class="od">On top of the photos already in your package</span></span><span class="op"><span class="plus">+</span>$75</span></label>
+      </div>
+    </div>
   </section>
 
-  <!-- 3 — SERVICES / ADD-ONS -->
+  <!-- 3 — ADD-ONS & À LA CARTE -->
   <section class="q locked" id="q-add">
-    <div class="qh"><span class="n">03</span><h2 id="add-title">Anything else?</h2><span class="opt" id="add-opt">Optional</span></div>
-    <div class="rows">
-      <div class="row" data-k="photos">
-        <div class="rh"><span class="rt"><span class="rn">Listing photos</span><span class="rd">HDR edited, delivered in 24–48 hrs</span></span><span class="rp" data-p="photos"></span></div>
-        <div class="seg" data-seg="photos">
-          <button type="button" data-v="0" aria-pressed="true">None</button>
-          <button type="button" data-v="15" aria-pressed="false">15</button>
-          <button type="button" data-v="25" aria-pressed="false">25</button>
-          <button type="button" data-v="35" aria-pressed="false">35</button>
-          <button type="button" data-v="50" aria-pressed="false">50</button>
-          <button type="button" data-v="65" aria-pressed="false">65</button>
+    <div class="qh"><span class="n">03</span><h2 id="add-title">Add-ons &amp; à la carte</h2><span class="opt-tag" id="add-opt">Optional</span></div>
+    <p class="hint" id="add-hint">Add individual services. Anything already in your package is marked and can't be double-added.</p>
+
+    <!-- Photography -->
+    <div class="acc" data-acc="photo">
+      <button class="acc-h" type="button" aria-expanded="false"><span class="al"><span class="at">Photography</span><span class="ax">Extra listing photos</span></span><span class="badge" hidden></span><span class="ai">+</span></button>
+      <div class="acc-b">
+        <p class="note ok top" id="photo-pkg-note" hidden></p>
+        <div class="opt-group" data-radio="photos" role="radiogroup" aria-label="Photo count">
+          <div class="opt" tabindex="0" role="radio" data-value="15"><span class="ol"><span class="on" data-base="15 photos">15 photos</span></span><span class="op" data-photo="15"></span></div>
+          <div class="opt" tabindex="0" role="radio" data-value="25"><span class="ol"><span class="on" data-base="25 photos">25 photos</span></span><span class="op" data-photo="25"></span></div>
+          <div class="opt" tabindex="0" role="radio" data-value="35"><span class="ol"><span class="on" data-base="35 photos">35 photos</span></span><span class="op" data-photo="35"></span></div>
+          <div class="opt" tabindex="0" role="radio" data-value="50"><span class="ol"><span class="on" data-base="50 photos">50 photos</span></span><span class="op" data-photo="50"></span></div>
+          <div class="opt" tabindex="0" role="radio" data-value="65"><span class="ol"><span class="on" data-base="65 photos">65 photos</span><span class="od">Recommended for large homes</span></span><span class="op" data-photo="65"></span></div>
+        </div>
+        <p class="note">Click a selected option again to clear it.</p>
+      </div>
+    </div>
+
+    <!-- Video -->
+    <div class="acc" data-acc="video">
+      <button class="acc-h" type="button" aria-expanded="false"><span class="al"><span class="at">Video</span><span class="ax">Walkthrough videos &amp; reels</span></span><span class="badge" hidden></span><span class="ai">+</span></button>
+      <div class="acc-b">
+        <div class="opt-group">
+          <div>
+            <label class="opt"><input type="checkbox" data-cb="vvt"><span class="ol"><span class="on">Simple walk-through video</span><span class="od">30–60 sec, light edit, single continuous flow. One format included.</span></span><span class="op" id="vvt-price"></span></label>
+            <div class="slide" id="fmt-slide">
+              <div class="slide-in">
+                <label class="fl" for="fmt">Format</label>
+                <select class="fs" id="fmt"><option value="">Select a format</option><option value="vertical">Vertical</option><option value="horizontal">Horizontal / landscape</option><option value="both">Both (+$45)</option></select>
+              </div>
+            </div>
+          </div>
+          <label class="opt"><input type="checkbox" data-cb="fwv"><span class="ol"><span class="on">Full walkthrough video</span><span class="od" id="fwv-desc">Multi-room, professionally edited — transitions, color grading, music. Priced by property size.</span></span><span class="op" id="fwv-price"></span></label>
         </div>
       </div>
-      <label class="row" data-k="extra15">
-        <span class="rh"><span class="rt"><span class="rn">15 more photos</span><span class="rd">On top of the photos in your package</span></span><span class="rp">+$75</span><input type="checkbox" class="sw" data-sw="extra15" aria-label="Add 15 more photos"></span>
-      </label>
-      <label class="row" data-k="tour">
-        <span class="rh"><span class="rt"><span class="rn">Matterport 3D tour</span><span class="rd">Interactive walkthrough + exterior 360° shots</span></span><span class="rp" data-p="tour"></span><input type="checkbox" class="sw" data-sw="tour" aria-label="Matterport 3D tour"></span>
-      </label>
-      <label class="row" data-k="fp">
-        <span class="rh"><span class="rt"><span class="rn">Measured floor plan</span></span><span class="rp">$40</span><input type="checkbox" class="sw" data-sw="fp" aria-label="Measured floor plan"></span>
-      </label>
-      <div class="row" data-k="video">
-        <div class="rh"><span class="rt"><span class="rn">Walkthrough video</span><span class="rd" id="video-d">Simple: 30–60 sec, one continuous take. Full: multi-room, edited with music.</span></span><span class="rp" data-p="video"></span></div>
-        <div class="seg" data-seg="video">
-          <button type="button" data-v="" aria-pressed="true">None</button>
-          <button type="button" data-v="simple" aria-pressed="false">Simple</button>
-          <button type="button" data-v="full" aria-pressed="false">Full</button>
+    </div>
+
+    <!-- 3D & floor plans -->
+    <div class="acc" data-acc="3d">
+      <button class="acc-h" type="button" aria-expanded="false"><span class="al"><span class="at">3D Tours &amp; Floor Plans</span><span class="ax">Matterport &amp; measured plans</span></span><span class="badge" hidden></span><span class="ai">+</span></button>
+      <div class="acc-b">
+        <p class="note top">The Matterport 3D tour is also part of the Essential Scan, Premier Combo, and Deluxe packages above.</p>
+        <div class="opt-group">
+          <label class="opt" data-inc="tour"><input type="checkbox" data-cb="tour"><span class="ol"><span class="on">Matterport 3D tour</span><span class="od">Interactive 3D walkthrough of the property, plus exterior 360° shots. Hosted 90 days — $20/mo after.</span></span><span class="op" id="tour-price"></span></label>
+          <label class="opt" data-inc="fp"><input type="checkbox" data-cb="fp"><span class="ol"><span class="on">Measured floor plan</span><span class="od">Professional measured plan of the property. Delivered in 24–48 hrs. Rush available below.</span></span><span class="op">$40</span></label>
         </div>
       </div>
-      <label class="row" data-k="kit">
-        <span class="rh"><span class="rt"><span class="rn">Social media kit</span><span class="rd">Reels, branded tiles and flyers from your listing media</span></span><span class="rp">$85</span><input type="checkbox" class="sw" data-sw="kit" aria-label="Social media kit"></span>
-      </label>
-      <label class="row" data-k="web">
-        <span class="rh"><span class="rt"><span class="rn">Property website</span><span class="rd">A dedicated website for the listing</span></span><span class="rp">$40</span><input type="checkbox" class="sw" data-sw="web" aria-label="Property website"></span>
-      </label>
-      <div class="row" data-k="dusk">
-        <div class="rh"><span class="rt"><span class="rn">Virtual dusk</span><span class="rd">Turn a daytime exterior into a twilight shot</span></span><span class="rp" data-p="dusk">$30<small>/photo</small></span>
-          <span class="step"><button type="button" data-step="dusk" data-d="-1" aria-label="Fewer">−</button><output data-out="dusk">0</output><button type="button" data-step="dusk" data-d="1" aria-label="More">+</button></span></div>
+    </div>
+
+    <!-- Editing -->
+    <div class="acc" data-acc="edit">
+      <button class="acc-h" type="button" aria-expanded="false"><span class="al"><span class="at">Editing</span><span class="ax">Virtual dusk &amp; video editing</span></span><span class="badge" hidden></span><span class="ai">+</span></button>
+      <div class="acc-b">
+        <p class="note lbl">Photo editing</p>
+        <div class="opt-group">
+          <div>
+            <label class="opt"><input type="checkbox" data-cb="dusk"><span class="ol"><span class="on">Virtual dusk</span><span class="od">Daytime exterior converted to a twilight look. Priced per photo.</span></span><span class="op">$30<small>/photo</small></span></label>
+            <div class="slide" id="dusk-slide">
+              <div class="qty"><span class="ql">Photos</span><button type="button" data-qty="duskQty" data-d="-1" aria-label="Fewer">−</button><output data-out="duskQty">1</output><button type="button" data-qty="duskQty" data-d="1" aria-label="More">+</button><span class="qt" id="dusk-total"></span></div>
+            </div>
+          </div>
+        </div>
+        <p class="note lbl">Video editing</p>
+        <p class="note top">For footage you've already shot. Pick a tier:</p>
+        <div class="opt-group" data-radio="videdit" role="radiogroup" aria-label="Video editing tier">
+          <div class="opt" tabindex="0" role="radio" data-value="short60"><span class="ol"><span class="on">Up to 60 seconds</span><span class="od">Edited to your desired format — social, walkthrough, or custom</span></span><span class="op">$80</span></div>
+          <div class="opt" tabindex="0" role="radio" data-value="1to3"><span class="ol"><span class="on">1–3 minutes</span><span class="od">Edited to your desired format — social, walkthrough, or custom</span></span><span class="op">$150</span></div>
+          <div class="opt" tabindex="0" role="radio" data-value="4to10"><span class="ol"><span class="on">4–10 minutes</span><span class="od">Longer footage, fully edited — final price confirmed after we review it</span></span><span class="op">From $250</span></div>
+        </div>
+        <div class="slide" id="videdit-slide"><p class="note info" id="videdit-info"></p></div>
       </div>
-      <div class="row" data-k="stage">
-        <div class="rh"><span class="rt"><span class="rn">Virtual staging</span><span class="rd">Furnish empty rooms, remove clutter, or both. Priced per image.</span></span><span class="rp" data-p="stage">$35<small>/image</small></span>
-          <span class="step"><button type="button" data-step="stage" data-d="-1" aria-label="Fewer">−</button><output data-out="stage">0</output><button type="button" data-step="stage" data-d="1" aria-label="More">+</button></span></div>
-        <div class="seg" data-seg="stageType" hidden>
-          <button type="button" data-v="stage" aria-pressed="true">Staging <small>$35</small></button>
-          <button type="button" data-v="clutter" aria-pressed="false">Clutter removal <small>$25</small></button>
-          <button type="button" data-v="both" aria-pressed="false">Both <small>$50</small></button>
+    </div>
+
+    <!-- Marketing -->
+    <div class="acc" data-acc="mkt">
+      <button class="acc-h" type="button" aria-expanded="false"><span class="al"><span class="at">Marketing</span><span class="ax">Social kit &amp; property website</span></span><span class="badge" hidden></span><span class="ai">+</span></button>
+      <div class="acc-b">
+        <p class="note ok top" id="mkt-note" hidden>Already included in your package selection.</p>
+        <div class="opt-group" data-radio="mkt" role="radiogroup" aria-label="Marketing option">
+          <div class="opt" tabindex="0" role="radio" data-value="kit"><span class="ol"><span class="on">Social media kit</span><span class="od">Custom-edited social reels, branded tiles, and digital flyers from your listing media</span></span><span class="op">$85</span></div>
+          <div class="opt" tabindex="0" role="radio" data-value="website"><span class="ol"><span class="on">Property website</span><span class="od">Dedicated single-property site. Hosted 90 days — $10/mo after.</span></span><span class="op">$40</span></div>
+          <div class="opt" tabindex="0" role="radio" data-value="bundle"><span class="ol"><span class="on">Social media kit + property website</span><span class="od">Both together — $15 less than separately. Site hosted 90 days — $10/mo after.</span></span><span class="op">$110</span></div>
+        </div>
+        <p class="note">Click a selected option again to clear it.</p>
+      </div>
+    </div>
+
+    <!-- Virtual staging -->
+    <div class="acc" data-acc="stage">
+      <button class="acc-h" type="button" aria-expanded="false"><span class="al"><span class="at">Virtual Staging</span><span class="ax">AI staging &amp; clutter removal</span></span><span class="badge" hidden></span><span class="ai">+</span></button>
+      <div class="acc-b">
+        <p class="note top">Choose one service, then set how many images. Each angle of a room counts as one image. 1–2 days to process.</p>
+        <div class="opt-group" data-radio="stage" role="radiogroup" aria-label="Virtual staging option">
+          <div class="opt" tabindex="0" role="radio" data-value="stage"><span class="ol"><span class="on">Virtual staging</span><span class="od">AI-furnished staging for empty or under-furnished rooms</span></span><span class="op">$35<small>/image</small></span></div>
+          <div class="opt" tabindex="0" role="radio" data-value="clutter"><span class="ol"><span class="on">Clutter removal</span><span class="od">Digitally remove clutter, personal items, and mess — no staging added</span></span><span class="op">$25<small>/image</small></span></div>
+          <div class="opt" tabindex="0" role="radio" data-value="both"><span class="ol"><span class="on">Virtual staging + clutter removal</span><span class="od">Full transformation — clutter removed and professionally staged</span></span><span class="op">$50<small>/image</small></span></div>
+        </div>
+        <div class="slide" id="stage-slide">
+          <div class="qty"><span class="ql">Images</span><button type="button" data-qty="stageQty" data-d="-1" aria-label="Fewer">−</button><output data-out="stageQty">1</output><button type="button" data-qty="stageQty" data-d="1" aria-label="More">+</button><span class="qt" id="stage-total"></span></div>
+        </div>
+        <p class="note">Click a selected option again to clear it.</p>
+      </div>
+    </div>
+
+    <!-- Closing gift -->
+    <div class="acc" data-acc="gift">
+      <button class="acc-h" type="button" aria-expanded="false"><span class="al"><span class="at">Closing Gift</span><span class="ax">A gift for your client</span></span><span class="badge" hidden></span><span class="ai">+</span></button>
+      <div class="acc-b">
+        <label class="opt"><input type="checkbox" data-cb="gift"><span class="ol"><span class="on">The Signature Album</span><span class="od">Hardcover photo book with matte pages, featuring the property photos and address. Free shipping.</span></span><span class="op">$159</span><img class="gift-img" src="https://static.showit.com/file/C3VU0B6OMGp9Jfp3v1pxwQ/273321/screenshot_2026-08-13_at_2_43_04_pm.png" alt="The Signature Album" loading="lazy" onerror="this.remove()"></label>
+      </div>
+    </div>
+
+    <!-- Scheduling & rush -->
+    <div class="acc" data-acc="rush">
+      <button class="acc-h" type="button" aria-expanded="false"><span class="al"><span class="at">Scheduling &amp; Rush</span><span class="ax">Faster delivery &amp; holiday dates</span></span><span class="badge" hidden></span><span class="ai">+</span></button>
+      <div class="acc-b">
+        <div class="opt-group">
+          <label class="opt"><input type="checkbox" data-cb="rush"><span class="ol"><span class="on">Rush delivery — under 24 hours</span><span class="od">Photos and floor plan delivered within 24 hrs of the shoot. Does not expedite video, Matterport/3D tours, websites, or technical files.</span></span><span class="op"><span class="plus">+</span>$75</span></label>
+          <label class="opt"><input type="checkbox" data-cb="holiday"><span class="ol"><span class="on">Holiday booking</span><span class="od">Appointments on select major U.S. holidays. We'll confirm availability before your appointment.</span></span><span class="op"><span class="plus">+</span>$100</span></label>
         </div>
       </div>
-      <label class="row" data-k="rush">
-        <span class="rh"><span class="rt"><span class="rn">Rush delivery</span><span class="rd">Photos and floor plan in under 24 hrs</span></span><span class="rp">+$75</span><input type="checkbox" class="sw" data-sw="rush" aria-label="Rush delivery"></span>
-      </label>
+    </div>
+
+    <!-- Technical -->
+    <div class="acc" data-acc="tech">
+      <button class="acc-h" type="button" aria-expanded="false"><span class="al"><span class="at">Professional / Technical Deliverables</span><span class="ax">CAD, BIM, point cloud, Xactimate</span></span><span class="badge" hidden></span><span class="ai">+</span></button>
+      <div class="acc-b">
+        <p class="note top">Ordered per project after your scan and not part of the standard delivery window. Turnaround is in business days, starting once your scan is processed.</p>
+        <div class="opt-group">
+          <label class="opt"><input type="checkbox" data-cb="matterpak"><span class="ol"><span class="on">MatterPak bundle</span><span class="od">Textured mesh, point cloud, and floor/ceiling plan images for outside 3D or CAD software. 1–2 business days.</span></span><span class="op">$80</span></label>
+          <label class="opt"><input type="checkbox" data-cb="e57"><span class="ol"><span class="on">E57 point cloud export</span><span class="od">High-density raw point cloud for professional CAD/BIM software (Revit, AutoCAD, ReCap). 1–2 business days.</span></span><span class="op">$160</span></label>
+          <label class="opt"><input type="checkbox" data-cb="cad"><span class="ol"><span class="on">CAD file (DWG/DXF)</span><span class="od">2D CAD floor plan file, ready for architects and designers. 3–5 business days; longer for complex properties.</span></span><span class="op">From $180</span></label>
+          <label class="opt"><input type="checkbox" data-cb="bim"><span class="ol"><span class="on">BIM file (Revit/IFC)</span><span class="od">Full Building Information Model for renovation, design, or construction planning. 2–7 business days; 1–2 weeks for large/complex properties.</span></span><span class="op">From $300</span></label>
+          <label class="opt"><input type="checkbox" data-cb="trueplan"><span class="ol"><span class="on">TruePlan (Xactimate sketch file)</span><span class="od">Insurance/restoration-ready .SKX sketch file, compatible with Xactimate. 2–3 business days, up to a week for complex properties.</span></span><span class="op">From $140</span></label>
+          <label class="opt"><input type="checkbox" data-cb="pireport"><span class="ol"><span class="on">Property Intelligence Report</span><span class="od">Automated MLS-ready measurement and room-by-room report from your scan. Within 1 business day of processing.</span></span><span class="op">$40</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aerial -->
+    <div class="acc" data-acc="aerial">
+      <button class="acc-h" type="button" aria-expanded="false"><span class="al"><span class="at">Aerial Photography &amp; Video</span><span class="ax">Coming soon</span></span><span class="ai">+</span></button>
+      <div class="acc-b">
+        <p class="note top">Aerial isn't bookable yet. When you book, you can ask to be notified when it launches.</p>
+      </div>
     </div>
   </section>
 
   <!-- 4 — TRAVEL (optional) -->
   <section class="q locked" id="q-zip">
-    <div class="qh"><span class="n">04</span><h2>Property ZIP</h2><span class="opt">Optional</span></div>
+    <div class="qh"><span class="n">04</span><h2>Property ZIP</h2><span class="opt-tag">Optional</span></div>
     <p class="hint">Travel is free within about 90 miles of Philadelphia. Add a ZIP code to check.</p>
     <label class="zip"><span class="zl">ZIP</span><input id="zip" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="e.g. 19103" aria-label="Property ZIP code"></label>
     <div class="tnote" id="tnote" aria-live="polite"></div>
@@ -361,6 +474,7 @@ footer{max-width:760px;margin:0 auto;padding:0 20px 120px;font-size:12px;color:v
 const BOOKING_URL = 'https://mediamansion.com/booking';
 const BIG = '8001-15000';
 const VVT_PRICE = {'200-2000':110,'2001-4000':120,'4001-6000':130,'6001-8000':140,'8001-15000':160};
+const VVT_BOTH_FMT_FEE = 45;
 const FWV_PRICE = {'200-2000':265,'2001-4000':315,'4001-6000':390,'6001-8000':475};
 const PHOTO_PRICE = {
   15:{'200-2000':99,'2001-4000':105,'4001-6000':110,'6001-8000':115,'8001-15000':125},
@@ -376,15 +490,26 @@ const PKG = {
   del:  {'200-2000':590,'2001-4000':705,'4001-6000':840,'6001-8000':1030,'8001-15000':null},
 };
 const PKG_NAME = {ess:'Essential Photos', escan:'Essential Scan', sig:'Premier Combo', del:'Deluxe Bundle'};
+const PKG_PHOTOS = {ess:30, sig:35, del:35};
 const PKG_INCLUDES = {
   ess:['30 listing photos','Measured floor plan','Property website','24–48 hr delivery'],
   escan:['Matterport 3D tour','Exterior 360° shots','24–48 hr delivery'],
   sig:['35 listing photos','Measured floor plan','Matterport 3D tour','Exterior 360° shots','Property website','48 hr delivery'],
   del:['35 listing photos','Measured floor plan','Matterport 3D tour','Exterior 360° shots','Property website','Social media kit','2 virtual dusk photos','1 vertical walkthrough reel','48 hr delivery'],
 };
-const PRICE = {fp:40, kit:85, web:40, kitWeb:110, extra15:75, dusk:30, rush:75};
+const PRICE = {
+  fp:40, matterpak:80, e57:160, cad:180, bim:300, trueplan:140, pireport:40,
+  kit:85, website:40, kitBundle:110, extra15:75,
+  vdusk:30, videdit:{short60:80,'1to3':150,'4to10':250},
+  album:159, rush:75, holiday:100,
+};
 const STAGE_UNIT = {stage:35, clutter:25, both:50};
 const STAGE_NAME = {stage:'Virtual staging', clutter:'Clutter removal', both:'Staging + clutter removal'};
+const VIDEDIT_MSG = {
+  short60:"Once your booking is confirmed, we'll reach out within 48 hours to gather your footage and begin editing your up-to-60-second video.",
+  '1to3':"Once your booking is confirmed, we'll reach out within 48 hours to gather your footage and begin editing your 1–3 minute video.",
+  '4to10':"Once your booking is confirmed, we'll reach out within 48 hours to gather your footage. Edits over 3 minutes start at $250 — we'll confirm the final price after reviewing the footage, before any editing begins."
+};
 
 /* travel — same rules as booking page */
 const ORIGIN_LAT=40.0247, ORIGIN_LON=-75.2271;
@@ -392,72 +517,90 @@ const TRAVEL_FREE_MILES=90, TRAVEL_FREE_SEC=7200, TRAVEL_RATE_PER_MILE=1.25, TRA
 const travelFeeFor = miles => Math.ceil((miles*TRAVEL_RATE_PER_MILE)/5)*5;
 
 /* ============================================================ STATE */
-const Q = {size:null, pkg:null, photos:0, extra15:false, tour:false, fp:false, video:'',
-           kit:false, web:false, dusk:0, stage:0, stageType:'stage', rush:false,
+const BOOL_KEYS = ['extra15','vvt','fwv','tour','fp','dusk','gift','rush','holiday','matterpak','e57','cad','bim','trueplan','pireport'];
+const Q = {size:null, pkg:null, photos:'', fmt:'', duskQty:1, videdit:'', mkt:'', stage:'', stageQty:1,
            zip:'', travelFee:0, travelMiles:0};
+BOOL_KEYS.forEach(k=>Q[k]=false);
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const fmt = n => '$'+Math.round(n).toLocaleString('en-US');
 
-/* What's already in each package, so we never offer it twice */
-const has = {
-  photos:  p => ['ess','sig','del'].includes(p),
-  tour:    p => ['escan','sig','del'].includes(p),
-  fp:      p => ['ess','sig','del'].includes(p),
-  web:     p => ['ess','sig','del'].includes(p),
-  kit:     p => p==='del',
+/* What each package already includes (same rules as booking) */
+const realPkg = () => ['ess','escan','sig','del'].includes(Q.pkg) ? Q.pkg : null;
+const inc = {
+  tour: () => ['escan','sig','del'].includes(Q.pkg),
+  fp:   () => ['ess','sig','del'].includes(Q.pkg),
+  web:  () => ['ess','sig','del'].includes(Q.pkg),
+  kit:  () => Q.pkg==='del',
 };
-function visible(k){
-  const p = Q.pkg, big = Q.size===BIG;
-  switch(k){
-    case 'photos':  return !has.photos(p);
-    case 'extra15': return has.photos(p) && !big;
-    case 'tour':    return !has.tour(p);
-    case 'fp':      return !has.fp(p);
-    case 'web':     return !has.web(p);
-    case 'kit':     return !has.kit(p);
-    default:        return true;
-  }
-}
-const OFF = {photos:0, extra15:false, tour:false, fp:false, kit:false, web:false};
+const isBig = () => Q.size===BIG;
+const extra15Ok = () => ['ess','sig','del'].includes(Q.pkg) && !isBig();
 
-/* ============================================================ CALC */
+/* drop anything the current package already covers */
+function dedupe(){
+  if(inc.tour()) Q.tour=false;
+  if(inc.fp()) Q.fp=false;
+  if(Q.mkt==='kit' && inc.kit()) Q.mkt='';
+  if(Q.mkt==='website' && inc.web()) Q.mkt='';
+  if(Q.mkt==='bundle' && (inc.kit()||inc.web())) Q.mkt='';
+  if(!extra15Ok()) Q.extra15=false;
+  if(!Q.vvt) Q.fmt='';
+}
+
+/* ============================================================ CALC  (mirrors booking calcTotal) */
 function calc(){
   const s = Q.size, lines = [], custom = [];
   if(!s || !Q.pkg) return null;
   let pkgLine = null;
+  const pk = realPkg();
 
-  if(Q.pkg!=='own'){
-    const p = PKG[Q.pkg][s];
-    pkgLine = {n:PKG_NAME[Q.pkg], p:p||0, label:p==null?'Custom quote':null, inc:PKG_INCLUDES[Q.pkg]};
-    if(p==null) custom.push(PKG_NAME[Q.pkg]+' package');
+  if(pk){
+    const p = PKG[pk][s];
+    pkgLine = {n:PKG_NAME[pk]+' package', p:p||0, label:p==null?'Custom quote':null, inc:PKG_INCLUDES[pk]};
+    if(p==null) custom.push(PKG_NAME[pk]+' package');
+    if(p!=null && Q.extra15 && extra15Ok()) lines.push({n:`Add 15 photos (${PKG_PHOTOS[pk]+15} total)`, p:PRICE.extra15, sub:true});
   }
-  if(visible('photos') && Q.photos) lines.push({n:`${Q.photos} listing photos`, p:PHOTO_PRICE[Q.photos][s]});
-  if(visible('extra15') && Q.extra15) lines.push({n:'15 more photos', p:PRICE.extra15});
-  if(visible('tour') && Q.tour){
+  if(Q.photos){
+    const c = +Q.photos;
+    lines.push({n: PKG_PHOTOS[pk] ? `${c} additional photos` : `${c} listing photos`, p:PHOTO_PRICE[c][s]});
+  }
+  if(Q.mkt==='kit') lines.push({n:'Social media kit', p:PRICE.kit});
+  else if(Q.mkt==='website') lines.push({n:'Property website', p:PRICE.website});
+  else if(Q.mkt==='bundle') lines.push({n:'Social media kit + property website', p:PRICE.kitBundle});
+
+  if(Q.vvt){
+    lines.push({n:'Simple walk-through video (30–60 sec)', p:VVT_PRICE[s]});
+    if(Q.fmt==='both') lines.push({n:'Vertical + horizontal cuts', p:VVT_BOTH_FMT_FEE, sub:true});
+  }
+  if(Q.fwv){
+    if(isBig()){ lines.push({n:'Full walkthrough video', p:0, label:'Custom quote'}); custom.push('Full walkthrough video'); }
+    else lines.push({n:'Full walkthrough video', p:FWV_PRICE[s]});
+  }
+  if(Q.rush) lines.push({n:'Rush delivery — under 24 hrs', p:PRICE.rush});
+  if(Q.holiday) lines.push({n:'Holiday booking', p:PRICE.holiday});
+  if(Q.tour){
     const p = PKG.escan[s];
     if(p==null){ lines.push({n:'Matterport 3D tour', p:0, label:'Custom quote'}); custom.push('Matterport 3D tour'); }
     else lines.push({n:'Matterport 3D tour', p});
   }
-  if(visible('fp') && Q.fp) lines.push({n:'Measured floor plan', p:PRICE.fp});
-  if(Q.video==='simple') lines.push({n:'Simple walkthrough video', p:VVT_PRICE[s]});
-  if(Q.video==='full'){
-    const p = FWV_PRICE[s];
-    if(p==null){ lines.push({n:'Full walkthrough video', p:0, label:'Custom quote'}); custom.push('Full walkthrough video'); }
-    else lines.push({n:'Full walkthrough video', p});
-  }
-  const kitOn = visible('kit') && Q.kit, webOn = visible('web') && Q.web;
-  if(kitOn && webOn) lines.push({n:'Social media kit + website', p:PRICE.kitWeb});
-  else if(kitOn) lines.push({n:'Social media kit', p:PRICE.kit});
-  else if(webOn) lines.push({n:'Property website', p:PRICE.web});
-  if(Q.dusk) lines.push({n:`Virtual dusk × ${Q.dusk}`, p:Q.dusk*PRICE.dusk});
-  if(Q.stage) lines.push({n:`${STAGE_NAME[Q.stageType]} × ${Q.stage}`, p:Q.stage*STAGE_UNIT[Q.stageType]});
-  if(Q.rush) lines.push({n:'Rush delivery', p:PRICE.rush});
+  if(Q.fp) lines.push({n:'Measured floor plan', p:PRICE.fp});
+  if(Q.matterpak) lines.push({n:'MatterPak bundle', p:PRICE.matterpak});
+  if(Q.e57) lines.push({n:'E57 point cloud export', p:PRICE.e57});
+  if(Q.cad) lines.push({n:'CAD file (DWG/DXF)', p:PRICE.cad, label:'From '+fmt(PRICE.cad), from:true});
+  if(Q.bim) lines.push({n:'BIM file (Revit/IFC)', p:PRICE.bim, label:'From '+fmt(PRICE.bim), from:true});
+  if(Q.trueplan) lines.push({n:'TruePlan (Xactimate sketch)', p:PRICE.trueplan, label:'From '+fmt(PRICE.trueplan), from:true});
+  if(Q.pireport) lines.push({n:'Property Intelligence Report', p:PRICE.pireport});
+  if(Q.dusk) lines.push({n:`Virtual dusk × ${Q.duskQty}`, p:Q.duskQty*PRICE.vdusk});
+  if(Q.stage) lines.push({n:`${STAGE_NAME[Q.stage]} × ${Q.stageQty} image${Q.stageQty>1?'s':''}`, p:Q.stageQty*STAGE_UNIT[Q.stage]});
+  if(Q.videdit==='short60') lines.push({n:'Video editing (up to 60 sec)', p:PRICE.videdit.short60});
+  else if(Q.videdit==='1to3') lines.push({n:'Video editing (1–3 min)', p:PRICE.videdit['1to3']});
+  else if(Q.videdit==='4to10') lines.push({n:'Video editing (4–10 min)', p:PRICE.videdit['4to10'], label:'From '+fmt(PRICE.videdit['4to10']), from:true});
+  if(Q.gift) lines.push({n:'The Signature Album', p:PRICE.album});
   if(Q.travelFee>0) lines.push({n:`Travel (${Q.travelMiles} mi)`, p:Q.travelFee});
 
   const total = (pkgLine?pkgLine.p:0) + lines.reduce((a,l)=>a+l.p,0);
-  return {pkgLine, lines, custom, total};
+  return {pkgLine, lines, custom, total, hasFrom: lines.some(l=>l.from)};
 }
 
 /* ============================================================ RENDER */
@@ -473,63 +616,89 @@ function animateTo(el, target){
   };
   raf = requestAnimationFrame(tick);
 }
+const slide = (el,on) => el.classList.toggle('open', !!on);
+
+/* which state keys count toward each accordion's "selected" badge */
+const ACC_KEYS = {
+  photo:['photos'], video:['vvt','fwv'], '3d':['tour','fp'], edit:['dusk','videdit'], mkt:['mkt'],
+  stage:['stage'], gift:['gift'], rush:['rush','holiday'], tech:['matterpak','e57','cad','bim','trueplan','pireport'],
+};
 
 function render(){
-  const s = Q.size, big = s===BIG;
+  dedupe();
+  const s = Q.size, big = isBig(), sz = s || '200-2000', pk = realPkg();
 
   // unlock sections
   $('#q-pkg').classList.toggle('locked', !s);
   ['#q-add','#q-zip'].forEach(id=>$(id).classList.toggle('locked', !(s && Q.pkg)));
 
-  // chips + package cards
+  // size chips + package cards
   $$('.chip').forEach(c=>c.setAttribute('aria-checked', c.dataset.size===s));
   $$('.pkg').forEach(c=>c.setAttribute('aria-checked', c.dataset.pkg===Q.pkg));
   $$('[data-price]').forEach(el=>{
-    const p = s ? PKG[el.dataset.price][s] : PKG[el.dataset.price]['200-2000'];
+    const p = PKG[el.dataset.price][sz];
     el.classList.toggle('cq', p==null);
     el.textContent = p==null ? 'Custom quote' : (s ? fmt(p) : 'from '+fmt(p));
   });
+  $('#pkg-custom-note').hidden = !(big && pk);
+  slide($('#extra15-slide'), extra15Ok());
 
   // section 3 copy
   const own = Q.pkg==='own';
-  $('#add-title').textContent = own ? 'Pick your services' : 'Anything else?';
+  $('#add-title').textContent = own ? 'Build your order' : 'Add-ons & à la carte';
   $('#add-opt').textContent = own ? 'Choose at least one' : 'Optional';
+  $('#add-hint').textContent = own
+    ? 'Open any category and pick the services you need.'
+    : 'Add individual services. Anything already in your package is marked and can\'t be double-added.';
 
-  // rows: visibility + reset anything hidden
-  $$('.row').forEach(r=>{
-    const k = r.dataset.k, v = visible(k);
-    r.hidden = !v;
-    if(!v && k in OFF) Q[k] = OFF[k];
-  });
+  // prices that depend on size
+  $$('[data-photo]').forEach(el=>el.textContent = fmt(PHOTO_PRICE[el.dataset.photo][sz]));
+  $('#vvt-price').textContent = fmt(VVT_PRICE[sz]);
+  $('#fwv-price').textContent = big ? 'Custom quote' : fmt(FWV_PRICE[sz]);
+  $('#fwv-desc').textContent = big
+    ? 'For properties over 8,000 sq ft this is quoted individually. Check the box and we\'ll send a custom quote.'
+    : 'Multi-room, professionally edited — transitions, color grading, music. Priced by property size.';
+  $('#tour-price').textContent = PKG.escan[sz]==null ? 'Custom quote' : fmt(PKG.escan[sz]);
 
-  // row prices for the selected size
-  const sz = s || '200-2000';
-  $('[data-p="photos"]').textContent = Q.photos ? fmt(PHOTO_PRICE[Q.photos][sz]) : 'from '+fmt(PHOTO_PRICE[15][sz]);
-  $('[data-p="tour"]').textContent = PKG.escan[sz]==null ? 'Custom quote' : fmt(PKG.escan[sz]);
-  $('[data-p="video"]').textContent =
-    Q.video==='simple' ? fmt(VVT_PRICE[sz]) :
-    Q.video==='full'   ? (FWV_PRICE[sz] ? fmt(FWV_PRICE[sz]) : 'Custom quote') :
-    'from '+fmt(VVT_PRICE[sz]);
-  $('#video-d').textContent = big
-    ? 'Simple: 30–60 sec, one continuous take. Full: priced individually for 8,000+ sq ft.'
-    : 'Simple: 30–60 sec, one continuous take. Full: multi-room, edited with music.';
-  if(Q.dusk) $('[data-p="dusk"]').textContent = fmt(Q.dusk*PRICE.dusk);
-  else $('[data-p="dusk"]').innerHTML = '$30<small>/photo</small>';
-  if(Q.stage) $('[data-p="stage"]').textContent = fmt(Q.stage*STAGE_UNIT[Q.stageType]);
-  else $('[data-p="stage"]').innerHTML = `$${STAGE_UNIT[Q.stageType]}<small>/image</small>`;
+  // photo note when the package already has photos
+  const pc = PKG_PHOTOS[pk];
+  $('#photo-pkg-note').hidden = !pc;
+  if(pc) $('#photo-pkg-note').textContent = `You already have ${pc} photos in your ${PKG_NAME[pk]} package — anything selected here is added on top.`;
+  $$('[data-radio="photos"] .on').forEach(o=>o.textContent = (pc?'Add ':'') + o.dataset.base);
+
+  // "included" markers
+  $('[data-inc="tour"]').classList.toggle('inc', inc.tour());
+  $('[data-inc="fp"]').classList.toggle('inc', inc.fp());
+  const mk = $('[data-radio="mkt"]');
+  mk.querySelector('[data-value="kit"]').classList.toggle('inc', inc.kit());
+  mk.querySelector('[data-value="website"]').classList.toggle('inc', inc.web());
+  mk.querySelector('[data-value="bundle"]').classList.toggle('inc', inc.kit()||inc.web());
+  $('#mkt-note').hidden = !(inc.kit()||inc.web());
 
   // controls reflect state
-  $$('[data-sw]').forEach(cb=>{ cb.checked = !!Q[cb.dataset.sw]; });
-  $$('[data-seg]').forEach(g=>{
-    const key = g.dataset.seg;
-    g.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', String(Q[key])===b.dataset.v));
+  $$('[data-cb]').forEach(cb=>{ cb.checked = !!Q[cb.dataset.cb]; cb.closest('.opt').classList.toggle('selected', cb.checked); });
+  $$('[data-radio]').forEach(g=>{
+    const key = g.dataset.radio;
+    g.querySelectorAll('.opt').forEach(o=>{
+      const on = String(Q[key])===o.dataset.value;
+      o.classList.toggle('selected', on); o.setAttribute('aria-checked', on);
+    });
   });
-  $('[data-seg="stageType"]').hidden = !Q.stage;
-  $$('[data-out]').forEach(o=>{ o.textContent = Q[o.dataset.out]; });
-  $$('[data-step][data-d="-1"]').forEach(b=>{ b.disabled = !Q[b.dataset.step]; });
-  $$('.row').forEach(r=>{
-    const k=r.dataset.k, val=Q[k];
-    r.classList.toggle('on', !!val);
+  $('#fmt').value = Q.fmt;
+  slide($('#fmt-slide'), Q.vvt);
+  slide($('#dusk-slide'), Q.dusk);
+  slide($('#stage-slide'), Q.stage);
+  slide($('#videdit-slide'), Q.videdit);
+  if(Q.videdit) $('#videdit-info').textContent = VIDEDIT_MSG[Q.videdit];
+  $$('[data-out]').forEach(o=>o.textContent = Q[o.dataset.out]);
+  $('#dusk-total').textContent = '= '+fmt(Q.duskQty*PRICE.vdusk);
+  $('#stage-total').textContent = '= '+fmt(Q.stageQty*(STAGE_UNIT[Q.stage]||35));
+
+  // accordion badges
+  $$('.acc[data-acc]').forEach(a=>{
+    const keys = ACC_KEYS[a.dataset.acc]; if(!keys) return;
+    const n = keys.filter(k=>!!Q[k]).length, b = a.querySelector('.badge');
+    b.hidden = !n; b.textContent = n+' selected';
   });
 
   // result
@@ -540,13 +709,13 @@ function render(){
 
   if(!s){ totEl.className='big small'; totEl.textContent='Pick a size'; sub.textContent='Start with step 1 above.'; shown=0; }
   else if(!Q.pkg){ totEl.className='big small'; totEl.textContent='Pick a package'; sub.textContent='Or choose “Build my own” in step 2.'; shown=0; }
-  else if(!hasAny){ totEl.className='big small'; totEl.textContent='Add a service'; sub.textContent='Turn on anything in step 3 to see your price.'; shown=0; }
+  else if(!hasAny){ totEl.className='big small'; totEl.textContent='Add a service'; sub.textContent='Open a category in step 3 to see your price.'; shown=0; }
   else if(R.total===0 && R.custom.length){
     totEl.className='big small'; totEl.textContent='Custom quote'; shown=0;
     sub.textContent='Large homes are priced individually. Book or ask, and you’ll get an exact price first.';
   } else {
     totEl.className='big';
-    if(!totEl.firstChild || totEl.firstChild.nodeType!==3 || !/^\$/.test(totEl.textContent)) { totEl.textContent=fmt(shown); }
+    if(!/^\$/.test(totEl.textContent)) totEl.textContent=fmt(shown);
     animateTo(totEl, R.total);
     sub.textContent = R.custom.length ? 'Plus the custom-quoted items below.' : 'Before sales tax. Nothing is charged when you book.';
   }
@@ -554,19 +723,21 @@ function render(){
   if(hasAny){
     let h = '';
     if(R.pkgLine){
-      h += `<li><span>${R.pkgLine.n} package</span><span>${R.pkgLine.label||fmt(R.pkgLine.p)}</span></li>`;
+      h += `<li><span>${R.pkgLine.n}</span><span>${R.pkgLine.label||fmt(R.pkgLine.p)}</span></li>`;
       h += R.pkgLine.inc.map(i=>`<li class="inc"><span>${i}</span><span></span></li>`).join('');
     }
-    h += R.lines.map(l=>`<li><span>${l.n}</span><span>${l.label||fmt(l.p)}</span></li>`).join('');
-    if(Q.travelFee===0 && Q.travelMiles===0 && $('#tnote').classList.contains('ok')) h += `<li><span>Travel</span><span>Included</span></li>`;
+    h += R.lines.map(l=>`<li${l.sub?' class="sub"':''}><span>${l.n}</span><span>${l.label||fmt(l.p)}</span></li>`).join('');
+    if(Q.travelFee===0 && $('#tnote').classList.contains('ok')) h += `<li><span>Travel</span><span>Included</span></li>`;
     linesEl.innerHTML = h;
     cust.hidden = !R.custom.length;
     if(R.custom.length) cust.innerHTML = `<strong>Custom quote:</strong> ${R.custom.join(', ')}. For homes over 8,000 sq ft we send an exact price before anything is charged.`;
     const notes = [];
-    const tourIn = has.tour(Q.pkg) || Q.tour, webIn = has.web(Q.pkg) || Q.web;
-    if(tourIn) notes.push('3D tour hosting is free for 90 days, then $20/mo');
-    if(webIn) notes.push('website hosting is free for 90 days, then $10/mo');
-    fine.textContent = notes.length ? notes.join('; ').replace(/^./,c=>c.toUpperCase())+'.' : '';
+    if(R.hasFrom) notes.push('Items marked “from” are starting prices, confirmed before work begins.');
+    const hosting = [];
+    if(inc.tour() || Q.tour) hosting.push('3D tour hosting is free for 90 days, then $20/mo');
+    if(inc.web() || Q.mkt==='website' || Q.mkt==='bundle') hosting.push('website hosting is free for 90 days, then $10/mo');
+    if(hosting.length) notes.push(hosting.join('; ').replace(/^./,c=>c.toUpperCase())+'.');
+    fine.textContent = notes.join(' ');
   } else { linesEl.innerHTML=''; cust.hidden=true; fine.textContent=''; }
 
   // sticky bar
@@ -586,15 +757,21 @@ $$('.pkg').forEach(c=>c.addEventListener('click',()=>{
   const first = !Q.pkg; Q.pkg = c.dataset.pkg; render();
   if(first) setTimeout(()=>$('#q-add').scrollIntoView({behavior:'smooth',block:'start'}),120);
 }));
-$$('[data-sw]').forEach(cb=>cb.addEventListener('change',()=>{ Q[cb.dataset.sw]=cb.checked; render(); }));
-$$('[data-seg]').forEach(g=>g.addEventListener('click',e=>{
-  const b = e.target.closest('button'); if(!b) return;
-  const key = g.dataset.seg, v = b.dataset.v;
-  Q[key] = key==='photos' ? +v : v;
-  render();
+$$('.acc-h').forEach(h=>h.addEventListener('click',()=>{
+  const a = h.closest('.acc'); a.classList.toggle('open'); h.setAttribute('aria-expanded', a.classList.contains('open'));
 }));
-$$('[data-step]').forEach(b=>b.addEventListener('click',()=>{
-  const k=b.dataset.step; Q[k]=Math.max(0,Math.min(50,Q[k]+(+b.dataset.d))); render();
+$$('[data-cb]').forEach(cb=>cb.addEventListener('change',()=>{ Q[cb.dataset.cb]=cb.checked; render(); }));
+$$('[data-radio]').forEach(g=>{
+  const key = g.dataset.radio;
+  const pick = o => { if(o.classList.contains('inc')) return; Q[key] = Q[key]===o.dataset.value ? '' : o.dataset.value; render(); };
+  g.querySelectorAll('.opt').forEach(o=>{
+    o.addEventListener('click',()=>pick(o));
+    o.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pick(o); } });
+  });
+});
+$('#fmt').addEventListener('change',e=>{ Q.fmt=e.target.value; render(); });
+$$('[data-qty]').forEach(b=>b.addEventListener('click',()=>{
+  const k=b.dataset.qty; Q[k]=Math.max(1,Math.min(75,Q[k]+(+b.dataset.d))); render();
 }));
 
 /* ZIP → travel check (ZIP centre → driving route from Philly base) */
@@ -603,7 +780,7 @@ $('#zip').addEventListener('input',e=>{
   const v = e.target.value.replace(/\D/g,'').slice(0,5); e.target.value=v; Q.zip=v;
   clearTimeout(zipTimer);
   const note=$('#tnote');
-  if(v.length<5){ Q.travelFee=0; Q.travelMiles=0; note.className='tnote'; note.textContent=''; render(); return; }
+  if(v.length<5){ zipSeq++; Q.travelFee=0; Q.travelMiles=0; note.className='tnote'; note.textContent=''; render(); return; }
   note.className='tnote'; note.textContent='Checking…';
   zipTimer=setTimeout(()=>checkZip(v),350);
 });
@@ -645,28 +822,36 @@ function updateBar(){
 }
 new IntersectionObserver(es=>{ barState.resultVisible = es[0].isIntersecting; updateBar(); },{threshold:.15}).observe($('#result'));
 
-/* shareable link: the quote lives in the URL hash */
-const KEYS = ['size','pkg','photos','extra15','tour','fp','video','kit','web','dusk','stage','stageType','rush','zip'];
+/* Shareable link + booking hand-off: the quote lives in the URL hash.
+   The booking page reads these same keys — keep them in sync. */
+const STR_KEYS = ['size','pkg','photos','fmt','videdit','mkt','stage','zip'];
 function saveHash(){
   const p = new URLSearchParams();
-  KEYS.forEach(k=>{ const v=Q[k]; if(v && !(k==='stageType'&&v==='stage')) p.set(k, v===true?'1':v); });
+  STR_KEYS.forEach(k=>{ if(Q[k]) p.set(k, Q[k]); });
+  BOOL_KEYS.forEach(k=>{ if(Q[k]) p.set(k,'1'); });
+  if(Q.dusk && Q.duskQty>1) p.set('duskQty', Q.duskQty);
+  if(Q.stage && Q.stageQty>1) p.set('stageQty', Q.stageQty);
   const h = p.toString();
   history.replaceState(null,'', h ? '#'+h : location.pathname+location.search);
-  // "Book this shoot" carries the quote over so the booking form is pre-filled
   $('#book').href = BOOKING_URL + (h ? '#'+h : '');
 }
 function loadHash(){
   if(!location.hash) return;
   const p = new URLSearchParams(location.hash.slice(1));
-  if(p.has('size') && PKG.ess.hasOwnProperty(p.get('size'))) Q.size=p.get('size');
-  if(['ess','escan','sig','del','own'].includes(p.get('pkg'))) Q.pkg=p.get('pkg');
-  if(PHOTO_PRICE[p.get('photos')]) Q.photos=+p.get('photos');
-  ['extra15','tour','fp','kit','web','rush'].forEach(k=>{ Q[k]=p.get(k)==='1'; });
-  if(['simple','full'].includes(p.get('video'))) Q.video=p.get('video');
-  ['dusk','stage'].forEach(k=>{ const n=parseInt(p.get(k)); if(n>0) Q[k]=Math.min(50,n); });
-  if(STAGE_UNIT[p.get('stageType')]) Q.stageType=p.get('stageType');
+  const oneOf = (k,list) => list.includes(p.get(k)) ? p.get(k) : '';
+  if(PKG.ess.hasOwnProperty(p.get('size'))) Q.size=p.get('size');
+  Q.pkg = oneOf('pkg',['ess','escan','sig','del','own']) || null;
+  Q.photos = oneOf('photos',['15','25','35','50','65']);
+  Q.fmt = oneOf('fmt',['vertical','horizontal','both']);
+  Q.videdit = oneOf('videdit',['short60','1to3','4to10']);
+  Q.mkt = oneOf('mkt',['kit','website','bundle']);
+  Q.stage = oneOf('stage',['stage','clutter','both']);
+  BOOL_KEYS.forEach(k=>{ Q[k]=p.get(k)==='1'; });
+  ['duskQty','stageQty'].forEach(k=>{ const n=parseInt(p.get(k),10); if(n>0) Q[k]=Math.min(75,n); });
   const z=(p.get('zip')||'').replace(/\D/g,'').slice(0,5);
   if(z.length===5){ Q.zip=z; $('#zip').value=z; checkZip(z); }
+  // open the categories that have something picked
+  $$('.acc[data-acc]').forEach(a=>{ const keys=ACC_KEYS[a.dataset.acc]; if(keys && keys.some(k=>!!Q[k])) a.classList.add('open'); });
 }
 $('#share').addEventListener('click',async()=>{
   try{ await navigator.clipboard.writeText(location.href); toast('Link copied'); }
