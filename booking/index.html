@@ -2155,16 +2155,18 @@ render();
    The quote page sends its selections in the link, e.g.
    /booking#size=2001-4000&pkg=sig&extra15=1&rush=1
    We apply them by clicking this page's own controls, so all the
-   normal pricing and dedupe rules still run.
+   normal pricing and dedupe rules still run. Keep the keys in sync
+   with the quote page.
    ============================================================ */
 (function prefillFromQuote(){
   if(!location.hash || location.hash.indexOf('size=')<0) return;
   const p = new URLSearchParams(location.hash.slice(1));
   const on = k => p.get(k)==='1';
-  const num = (k,max) => { const n=parseInt(p.get(k),10); return n>0 ? Math.min(max,n) : 0; };
+  const num = (k,max) => { const n=parseInt(p.get(k),10); return n>0 ? Math.min(max,n) : 1; };
   const check = id => { const cb=$(id); if(cb && !cb.checked) cb.click(); };
   const openAcc = id => { const a=$(id); if(a) a.classList.add('open'); };
   const setQty = (id,n) => { const i=$(id); if(i){ i.value=n; i.dispatchEvent(new Event('input')); } };
+  const pickOpt = (group,val) => { const o=document.querySelector(`#${group} .opt[data-value="${val}"]`); if(o){ o.click(); return true; } return false; };
 
   // 1. size (required — nothing else is priced without it)
   const sizeOpt = document.querySelector(`#sqft-group .opt[data-value="${p.get('size')}"]`);
@@ -2177,25 +2179,39 @@ render();
   if(['ess','escan','sig','del'].includes(pkg)) selPkg(pkg);
   if(on('extra15') && ['ess','sig','del'].includes(pkg)) check('ess-addon-cb');
 
-  // 3. services
+  // 3. add-ons
   const photos = p.get('photos');
-  if(photos){ const o=document.querySelector(`#photo-group .opt[data-value="${photos}"]`); if(o){ o.click(); openAcc('acc-photo'); } }
+  if(photos && pickOpt('photo-group',photos)) openAcc('acc-photo');
+
+  if(on('vvt')){
+    check('vvt-cb');
+    const f = {vertical:'Vertical', horizontal:'Horizontal/Landscape', both:'Both'}[p.get('fmt')];
+    if(f){ $('vvt-fmt').value=f; $('vvt-fmt').dispatchEvent(new Event('change')); }
+    openAcc('acc-video');
+  }
+  if(on('fwv')){ check(big ? 'fwv-large-cb' : 'fwv-cb'); openAcc('acc-video'); }
+
   if(on('tour')){ check('matterport-cb'); openAcc('acc-3d'); }
   if(on('fp')){ check('fp-cb'); openAcc('acc-3d'); }
-  if(p.get('video')==='simple'){ check('vvt-cb'); openAcc('acc-video'); }       // they still pick a format
-  if(p.get('video')==='full'){ check(big ? 'fwv-large-cb' : 'fwv-cb'); openAcc('acc-video'); }
-  const kit = on('kit'), web = on('web');
-  const mkt = kit && web ? 'bundle' : kit ? 'kit' : web ? 'website' : null;
-  if(mkt){ const o=document.querySelector(`#mkt-group .opt[data-value="${mkt}"]`); if(o){ o.click(); openAcc('acc-mkt'); } }
-  const dusk = num('dusk',75);
-  if(dusk){ check('vdusk-cb'); setQty('vdusk-qty',dusk); openAcc('acc-edit'); }
-  const stage = num('stage',75);
-  if(stage){
-    const type = ['stage','clutter','both'].includes(p.get('stageType')) ? p.get('stageType') : 'stage';
-    const o=document.querySelector(`#stage-group .opt[data-value="${type}"]`);
-    if(o){ o.click(); setQty('stage-qty',stage); openAcc('acc-stage'); }
-  }
+
+  if(on('dusk')){ check('vdusk-cb'); setQty('vdusk-qty',num('duskQty',75)); openAcc('acc-edit'); }
+  const videdit = p.get('videdit');
+  if(videdit && pickOpt('videdit-group',videdit)) openAcc('acc-edit');
+
+  // marketing: new links send mkt=…; older links sent kit=1 / web=1
+  let mkt = p.get('mkt');
+  if(!mkt){ const k=on('kit'), w=on('web'); mkt = k&&w ? 'bundle' : k ? 'kit' : w ? 'website' : null; }
+  if(mkt && pickOpt('mkt-group',mkt)) openAcc('acc-mkt');
+
+  // staging: new links send stage=type&stageQty=n; older links sent stage=n&stageType=type
+  let stType = p.get('stage'), stQty = num('stageQty',75);
+  if(/^\d+$/.test(stType||'')){ stQty = Math.min(75,+stType); stType = p.get('stageType') || 'stage'; }
+  if(['stage','clutter','both'].includes(stType) && pickOpt('stage-group',stType)){ setQty('stage-qty',stQty); openAcc('acc-stage'); }
+
+  if(on('gift')){ check('gift-cb'); openAcc('acc-gift'); }
   if(on('rush')){ check('rush-cb'); openAcc('acc-rush'); }
+  if(on('holiday')){ check('holiday-cb'); openAcc('acc-rush'); }
+  ['matterpak','e57','cad','bim','trueplan','pireport'].forEach(k=>{ if(on(k)){ check(k+'-cb'); openAcc('acc-tech'); } });
 
   // ZIP for step 3 (they finish the street address there)
   const zip = (p.get('zip')||'').replace(/\D/g,'').slice(0,5);
