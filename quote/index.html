@@ -75,7 +75,7 @@ main{max-width:760px;margin:0 auto;padding:36px 20px 140px}
 .pkg{position:relative;text-align:left;border:1.5px solid var(--line);background:var(--white);border-radius:var(--r);padding:0;cursor:pointer;transition:var(--t);overflow:hidden;display:flex;flex-direction:column}
 .pkg:hover{border-color:var(--gold)}
 .pkg[aria-checked="true"]{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold);background:var(--gold-tint)}
-.pkg img{width:100%;aspect-ratio:4/3;height:auto;object-fit:cover}
+.pkg img{width:100%;aspect-ratio:16/9;height:auto;object-fit:cover}
 .pkg .pb{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
 .pkg .pt{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .pkg .pn{font-family:var(--display);font-size:20px;letter-spacing:.04em;color:var(--black);line-height:1}
@@ -103,7 +103,6 @@ main{max-width:760px;margin:0 auto;padding:36px 20px 140px}
 .opt .op{font-size:15px;font-weight:600;white-space:nowrap;margin-left:auto;padding-left:12px;flex-shrink:0;color:var(--ink)}
 .opt .op small{font-weight:500;color:var(--taupe)}
 .opt .op .plus{color:var(--gold-dk)}
-.opt .gift-img{width:76px;height:76px;object-fit:cover;border-radius:var(--r);flex-shrink:0;margin-left:4px}
 .note{font-size:13.5px;color:var(--taupe);margin-top:10px;line-height:1.55}
 .note.top{margin:0 0 10px}
 .note.ok{color:var(--green);font-weight:500}
@@ -196,7 +195,6 @@ footer{max-width:760px;margin:0 auto;padding:0 20px 120px;font-size:12px;color:v
   .sizes{grid-template-columns:repeat(2,1fr)}
   .sizes .chip:last-child{grid-column:1/-1}
   .pkgs{grid-template-columns:1fr}
-  .pkg img{aspect-ratio:3/2}
   .pkg .tag{font-size:9px;letter-spacing:.1em;padding:3px 7px;max-width:calc(100% - 16px);white-space:nowrap}
   .ctas{grid-template-columns:1fr}
   .qh h2{font-size:23px}
@@ -204,7 +202,6 @@ footer{max-width:760px;margin:0 auto;padding:0 20px 120px;font-size:12px;color:v
   .acc-h .at{font-size:23px}
   .acc-b{padding:4px 12px 16px}
   .opt{padding:13px 13px;gap:11px}
-  .opt .gift-img{width:60px;height:60px}
   .bar .in{padding:10px 16px}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
@@ -272,11 +269,6 @@ footer{max-width:760px;margin:0 auto;padding:0 20px 120px;font-size:12px;color:v
       </button>
     </div>
     <p class="pkg-note" id="pkg-custom-note" hidden>This package is quoted individually for properties over 8,000 sq ft. We'll send a custom quote, and nothing is charged until you approve it.</p>
-    <div class="slide" id="extra15-slide">
-      <div style="padding-top:12px">
-        <label class="opt"><input type="checkbox" data-cb="extra15"><span class="ol"><span class="on">Add 15 more photos</span><span class="od">On top of the photos already in your package</span></span><span class="op"><span class="plus">+</span>$75</span></label>
-      </div>
-    </div>
   </section>
 
   <!-- 3 — ADD-ONS & À LA CARTE -->
@@ -386,14 +378,6 @@ footer{max-width:760px;margin:0 auto;padding:0 20px 120px;font-size:12px;color:v
       </div>
     </div>
 
-    <!-- Closing gift -->
-    <div class="acc" data-acc="gift">
-      <button class="acc-h" type="button" aria-expanded="false"><span class="al"><span class="at">Closing Gift</span><span class="ax">A gift for your client</span></span><span class="badge" hidden></span><span class="ai">+</span></button>
-      <div class="acc-b">
-        <label class="opt"><input type="checkbox" data-cb="gift"><span class="ol"><span class="on">The Signature Album</span><span class="od">Hardcover photo book with matte pages, featuring the property photos and address. Free shipping.</span></span><span class="op">$159</span><img class="gift-img" src="https://static.showit.com/file/C3VU0B6OMGp9Jfp3v1pxwQ/273321/screenshot_2026-08-13_at_2_43_04_pm.png" alt="The Signature Album" loading="lazy" onerror="this.remove()"></label>
-      </div>
-    </div>
-
     <!-- Scheduling & rush -->
     <div class="acc" data-acc="rush">
       <button class="acc-h" type="button" aria-expanded="false"><span class="al"><span class="at">Scheduling &amp; Rush</span><span class="ax">Faster delivery &amp; holiday dates</span></span><span class="badge" hidden></span><span class="ai">+</span></button>
@@ -421,13 +405,6 @@ footer{max-width:760px;margin:0 auto;padding:0 20px 120px;font-size:12px;color:v
       </div>
     </div>
 
-    <!-- Aerial -->
-    <div class="acc" data-acc="aerial">
-      <button class="acc-h" type="button" aria-expanded="false"><span class="al"><span class="at">Aerial Photography &amp; Video</span><span class="ax">Coming soon</span></span><span class="ai">+</span></button>
-      <div class="acc-b">
-        <p class="note top">Aerial isn't bookable yet. When you book, you can ask to be notified when it launches.</p>
-      </div>
-    </div>
   </section>
 
   <!-- 4 — TRAVEL (optional) -->
@@ -499,9 +476,9 @@ const PKG_INCLUDES = {
 };
 const PRICE = {
   fp:40, matterpak:80, e57:160, cad:180, bim:300, trueplan:140, pireport:40,
-  kit:85, website:40, kitBundle:110, extra15:75,
+  kit:85, website:40, kitBundle:110,
   vdusk:30, videdit:{short60:80,'1to3':150,'4to10':250},
-  album:159, rush:75, holiday:100,
+  rush:75, holiday:100,
 };
 const STAGE_UNIT = {stage:35, clutter:25, both:50};
 const STAGE_NAME = {stage:'Virtual staging', clutter:'Clutter removal', both:'Staging + clutter removal'};
@@ -517,7 +494,7 @@ const TRAVEL_FREE_MILES=90, TRAVEL_FREE_SEC=7200, TRAVEL_RATE_PER_MILE=1.25, TRA
 const travelFeeFor = miles => Math.ceil((miles*TRAVEL_RATE_PER_MILE)/5)*5;
 
 /* ============================================================ STATE */
-const BOOL_KEYS = ['extra15','vvt','fwv','tour','fp','dusk','gift','rush','holiday','matterpak','e57','cad','bim','trueplan','pireport'];
+const BOOL_KEYS = ['vvt','fwv','tour','fp','dusk','rush','holiday','matterpak','e57','cad','bim','trueplan','pireport'];
 const Q = {size:null, pkg:null, photos:'', fmt:'', duskQty:1, videdit:'', mkt:'', stage:'', stageQty:1,
            zip:'', travelFee:0, travelMiles:0};
 BOOL_KEYS.forEach(k=>Q[k]=false);
@@ -535,7 +512,6 @@ const inc = {
   kit:  () => Q.pkg==='del',
 };
 const isBig = () => Q.size===BIG;
-const extra15Ok = () => ['ess','sig','del'].includes(Q.pkg) && !isBig();
 
 /* drop anything the current package already covers */
 function dedupe(){
@@ -544,7 +520,6 @@ function dedupe(){
   if(Q.mkt==='kit' && inc.kit()) Q.mkt='';
   if(Q.mkt==='website' && inc.web()) Q.mkt='';
   if(Q.mkt==='bundle' && (inc.kit()||inc.web())) Q.mkt='';
-  if(!extra15Ok()) Q.extra15=false;
   if(!Q.vvt) Q.fmt='';
 }
 
@@ -559,7 +534,6 @@ function calc(){
     const p = PKG[pk][s];
     pkgLine = {n:PKG_NAME[pk]+' package', p:p||0, label:p==null?'Custom quote':null, inc:PKG_INCLUDES[pk]};
     if(p==null) custom.push(PKG_NAME[pk]+' package');
-    if(p!=null && Q.extra15 && extra15Ok()) lines.push({n:`Add 15 photos (${PKG_PHOTOS[pk]+15} total)`, p:PRICE.extra15, sub:true});
   }
   if(Q.photos){
     const c = +Q.photos;
@@ -596,7 +570,6 @@ function calc(){
   if(Q.videdit==='short60') lines.push({n:'Video editing (up to 60 sec)', p:PRICE.videdit.short60});
   else if(Q.videdit==='1to3') lines.push({n:'Video editing (1–3 min)', p:PRICE.videdit['1to3']});
   else if(Q.videdit==='4to10') lines.push({n:'Video editing (4–10 min)', p:PRICE.videdit['4to10'], label:'From '+fmt(PRICE.videdit['4to10']), from:true});
-  if(Q.gift) lines.push({n:'The Signature Album', p:PRICE.album});
   if(Q.travelFee>0) lines.push({n:`Travel (${Q.travelMiles} mi)`, p:Q.travelFee});
 
   const total = (pkgLine?pkgLine.p:0) + lines.reduce((a,l)=>a+l.p,0);
@@ -621,7 +594,7 @@ const slide = (el,on) => el.classList.toggle('open', !!on);
 /* which state keys count toward each accordion's "selected" badge */
 const ACC_KEYS = {
   photo:['photos'], video:['vvt','fwv'], '3d':['tour','fp'], edit:['dusk','videdit'], mkt:['mkt'],
-  stage:['stage'], gift:['gift'], rush:['rush','holiday'], tech:['matterpak','e57','cad','bim','trueplan','pireport'],
+  stage:['stage'], rush:['rush','holiday'], tech:['matterpak','e57','cad','bim','trueplan','pireport'],
 };
 
 function render(){
@@ -641,7 +614,6 @@ function render(){
     el.textContent = p==null ? 'Custom quote' : (s ? fmt(p) : 'from '+fmt(p));
   });
   $('#pkg-custom-note').hidden = !(big && pk);
-  slide($('#extra15-slide'), extra15Ok());
 
   // section 3 copy
   const own = Q.pkg==='own';
