@@ -376,7 +376,6 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
     <span class="micro">Estimated time</span>
     <span class="v">3–5 min</span>
   </div>
-  <p style="margin-top:16px;max-width:580px;color:var(--taupe);font-size:15px;line-height:1.6">Pick your services, choose a time, and share access details in one place. Nothing is charged today — we'll email you within 12 hours to confirm your appointment.</p>
 </section>
 
 <nav class="progress" id="progress" aria-label="Booking progress">
@@ -2150,6 +2149,62 @@ $('mob-sheet').addEventListener('click',e=>{ if(e.target===$('mob-sheet')) $('mo
    ============================================================ */
 setProgress();
 render();
+
+/* ============================================================
+   PREFILL FROM INSTANT QUOTE  (mediamansion.com/quote → Book this shoot)
+   The quote page sends its selections in the link, e.g.
+   /booking#size=2001-4000&pkg=sig&extra15=1&rush=1
+   We apply them by clicking this page's own controls, so all the
+   normal pricing and dedupe rules still run.
+   ============================================================ */
+(function prefillFromQuote(){
+  if(!location.hash || location.hash.indexOf('size=')<0) return;
+  const p = new URLSearchParams(location.hash.slice(1));
+  const on = k => p.get(k)==='1';
+  const num = (k,max) => { const n=parseInt(p.get(k),10); return n>0 ? Math.min(max,n) : 0; };
+  const check = id => { const cb=$(id); if(cb && !cb.checked) cb.click(); };
+  const openAcc = id => { const a=$(id); if(a) a.classList.add('open'); };
+  const setQty = (id,n) => { const i=$(id); if(i){ i.value=n; i.dispatchEvent(new Event('input')); } };
+
+  // 1. size (required — nothing else is priced without it)
+  const sizeOpt = document.querySelector(`#sqft-group .opt[data-value="${p.get('size')}"]`);
+  if(!sizeOpt) return;
+  sizeOpt.click();
+  const big = S.sqftKey===CUSTOM_KEY;
+
+  // 2. package
+  const pkg = p.get('pkg');
+  if(['ess','escan','sig','del'].includes(pkg)) selPkg(pkg);
+  if(on('extra15') && ['ess','sig','del'].includes(pkg)) check('ess-addon-cb');
+
+  // 3. services
+  const photos = p.get('photos');
+  if(photos){ const o=document.querySelector(`#photo-group .opt[data-value="${photos}"]`); if(o){ o.click(); openAcc('acc-photo'); } }
+  if(on('tour')){ check('matterport-cb'); openAcc('acc-3d'); }
+  if(on('fp')){ check('fp-cb'); openAcc('acc-3d'); }
+  if(p.get('video')==='simple'){ check('vvt-cb'); openAcc('acc-video'); }       // they still pick a format
+  if(p.get('video')==='full'){ check(big ? 'fwv-large-cb' : 'fwv-cb'); openAcc('acc-video'); }
+  const kit = on('kit'), web = on('web');
+  const mkt = kit && web ? 'bundle' : kit ? 'kit' : web ? 'website' : null;
+  if(mkt){ const o=document.querySelector(`#mkt-group .opt[data-value="${mkt}"]`); if(o){ o.click(); openAcc('acc-mkt'); } }
+  const dusk = num('dusk',75);
+  if(dusk){ check('vdusk-cb'); setQty('vdusk-qty',dusk); openAcc('acc-edit'); }
+  const stage = num('stage',75);
+  if(stage){
+    const type = ['stage','clutter','both'].includes(p.get('stageType')) ? p.get('stageType') : 'stage';
+    const o=document.querySelector(`#stage-group .opt[data-value="${type}"]`);
+    if(o){ o.click(); setQty('stage-qty',stage); openAcc('acc-stage'); }
+  }
+  if(on('rush')){ check('rush-cb'); openAcc('acc-rush'); }
+
+  // ZIP for step 3 (they finish the street address there)
+  const zip = (p.get('zip')||'').replace(/\D/g,'').slice(0,5);
+  if(zip.length===5 && $('zip')) $('zip').value = zip;
+
+  render();
+  history.replaceState(null,'',location.pathname+location.search);   // a refresh starts clean
+  setTimeout(()=>showToast('Your quote is loaded. Review it below, then continue.'),400);
+})();
 </script>
 
 </body>
