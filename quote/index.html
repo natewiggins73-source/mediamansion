@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instant Quote | Media Mansion</title>
+<meta name="description" content="Get an instant price for real estate photos, Matterport 3D tours, floor plans and video in Greater Philadelphia. No email or phone number required.">
+<link rel="canonical" href="https://mediamansion.com/quote">
+<meta name="theme-color" content="#060a0c">
+<link rel="icon" href="https://static.showit.com/file/5TM7Lbemb2ZT0DGp28HF6A/273321/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="https://static.showit.com/file/5TM7Lbemb2ZT0DGp28HF6A/273321/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Instant Quote | Media Mansion">
+<meta property="og:description" content="See your price in under a minute. No contact info needed.">
+<meta property="og:image" content="https://static.showit.com/file/1k77VDFhZ6cB_A7WMYvtJQ/273321/screenshot_2026-09-03_at_4_50_53_pm.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#060a0c;--ink:#1c1a17;--panel:#17150f;
+  --paper:#f7f5f1;--cream:#eceae5;--white:#fff;
+  --gold:#c9a15c;--gold-dk:#a5813f;--gold-tint:#faf4e9;--gold-line:#e6d4b3;
+  --taupe:#8c847a;--taupe-lt:#b8b0a4;
+  --line:#e4e0d7;--line-soft:#efece4;
+  --red:#b23b3b;--red-bg:#fbf1f1;--green:#3f7d5c;--green-bg:#eef6f1;
+  --serif:'Playfair Display',Georgia,serif;
+  --display:'Bebas Neue',Impact,sans-serif;
+  --sans:'Montserrat',system-ui,-apple-system,sans-serif;
+  --r:6px;--t:.18s ease;
+}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:var(--sans);color:var(--ink);background:var(--paper);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+img{max-width:100%;display:block}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.sr-only{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.micro{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--taupe)}
+
+/* header */
+.hdr{background:var(--black);color:#fff}
+.hdr .in{max-width:760px;margin:0 auto;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{height:36px;width:auto}
+.brand .bt{font-family:var(--display);font-size:22px;letter-spacing:.08em;line-height:1}
+.brand .bs{font-size:10px;letter-spacing:.22em;color:var(--taupe-lt);text-transform:uppercase;font-weight:600;margin-top:3px}
+.hdr .home{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--taupe-lt)}
+.hdr .home:hover{color:#fff}
+
+/* intro */
+main{max-width:760px;margin:0 auto;padding:36px 20px 140px}
+.intro h1{font-family:var(--display);font-weight:400;font-size:clamp(40px,8vw,64px);line-height:.92;letter-spacing:.01em;text-transform:uppercase;color:var(--black)}
+.intro p{margin-top:12px;color:var(--taupe);font-size:15px;max-width:520px}
+.badges{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:16px}
+.badges span{font-size:12px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:6px}
+.badges span::before{content:'\2713';font-size:11px}
+
+/* sections */
+.q{margin-top:34px;transition:opacity .3s ease}
+.q.locked{opacity:.35;pointer-events:none;user-select:none}
+.qh{display:flex;align-items:baseline;gap:12px;margin-bottom:14px}
+.qh .n{font-family:var(--display);font-size:30px;color:var(--gold);line-height:1}
+.qh h2{font-family:var(--display);font-weight:400;font-size:26px;letter-spacing:.03em;text-transform:uppercase;color:var(--black);line-height:1}
+.qh .opt{font-size:12px;color:var(--taupe);font-weight:500;letter-spacing:.04em;margin-left:auto;white-space:nowrap}
+.hint{font-size:13px;color:var(--taupe);margin:-6px 0 14px}
+
+/* size chips */
+.sizes{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--white);border-radius:var(--r);padding:14px 8px;text-align:center;cursor:pointer;transition:var(--t)}
+.chip:hover{border-color:var(--gold)}
+.chip[aria-checked="true"]{border-color:var(--gold);background:var(--gold-tint);box-shadow:inset 0 0 0 1px var(--gold)}
+.chip b{display:block;font-family:var(--display);font-weight:400;font-size:22px;letter-spacing:.02em;color:var(--black);line-height:1}
+.chip small{display:block;font-size:11px;color:var(--taupe);margin-top:4px;font-weight:500}
+
+/* package cards */
+.pkgs{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.pkg{position:relative;text-align:left;border:1.5px solid var(--line);background:var(--white);border-radius:var(--r);padding:0;cursor:pointer;transition:var(--t);overflow:hidden;display:flex;flex-direction:column}
+.pkg:hover{border-color:var(--gold)}
+.pkg[aria-checked="true"]{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold);background:var(--gold-tint)}
+.pkg img{width:100%;height:96px;object-fit:cover}
+.pkg .pb{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
+.pkg .pt{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pkg .pn{font-family:var(--display);font-size:20px;letter-spacing:.04em;color:var(--black);line-height:1}
+.pkg .pp{font-family:var(--display);font-size:24px;color:var(--gold-dk);line-height:1;white-space:nowrap}
+.pkg .pp.cq{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.04em}
+.pkg .pi{font-size:12.5px;color:var(--taupe);line-height:1.45}
+.pkg .tag{position:absolute;top:8px;left:8px;background:var(--black);color:var(--gold);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 8px;border-radius:3px}
+.pkg.own{grid-column:1/-1;flex-direction:row;align-items:center;padding:14px 16px;gap:14px;border-style:dashed}
+.pkg.own[aria-checked="true"]{border-style:solid}
+.pkg.own .pb{padding:0}
+.pkg.own .ic{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--gold-line);display:flex;align-items:center;justify-content:center;color:var(--gold-dk);font-size:22px;flex:none;line-height:1}
+
+/* service rows */
+.rows{background:var(--white);border:1px solid var(--line);border-radius:var(--r)}
+.row{display:block;padding:15px 16px;border-top:1px solid var(--line-soft)}
+.row:first-child{border-top:none}
+.row[hidden]{display:none}
+.rh{display:flex;align-items:center;gap:12px}
+label.row,.row .rh.tap{cursor:pointer}
+.rt{flex:1;min-width:0}
+.rn{font-size:15px;font-weight:600;color:var(--ink);display:block}
+.rd{font-size:12.5px;color:var(--taupe);display:block;margin-top:2px;line-height:1.45}
+.rp{font-size:14.5px;font-weight:600;color:var(--ink);white-space:nowrap}
+.rp small{font-weight:500;color:var(--taupe)}
+.row.on .rp{color:var(--gold-dk)}
+
+/* switch */
+.sw{appearance:none;-webkit-appearance:none;width:44px;height:26px;border-radius:26px;background:var(--line);position:relative;cursor:pointer;flex:none;transition:var(--t)}
+.sw::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:var(--t)}
+.sw:checked{background:var(--gold-dk)}
+.sw:checked::after{left:21px}
+
+/* segmented choices inside a row */
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.seg[hidden]{display:none}
+.seg button{border:1.5px solid var(--line);background:var(--white);border-radius:100px;padding:7px 13px;font-size:13px;font-weight:600;cursor:pointer;transition:var(--t);color:var(--ink)}
+.seg button:hover{border-color:var(--gold)}
+.seg button[aria-pressed="true"]{background:var(--black);border-color:var(--black);color:#fff}
+.seg button small{font-weight:500;opacity:.7;margin-left:4px}
+
+/* stepper */
+.step{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:100px;flex:none;background:var(--white)}
+.step button{width:34px;height:32px;border:none;background:none;cursor:pointer;font-size:18px;line-height:1;color:var(--ink)}
+.step button:disabled{opacity:.3;cursor:default}
+.step output{min-width:24px;text-align:center;font-weight:600;font-size:14.5px}
+.row.on .step{border-color:var(--gold)}
+
+/* travel */
+.zip{display:flex;gap:10px;align-items:center;background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.zip input{flex:1;min-width:0;border:none;background:none;font:inherit;font-size:16px;font-weight:500;color:var(--ink);letter-spacing:.06em;outline:none}
+.zip input::placeholder{color:var(--taupe-lt);letter-spacing:.02em;font-weight:400}
+.zip .zl{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--taupe)}
+.tnote{font-size:13px;margin-top:8px;color:var(--taupe);min-height:20px}
+.tnote.ok{color:var(--green)}
+.tnote.fee{color:var(--gold-dk);font-weight:600}
+.tnote.out{color:var(--red);font-weight:600}
+
+/* result */
+.result{margin-top:40px;background:var(--panel);color:var(--cream);border-radius:var(--r);border-top:3px solid var(--gold);padding:26px 22px 22px;scroll-margin-top:20px}
+.result .lbl{color:var(--taupe-lt)}
+.big{font-family:var(--display);font-size:clamp(64px,14vw,96px);line-height:.9;color:#fff;letter-spacing:.01em;margin-top:6px}
+.big.small{font-size:clamp(40px,9vw,56px)}
+.big .plus{color:var(--gold);font-size:.5em;vertical-align:.5em;margin-left:6px}
+.sub{font-size:13px;color:var(--taupe-lt);margin-top:6px}
+.lines{list-style:none;margin-top:20px;border-top:1px solid rgba(255,255,255,.12);padding-top:14px;display:flex;flex-direction:column;gap:7px}
+.lines li{display:flex;justify-content:space-between;gap:12px;font-size:14px}
+.lines li span:first-child{color:var(--taupe-lt)}
+.lines li.inc{font-size:12.5px;padding-left:14px;position:relative}
+.lines li.inc span:first-child{color:var(--taupe)}
+.lines li.inc::before{content:'\2713';position:absolute;left:0;color:var(--gold);font-size:10px;top:2px}
+.lines li.empty span{color:var(--taupe);font-style:italic}
+.fine{font-size:12px;color:var(--taupe);margin-top:14px;line-height:1.55}
+.custom{margin-top:14px;font-size:13px;color:var(--gold);border:1px solid var(--gold-dk);border-radius:var(--r);padding:10px 12px;line-height:1.5}
+.ctas{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:600;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;padding:16px 18px;border-radius:var(--r);border:1.5px solid rgba(255,255,255,.25);color:#fff;transition:var(--t);text-align:center}
+.btn:hover{border-color:#fff}
+.btn.solid{grid-column:1/-1;background:var(--gold);border-color:var(--gold);color:var(--black);font-size:13.5px;padding:18px}
+.btn.solid:hover{background:#d6b06c;border-color:#d6b06c}
+.btn svg{width:22px;height:12px}
+.share{display:block;margin:16px auto 0;background:none;border:none;color:var(--taupe-lt);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.share:hover{color:#fff}
+.result.pending .ctas,.result.pending .share,.result.pending .lines{display:none}
+
+/* sticky bar */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(23,21,15,.97);backdrop-filter:blur(8px);border-top:2px solid var(--gold);color:#fff;transform:translateY(110%);transition:transform .3s ease}
+.bar.show{transform:none}
+.bar .in{max-width:760px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.bar .bl{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--taupe-lt);font-weight:600}
+.bar .bv{font-family:var(--display);font-size:30px;letter-spacing:.03em;line-height:1}
+.bar a{background:var(--gold);color:var(--black);font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:12px 16px;border-radius:var(--r);white-space:nowrap}
+
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:var(--black);color:#fff;font-size:13.5px;padding:11px 18px;border-radius:var(--r);opacity:0;pointer-events:none;transition:.25s;z-index:60}
+.toast.show{opacity:1;transform:translateX(-50%)}
+
+footer{max-width:760px;margin:0 auto;padding:0 20px 120px;font-size:12px;color:var(--taupe);text-align:center}
+
+@media(max-width:640px){
+  main{padding:26px 16px 130px}
+  .hdr .in{padding:14px 16px}
+  .brand img{height:30px}
+  .brand .bt{font-size:19px}
+  .sizes{grid-template-columns:repeat(2,1fr)}
+  .sizes .chip:last-child{grid-column:1/-1}
+  .pkgs{grid-template-columns:1fr}
+  .pkg{flex-direction:row}
+  .pkg img{width:96px;height:auto;min-height:100%;flex:none}
+  .pkg .tag{top:6px;left:6px;font-size:9px;padding:3px 6px}
+  .ctas{grid-template-columns:1fr}
+  .qh h2{font-size:23px}
+  .bar .in{padding:10px 16px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="in">
+    <a class="brand" href="https://mediamansion.com/">
+      <img src="https://static.showit.com/file/5TM7Lbemb2ZT0DGp28HF6A/273321/apple-touch-icon.png" alt="" onerror="this.style.display='none'">
+      <span><span class="bt">Media Mansion</span><br><span class="bs">Instant Quote</span></span>
+    </a>
+    <a class="home" href="https://mediamansion.com/">&larr; Home</a>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <h1>Get your price<br>in 30 seconds</h1>
+    <p>Answer a couple of questions and see your price right away.</p>
+    <div class="badges"><span>No email or phone</span><span>Nothing to sign up for</span><span>Prices update as you go</span></div>
+  </section>
+
+  <!-- 1 — SIZE -->
+  <section class="q" id="q-size">
+    <div class="qh"><span class="n">01</span><h2>How big is the property?</h2></div>
+    <p class="hint">A rough guess is fine. Include finished and unfinished space.</p>
+    <div class="sizes" role="radiogroup" aria-label="Property size">
+      <button type="button" class="chip" role="radio" aria-checked="false" data-size="200-2000"><b>Under 2,000</b><small>sq ft</small></button>
+      <button type="button" class="chip" role="radio" aria-checked="false" data-size="2001-4000"><b>2,000–4,000</b><small>sq ft</small></button>
+      <button type="button" class="chip" role="radio" aria-checked="false" data-size="4001-6000"><b>4,000–6,000</b><small>sq ft</small></button>
+      <button type="button" class="chip" role="radio" aria-checked="false" data-size="6001-8000"><b>6,000–8,000</b><small>sq ft</small></button>
+      <button type="button" class="chip" role="radio" aria-checked="false" data-size="8001-15000"><b>8,000+</b><small>sq ft</small></button>
+    </div>
+  </section>
+
+  <!-- 2 — START POINT -->
+  <section class="q locked" id="q-pkg">
+    <div class="qh"><span class="n">02</span><h2>Pick a package</h2></div>
+    <p class="hint">Or build your own from individual services.</p>
+    <div class="pkgs" role="radiogroup" aria-label="Package">
+      <button type="button" class="pkg" role="radio" aria-checked="false" data-pkg="ess">
+        <img src="https://static.showit.com/file/VRswM6lC5RIzNBe_vPulKA/273321/bedroom_7.jpg" alt="" loading="lazy" onerror="this.remove()">
+        <span class="pb"><span class="pt"><span class="pn">Essential Photos</span><span class="pp" data-price="ess"></span></span>
+        <span class="pi">30 photos · floor plan · property website</span></span>
+      </button>
+      <button type="button" class="pkg" role="radio" aria-checked="false" data-pkg="escan">
+        <img src="https://static.showit.com/file/GGDgT_jvOXvOaX3xmxOHbw/273321/dollhouse-view_3.jpg" alt="" loading="lazy" onerror="this.remove()">
+        <span class="pb"><span class="pt"><span class="pn">Essential Scan</span><span class="pp" data-price="escan"></span></span>
+        <span class="pi">Matterport 3D tour · exterior 360° shots</span></span>
+      </button>
+      <button type="button" class="pkg" role="radio" aria-checked="false" data-pkg="sig">
+        <span class="tag">Most popular</span>
+        <img src="https://static.showit.com/file/U2rd3-3Ikj7spZIDQX4lIA/273321/20260104_1108_luxury_minimalist_home_interior_simple_compose_01ke4w8v7gfpks0f2x94tbjny1.png" alt="" loading="lazy" onerror="this.remove()">
+        <span class="pb"><span class="pt"><span class="pn">Premier Combo</span><span class="pp" data-price="sig"></span></span>
+        <span class="pi">35 photos · 3D tour · floor plan · website</span></span>
+      </button>
+      <button type="button" class="pkg" role="radio" aria-checked="false" data-pkg="del">
+        <img src="https://static.showit.com/file/MxZlE4a-bYW6LVbGxFbo7w/273321/124314.jpg" alt="" loading="lazy" onerror="this.remove()">
+        <span class="pb"><span class="pt"><span class="pn">Deluxe Bundle</span><span class="pp" data-price="del"></span></span>
+        <span class="pi">Premier Combo + social kit, 2 virtual dusk photos, vertical reel</span></span>
+      </button>
+      <button type="button" class="pkg own" role="radio" aria-checked="false" data-pkg="own">
+        <span class="ic" aria-hidden="true">+</span>
+        <span class="pb"><span class="pn">Build my own</span><span class="pi">Pick just the services you need</span></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- 3 — SERVICES / ADD-ONS -->
+  <section class="q locked" id="q-add">
+    <div class="qh"><span class="n">03</span><h2 id="add-title">Anything else?</h2><span class="opt" id="add-opt">Optional</span></div>
+    <div class="rows">
+      <div class="row" data-k="photos">
+        <div class="rh"><span class="rt"><span class="rn">Listing photos</span><span class="rd">HDR edited, delivered in 24–48 hrs</span></span><span class="rp" data-p="photos"></span></div>
+        <div class="seg" data-seg="photos">
+          <button type="button" data-v="0" aria-pressed="true">None</button>
+          <button type="button" data-v="15" aria-pressed="false">15</button>
+          <button type="button" data-v="25" aria-pressed="false">25</button>
+          <button type="button" data-v="35" aria-pressed="false">35</button>
+          <button type="button" data-v="50" aria-pressed="false">50</button>
+          <button type="button" data-v="65" aria-pressed="false">65</button>
+        </div>
+      </div>
+      <label class="row" data-k="extra15">
+        <span class="rh"><span class="rt"><span class="rn">15 more photos</span><span class="rd">On top of the photos in your package</span></span><span class="rp">+$75</span><input type="checkbox" class="sw" data-sw="extra15" aria-label="Add 15 more photos"></span>
+      </label>
+      <label class="row" data-k="tour">
+        <span class="rh"><span class="rt"><span class="rn">Matterport 3D tour</span><span class="rd">Interactive walkthrough + exterior 360° shots</span></span><span class="rp" data-p="tour"></span><input type="checkbox" class="sw" data-sw="tour" aria-label="Matterport 3D tour"></span>
+      </label>
+      <label class="row" data-k="fp">
+        <span class="rh"><span class="rt"><span class="rn">Measured floor plan</span></span><span class="rp">$40</span><input type="checkbox" class="sw" data-sw="fp" aria-label="Measured floor plan"></span>
+      </label>
+      <div class="row" data-k="video">
+        <div class="rh"><span class="rt"><span class="rn">Walkthrough video</span><span class="rd" id="video-d">Simple: 30–60 sec, one continuous take. Full: multi-room, edited with music.</span></span><span class="rp" data-p="video"></span></div>
+        <div class="seg" data-seg="video">
+          <button type="button" data-v="" aria-pressed="true">None</button>
+          <button type="button" data-v="simple" aria-pressed="false">Simple</button>
+          <button type="button" data-v="full" aria-pressed="false">Full</button>
+        </div>
+      </div>
+      <label class="row" data-k="kit">
+        <span class="rh"><span class="rt"><span class="rn">Social media kit</span><span class="rd">Reels, branded tiles and flyers from your listing media</span></span><span class="rp">$85</span><input type="checkbox" class="sw" data-sw="kit" aria-label="Social media kit"></span>
+      </label>
+      <label class="row" data-k="web">
+        <span class="rh"><span class="rt"><span class="rn">Property website</span><span class="rd">A dedicated website for the listing</span></span><span class="rp">$40</span><input type="checkbox" class="sw" data-sw="web" aria-label="Property website"></span>
+      </label>
+      <div class="row" data-k="dusk">
+        <div class="rh"><span class="rt"><span class="rn">Virtual dusk</span><span class="rd">Turn a daytime exterior into a twilight shot</span></span><span class="rp" data-p="dusk">$30<small>/photo</small></span>
+          <span class="step"><button type="button" data-step="dusk" data-d="-1" aria-label="Fewer">−</button><output data-out="dusk">0</output><button type="button" data-step="dusk" data-d="1" aria-label="More">+</button></span></div>
+      </div>
+      <div class="row" data-k="stage">
+        <div class="rh"><span class="rt"><span class="rn">Virtual staging</span><span class="rd">Furnish empty rooms, remove clutter, or both. Priced per image.</span></span><span class="rp" data-p="stage">$35<small>/image</small></span>
+          <span class="step"><button type="button" data-step="stage" data-d="-1" aria-label="Fewer">−</button><output data-out="stage">0</output><button type="button" data-step="stage" data-d="1" aria-label="More">+</button></span></div>
+        <div class="seg" data-seg="stageType" hidden>
+          <button type="button" data-v="stage" aria-pressed="true">Staging <small>$35</small></button>
+          <button type="button" data-v="clutter" aria-pressed="false">Clutter removal <small>$25</small></button>
+          <button type="button" data-v="both" aria-pressed="false">Both <small>$50</small></button>
+        </div>
+      </div>
+      <label class="row" data-k="rush">
+        <span class="rh"><span class="rt"><span class="rn">Rush delivery</span><span class="rd">Photos and floor plan in under 24 hrs</span></span><span class="rp">+$75</span><input type="checkbox" class="sw" data-sw="rush" aria-label="Rush delivery"></span>
+      </label>
+    </div>
+  </section>
+
+  <!-- 4 — TRAVEL (optional) -->
+  <section class="q locked" id="q-zip">
+    <div class="qh"><span class="n">04</span><h2>Property ZIP</h2><span class="opt">Optional</span></div>
+    <p class="hint">Travel is free within about 90 miles of Philadelphia. Add a ZIP code to check.</p>
+    <label class="zip"><span class="zl">ZIP</span><input id="zip" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="e.g. 19103" aria-label="Property ZIP code"></label>
+    <div class="tnote" id="tnote" aria-live="polite"></div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="result pending" id="result" aria-live="polite">
+    <div class="micro lbl">Your estimate</div>
+    <div class="big small" id="total">Pick a size</div>
+    <div class="sub" id="total-sub">Start with step 1 above.</div>
+    <ul class="lines" id="lines"></ul>
+    <div class="custom" id="custom" hidden></div>
+    <p class="fine" id="fine"></p>
+    <div class="ctas">
+      <a class="btn solid" id="book" href="https://mediamansion.com/booking">Book this shoot
+        <svg viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M0 6h22M17 1l5 5-5 5"/></svg></a>
+      <a class="btn" href="https://mediamansion.com/#contact">Ask a question</a>
+      <a class="btn" href="https://mediamansion.com/">Back to home</a>
+    </div>
+    <button type="button" class="share" id="share">Copy a link to this quote</button>
+  </section>
+</main>
+
+<footer>Estimate based on current Media Mansion pricing. Your final price is confirmed when you book.</footer>
+
+<div class="bar" id="bar" aria-hidden="true">
+  <div class="in">
+    <div><div class="bl">Estimate</div><div class="bv" id="bar-v">$0</div></div>
+    <a href="#result">See price</a>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ============================================================
+   PRICING — copied from the booking page. If prices change there,
+   change them here too.
+   ============================================================ */
+const BOOKING_URL = 'https://mediamansion.com/booking';
+const BIG = '8001-15000';
+const VVT_PRICE = {'200-2000':110,'2001-4000':120,'4001-6000':130,'6001-8000':140,'8001-15000':160};
+const FWV_PRICE = {'200-2000':265,'2001-4000':315,'4001-6000':390,'6001-8000':475};
+const PHOTO_PRICE = {
+  15:{'200-2000':99,'2001-4000':105,'4001-6000':110,'6001-8000':115,'8001-15000':125},
+  25:{'200-2000':120,'2001-4000':130,'4001-6000':140,'6001-8000':150,'8001-15000':160},
+  35:{'200-2000':145,'2001-4000':155,'4001-6000':165,'6001-8000':175,'8001-15000':185},
+  50:{'200-2000':200,'2001-4000':210,'4001-6000':220,'6001-8000':235,'8001-15000':250},
+  65:{'200-2000':250,'2001-4000':260,'4001-6000':275,'6001-8000':290,'8001-15000':310},
+};
+const PKG = {
+  ess:  {'200-2000':220,'2001-4000':240,'4001-6000':260,'6001-8000':285,'8001-15000':null},
+  escan:{'200-2000':230,'2001-4000':340,'4001-6000':490,'6001-8000':700,'8001-15000':null},
+  sig:  {'200-2000':360,'2001-4000':470,'4001-6000':600,'6001-8000':790,'8001-15000':null},
+  del:  {'200-2000':590,'2001-4000':705,'4001-6000':840,'6001-8000':1030,'8001-15000':null},
+};
+const PKG_NAME = {ess:'Essential Photos', escan:'Essential Scan', sig:'Premier Combo', del:'Deluxe Bundle'};
+const PKG_INCLUDES = {
+  ess:['30 listing photos','Measured floor plan','Property website','24–48 hr delivery'],
+  escan:['Matterport 3D tour','Exterior 360° shots','24–48 hr delivery'],
+  sig:['35 listing photos','Measured floor plan','Matterport 3D tour','Exterior 360° shots','Property website','48 hr delivery'],
+  del:['35 listing photos','Measured floor plan','Matterport 3D tour','Exterior 360° shots','Property website','Social media kit','2 virtual dusk photos','1 vertical walkthrough reel','48 hr delivery'],
+};
+const PRICE = {fp:40, kit:85, web:40, kitWeb:110, extra15:75, dusk:30, rush:75};
+const STAGE_UNIT = {stage:35, clutter:25, both:50};
+const STAGE_NAME = {stage:'Virtual staging', clutter:'Clutter removal', both:'Staging + clutter removal'};
+
+/* travel — same rules as booking page */
+const ORIGIN_LAT=40.0247, ORIGIN_LON=-75.2271;
+const TRAVEL_FREE_MILES=90, TRAVEL_FREE_SEC=7200, TRAVEL_RATE_PER_MILE=1.25, TRAVEL_MAX_SEC=16200;
+const travelFeeFor = miles => Math.ceil((miles*TRAVEL_RATE_PER_MILE)/5)*5;
+
+/* ============================================================ STATE */
+const Q = {size:null, pkg:null, photos:0, extra15:false, tour:false, fp:false, video:'',
+           kit:false, web:false, dusk:0, stage:0, stageType:'stage', rush:false,
+           zip:'', travelFee:0, travelMiles:0};
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const fmt = n => '$'+Math.round(n).toLocaleString('en-US');
+
+/* What's already in each package, so we never offer it twice */
+const has = {
+  photos:  p => ['ess','sig','del'].includes(p),
+  tour:    p => ['escan','sig','del'].includes(p),
+  fp:      p => ['ess','sig','del'].includes(p),
+  web:     p => ['ess','sig','del'].includes(p),
+  kit:     p => p==='del',
+};
+function visible(k){
+  const p = Q.pkg, big = Q.size===BIG;
+  switch(k){
+    case 'photos':  return !has.photos(p);
+    case 'extra15': return has.photos(p) && !big;
+    case 'tour':    return !has.tour(p);
+    case 'fp':      return !has.fp(p);
+    case 'web':     return !has.web(p);
+    case 'kit':     return !has.kit(p);
+    default:        return true;
+  }
+}
+const OFF = {photos:0, extra15:false, tour:false, fp:false, kit:false, web:false};
+
+/* ============================================================ CALC */
+function calc(){
+  const s = Q.size, lines = [], custom = [];
+  if(!s || !Q.pkg) return null;
+  let pkgLine = null;
+
+  if(Q.pkg!=='own'){
+    const p = PKG[Q.pkg][s];
+    pkgLine = {n:PKG_NAME[Q.pkg], p:p||0, label:p==null?'Custom quote':null, inc:PKG_INCLUDES[Q.pkg]};
+    if(p==null) custom.push(PKG_NAME[Q.pkg]+' package');
+  }
+  if(visible('photos') && Q.photos) lines.push({n:`${Q.photos} listing photos`, p:PHOTO_PRICE[Q.photos][s]});
+  if(visible('extra15') && Q.extra15) lines.push({n:'15 more photos', p:PRICE.extra15});
+  if(visible('tour') && Q.tour){
+    const p = PKG.escan[s];
+    if(p==null){ lines.push({n:'Matterport 3D tour', p:0, label:'Custom quote'}); custom.push('Matterport 3D tour'); }
+    else lines.push({n:'Matterport 3D tour', p});
+  }
+  if(visible('fp') && Q.fp) lines.push({n:'Measured floor plan', p:PRICE.fp});
+  if(Q.video==='simple') lines.push({n:'Simple walkthrough video', p:VVT_PRICE[s]});
+  if(Q.video==='full'){
+    const p = FWV_PRICE[s];
+    if(p==null){ lines.push({n:'Full walkthrough video', p:0, label:'Custom quote'}); custom.push('Full walkthrough video'); }
+    else lines.push({n:'Full walkthrough video', p});
+  }
+  const kitOn = visible('kit') && Q.kit, webOn = visible('web') && Q.web;
+  if(kitOn && webOn) lines.push({n:'Social media kit + website', p:PRICE.kitWeb});
+  else if(kitOn) lines.push({n:'Social media kit', p:PRICE.kit});
+  else if(webOn) lines.push({n:'Property website', p:PRICE.web});
+  if(Q.dusk) lines.push({n:`Virtual dusk × ${Q.dusk}`, p:Q.dusk*PRICE.dusk});
+  if(Q.stage) lines.push({n:`${STAGE_NAME[Q.stageType]} × ${Q.stage}`, p:Q.stage*STAGE_UNIT[Q.stageType]});
+  if(Q.rush) lines.push({n:'Rush delivery', p:PRICE.rush});
+  if(Q.travelFee>0) lines.push({n:`Travel (${Q.travelMiles} mi)`, p:Q.travelFee});
+
+  const total = (pkgLine?pkgLine.p:0) + lines.reduce((a,l)=>a+l.p,0);
+  return {pkgLine, lines, custom, total};
+}
+
+/* ============================================================ RENDER */
+let shown = 0, raf = null;
+function animateTo(el, target){
+  cancelAnimationFrame(raf);
+  const from = shown, start = performance.now(), dur = 380;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches || Math.abs(target-from)<2){ shown=target; el.textContent=fmt(target); return; }
+  const tick = now => {
+    const t = Math.min(1,(now-start)/dur), e = 1-Math.pow(1-t,3);
+    shown = from + (target-from)*e; el.textContent = fmt(shown);
+    if(t<1) raf = requestAnimationFrame(tick); else shown = target;
+  };
+  raf = requestAnimationFrame(tick);
+}
+
+function render(){
+  const s = Q.size, big = s===BIG;
+
+  // unlock sections
+  $('#q-pkg').classList.toggle('locked', !s);
+  ['#q-add','#q-zip'].forEach(id=>$(id).classList.toggle('locked', !(s && Q.pkg)));
+
+  // chips + package cards
+  $$('.chip').forEach(c=>c.setAttribute('aria-checked', c.dataset.size===s));
+  $$('.pkg').forEach(c=>c.setAttribute('aria-checked', c.dataset.pkg===Q.pkg));
+  $$('[data-price]').forEach(el=>{
+    const p = s ? PKG[el.dataset.price][s] : PKG[el.dataset.price]['200-2000'];
+    el.classList.toggle('cq', p==null);
+    el.textContent = p==null ? 'Custom quote' : (s ? fmt(p) : 'from '+fmt(p));
+  });
+
+  // section 3 copy
+  const own = Q.pkg==='own';
+  $('#add-title').textContent = own ? 'Pick your services' : 'Anything else?';
+  $('#add-opt').textContent = own ? 'Choose at least one' : 'Optional';
+
+  // rows: visibility + reset anything hidden
+  $$('.row').forEach(r=>{
+    const k = r.dataset.k, v = visible(k);
+    r.hidden = !v;
+    if(!v && k in OFF) Q[k] = OFF[k];
+  });
+
+  // row prices for the selected size
+  const sz = s || '200-2000';
+  $('[data-p="photos"]').textContent = Q.photos ? fmt(PHOTO_PRICE[Q.photos][sz]) : 'from '+fmt(PHOTO_PRICE[15][sz]);
+  $('[data-p="tour"]').textContent = PKG.escan[sz]==null ? 'Custom quote' : fmt(PKG.escan[sz]);
+  $('[data-p="video"]').textContent =
+    Q.video==='simple' ? fmt(VVT_PRICE[sz]) :
+    Q.video==='full'   ? (FWV_PRICE[sz] ? fmt(FWV_PRICE[sz]) : 'Custom quote') :
+    'from '+fmt(VVT_PRICE[sz]);
+  $('#video-d').textContent = big
+    ? 'Simple: 30–60 sec, one continuous take. Full: priced individually for 8,000+ sq ft.'
+    : 'Simple: 30–60 sec, one continuous take. Full: multi-room, edited with music.';
+  if(Q.dusk) $('[data-p="dusk"]').textContent = fmt(Q.dusk*PRICE.dusk);
+  else $('[data-p="dusk"]').innerHTML = '$30<small>/photo</small>';
+  if(Q.stage) $('[data-p="stage"]').textContent = fmt(Q.stage*STAGE_UNIT[Q.stageType]);
+  else $('[data-p="stage"]').innerHTML = `$${STAGE_UNIT[Q.stageType]}<small>/image</small>`;
+
+  // controls reflect state
+  $$('[data-sw]').forEach(cb=>{ cb.checked = !!Q[cb.dataset.sw]; });
+  $$('[data-seg]').forEach(g=>{
+    const key = g.dataset.seg;
+    g.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', String(Q[key])===b.dataset.v));
+  });
+  $('[data-seg="stageType"]').hidden = !Q.stage;
+  $$('[data-out]').forEach(o=>{ o.textContent = Q[o.dataset.out]; });
+  $$('[data-step][data-d="-1"]').forEach(b=>{ b.disabled = !Q[b.dataset.step]; });
+  $$('.row').forEach(r=>{
+    const k=r.dataset.k, val=Q[k];
+    r.classList.toggle('on', !!val);
+  });
+
+  // result
+  const R = calc(), res = $('#result'), totEl = $('#total'), sub = $('#total-sub');
+  const linesEl = $('#lines'), cust = $('#custom'), fine = $('#fine');
+  const hasAny = R && (R.pkgLine || R.lines.length);
+  res.classList.toggle('pending', !hasAny);
+
+  if(!s){ totEl.className='big small'; totEl.textContent='Pick a size'; sub.textContent='Start with step 1 above.'; shown=0; }
+  else if(!Q.pkg){ totEl.className='big small'; totEl.textContent='Pick a package'; sub.textContent='Or choose “Build my own” in step 2.'; shown=0; }
+  else if(!hasAny){ totEl.className='big small'; totEl.textContent='Add a service'; sub.textContent='Turn on anything in step 3 to see your price.'; shown=0; }
+  else if(R.total===0 && R.custom.length){
+    totEl.className='big small'; totEl.textContent='Custom quote'; shown=0;
+    sub.textContent='Large homes are priced individually. Book or ask, and you’ll get an exact price first.';
+  } else {
+    totEl.className='big';
+    if(!totEl.firstChild || totEl.firstChild.nodeType!==3 || !/^\$/.test(totEl.textContent)) { totEl.textContent=fmt(shown); }
+    animateTo(totEl, R.total);
+    sub.textContent = R.custom.length ? 'Plus the custom-quoted items below.' : 'Before sales tax. Nothing is charged when you book.';
+  }
+
+  if(hasAny){
+    let h = '';
+    if(R.pkgLine){
+      h += `<li><span>${R.pkgLine.n} package</span><span>${R.pkgLine.label||fmt(R.pkgLine.p)}</span></li>`;
+      h += R.pkgLine.inc.map(i=>`<li class="inc"><span>${i}</span><span></span></li>`).join('');
+    }
+    h += R.lines.map(l=>`<li><span>${l.n}</span><span>${l.label||fmt(l.p)}</span></li>`).join('');
+    if(Q.travelFee===0 && Q.travelMiles===0 && $('#tnote').classList.contains('ok')) h += `<li><span>Travel</span><span>Included</span></li>`;
+    linesEl.innerHTML = h;
+    cust.hidden = !R.custom.length;
+    if(R.custom.length) cust.innerHTML = `<strong>Custom quote:</strong> ${R.custom.join(', ')}. For homes over 8,000 sq ft we send an exact price before anything is charged.`;
+    const notes = [];
+    const tourIn = has.tour(Q.pkg) || Q.tour, webIn = has.web(Q.pkg) || Q.web;
+    if(tourIn) notes.push('3D tour hosting is free for 90 days, then $20/mo');
+    if(webIn) notes.push('website hosting is free for 90 days, then $10/mo');
+    fine.textContent = notes.length ? notes.join('; ').replace(/^./,c=>c.toUpperCase())+'.' : '';
+  } else { linesEl.innerHTML=''; cust.hidden=true; fine.textContent=''; }
+
+  // sticky bar
+  const barOn = hasAny && R.total>0;
+  $('#bar-v').textContent = barOn ? fmt(R.total)+(R.custom.length?'+':'') : '';
+  barState.has = barOn; updateBar();
+
+  saveHash();
+}
+
+/* ============================================================ EVENTS */
+$$('.chip').forEach(c=>c.addEventListener('click',()=>{
+  const first = !Q.size; Q.size = c.dataset.size; render();
+  if(first) setTimeout(()=>$('#q-pkg').scrollIntoView({behavior:'smooth',block:'start'}),120);
+}));
+$$('.pkg').forEach(c=>c.addEventListener('click',()=>{
+  const first = !Q.pkg; Q.pkg = c.dataset.pkg; render();
+  if(first) setTimeout(()=>$('#q-add').scrollIntoView({behavior:'smooth',block:'start'}),120);
+}));
+$$('[data-sw]').forEach(cb=>cb.addEventListener('change',()=>{ Q[cb.dataset.sw]=cb.checked; render(); }));
+$$('[data-seg]').forEach(g=>g.addEventListener('click',e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  const key = g.dataset.seg, v = b.dataset.v;
+  Q[key] = key==='photos' ? +v : v;
+  render();
+}));
+$$('[data-step]').forEach(b=>b.addEventListener('click',()=>{
+  const k=b.dataset.step; Q[k]=Math.max(0,Math.min(50,Q[k]+(+b.dataset.d))); render();
+}));
+
+/* ZIP → travel check (ZIP centre → driving route from Philly base) */
+let zipTimer=null, zipSeq=0;
+$('#zip').addEventListener('input',e=>{
+  const v = e.target.value.replace(/\D/g,'').slice(0,5); e.target.value=v; Q.zip=v;
+  clearTimeout(zipTimer);
+  const note=$('#tnote');
+  if(v.length<5){ Q.travelFee=0; Q.travelMiles=0; note.className='tnote'; note.textContent=''; render(); return; }
+  note.className='tnote'; note.textContent='Checking…';
+  zipTimer=setTimeout(()=>checkZip(v),350);
+});
+async function checkZip(zip){
+  const seq=++zipSeq, note=$('#tnote');
+  try{
+    const g = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&postalcode=${zip}`,{headers:{'Accept-Language':'en'}}).then(r=>r.json());
+    if(seq!==zipSeq) return;
+    if(!g || !g.length){ note.className='tnote'; note.textContent='We couldn’t find that ZIP. Your travel fee, if any, is confirmed when you book.'; Q.travelFee=0; Q.travelMiles=0; render(); return; }
+    const lat=+g[0].lat, lon=+g[0].lon;
+    const d = await fetch(`https://router.project-osrm.org/route/v1/driving/${ORIGIN_LON},${ORIGIN_LAT};${lon},${lat}?overview=false`).then(r=>r.json());
+    if(seq!==zipSeq) return;
+    if(!d.routes || !d.routes.length) throw new Error('no route');
+    const route=d.routes[0], miles=Math.ceil(route.distance/1609.34);
+    if(route.duration>TRAVEL_MAX_SEC){
+      Q.travelFee=0; Q.travelMiles=0; note.className='tnote out';
+      note.textContent='That area is outside our service range right now.';
+    } else if(route.duration>TRAVEL_FREE_SEC || miles>TRAVEL_FREE_MILES){
+      Q.travelMiles=miles; Q.travelFee=travelFeeFor(miles); note.className='tnote fee';
+      note.textContent=`About ${miles} miles away, so a ${fmt(Q.travelFee)} travel fee is added.`;
+    } else {
+      Q.travelFee=0; Q.travelMiles=0; note.className='tnote ok';
+      note.textContent='✓ Travel is included for this area.';
+    }
+  }catch(err){
+    if(seq!==zipSeq) return;
+    Q.travelFee=0; Q.travelMiles=0; note.className='tnote';
+    note.textContent='Couldn’t check travel right now. Any travel fee is confirmed when you book.';
+  }
+  render();
+}
+
+/* sticky bar: show once there's a price, hide while the result is on screen */
+const barState = {has:false, resultVisible:false};
+function updateBar(){
+  const show = barState.has && !barState.resultVisible;
+  $('#bar').classList.toggle('show', show);
+  $('#bar').setAttribute('aria-hidden', String(!show));
+}
+new IntersectionObserver(es=>{ barState.resultVisible = es[0].isIntersecting; updateBar(); },{threshold:.15}).observe($('#result'));
+
+/* shareable link: the quote lives in the URL hash */
+const KEYS = ['size','pkg','photos','extra15','tour','fp','video','kit','web','dusk','stage','stageType','rush','zip'];
+function saveHash(){
+  const p = new URLSearchParams();
+  KEYS.forEach(k=>{ const v=Q[k]; if(v && !(k==='stageType'&&v==='stage')) p.set(k, v===true?'1':v); });
+  const h = p.toString();
+  history.replaceState(null,'', h ? '#'+h : location.pathname+location.search);
+  // "Book this shoot" carries the quote over so the booking form is pre-filled
+  $('#book').href = BOOKING_URL + (h ? '#'+h : '');
+}
+function loadHash(){
+  if(!location.hash) return;
+  const p = new URLSearchParams(location.hash.slice(1));
+  if(p.has('size') && PKG.ess.hasOwnProperty(p.get('size'))) Q.size=p.get('size');
+  if(['ess','escan','sig','del','own'].includes(p.get('pkg'))) Q.pkg=p.get('pkg');
+  if(PHOTO_PRICE[p.get('photos')]) Q.photos=+p.get('photos');
+  ['extra15','tour','fp','kit','web','rush'].forEach(k=>{ Q[k]=p.get(k)==='1'; });
+  if(['simple','full'].includes(p.get('video'))) Q.video=p.get('video');
+  ['dusk','stage'].forEach(k=>{ const n=parseInt(p.get(k)); if(n>0) Q[k]=Math.min(50,n); });
+  if(STAGE_UNIT[p.get('stageType')]) Q.stageType=p.get('stageType');
+  const z=(p.get('zip')||'').replace(/\D/g,'').slice(0,5);
+  if(z.length===5){ Q.zip=z; $('#zip').value=z; checkZip(z); }
+}
+$('#share').addEventListener('click',async()=>{
+  try{ await navigator.clipboard.writeText(location.href); toast('Link copied'); }
+  catch(e){ prompt('Copy this link:', location.href); }
+});
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+
+loadHash();
+render();
+</script>
+</body>
+</html>
