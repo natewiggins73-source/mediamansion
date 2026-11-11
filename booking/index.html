@@ -299,17 +299,6 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
 .mob-sheet .ms-inner{position:absolute;left:0;right:0;bottom:0;background:var(--panel);color:var(--cream);border-radius:12px 12px 0 0;padding:22px;max-height:80vh;overflow-y:auto}
 .mob-sheet .ms-close{position:absolute;top:14px;right:16px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer}
 
-/* ---------- BOOKING ID ---------- */
-.bid-card{background:var(--black);color:#fff;border-radius:var(--r);padding:18px 20px;border-top:3px solid var(--gold)}
-.bid-card .micro{display:block;color:var(--gold);margin-bottom:8px}
-.bid-card .bid-code-sm{font-family:var(--display);font-size:30px;letter-spacing:.08em;color:#fff;line-height:1}
-.bid-card p{font-size:12px;color:var(--taupe-lt);margin-top:8px;line-height:1.5}
-.bid-box{border:2px solid var(--gold);border-radius:var(--r);background:var(--gold-tint);padding:22px 24px;text-align:center}
-.bid-box .bid-code{font-family:var(--display);font-size:clamp(40px,8vw,64px);letter-spacing:.1em;color:var(--black);line-height:1}
-.bid-box .bid-help{font-size:14px;color:var(--ink);max-width:440px;margin:12px auto 16px;line-height:1.55}
-.bid-box .bid-help strong{font-weight:600}
-.bid-copied{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-top:10px;display:none}
-.bid-copied.show{display:block}
 
 /* ---------- ERROR BANNER / TOAST ---------- */
 .err-banner{display:none;background:var(--red-bg);border:1px solid var(--red);border-radius:var(--r);padding:14px 16px;font-size:14.5px;color:var(--red);margin-bottom:16px}
@@ -742,7 +731,7 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
 <section class="step" id="step2">
   <div class="step-head">
     <div class="sk"><span class="num">02</span><h2>When should we come?</h2></div>
-    <p class="sub">Pick an available date and time below. When the calendar asks for a <strong>Booking ID</strong>, paste the one shown under the calendar — it links your appointment to this order.</p>
+    <p class="sub">Pick an available date and time below and finish booking it in the calendar. Then check the box underneath to continue.</p>
   </div>
 
   <div class="block">
@@ -755,19 +744,10 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
     </div>
   </div>
 
-  <div class="block" id="bookingid-block">
-    <div class="bh"><h3>Your booking ID</h3></div>
-    <div class="bid-box">
-      <div class="bid-code" id="bid-code">—</div>
-      <button class="btn ghost" type="button" id="bid-copy">Copy ID</button>
-      <div class="bid-copied" id="bid-copied">Copied</div>
-    </div>
-  </div>
-
   <div class="block">
     <label class="checkrow big" id="appt-confirm-row">
       <input type="checkbox" id="appt-confirm-cb">
-      <span><strong>I selected my appointment time and entered my Booking ID.</strong><br><span style="color:var(--taupe);font-size:12.5px">Complete the booking in the calendar before you continue. We'll match it to your order using the Booking ID.</span></span>
+      <span><strong>I confirm I have booked my appointment.</strong><br><span style="color:var(--taupe);font-size:12.5px">Complete the booking in the calendar above before you check this box.</span></span>
     </label>
     <div class="fe" id="appt-confirm-err" style="margin-top:10px">Please confirm you've selected an appointment time.</div>
   </div>
@@ -986,10 +966,6 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
     <div class="s-usd">All amounts in USD</div>
     <div class="s-quote" id="s-quote" style="display:none"></div>
   </div>
-  <div class="bid-card" id="bid-card" hidden>
-    <span class="micro">Booking ID</span>
-    <div class="bid-code-sm" id="bid-code-sb">—</div>
-  </div>
   <div class="help-card">
     <span class="micro">Need help choosing?</span>
     <p>Email <a href="mailto:hello@mediamansion.com">hello@mediamansion.com</a> and we'll point you to the right package.</p>
@@ -1014,10 +990,6 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
     <div class="s-line tax"><span>Sales tax</span><span>Calculated on invoice</span></div>
     <div class="s-line total"><span>Estimated total</span><span id="s-total-m">$0</span></div>
     <div class="s-quote" id="s-quote-m" style="display:none"></div>
-    <div id="bid-block-m" hidden style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)">
-      <span class="micro" style="color:var(--gold);display:block;margin-bottom:6px">Booking ID</span>
-      <div class="bid-code-sm" id="bid-code-m">—</div>
-    </div>
   </div>
 </div>
 
@@ -1170,7 +1142,7 @@ const S = {
   billing:'same', recipient:'me',
   occ:null, pets:null,
   promoCode:'', promoRate:0,
-  terms:false, apptConfirmed:false,
+  terms:false, apptConfirmed:false, apptBookedAt:null,
   travelMiles:0, travelFee:0, travelNotify:false, travelTimeSec:0,
 };
 
@@ -1218,9 +1190,6 @@ function showStep(n, skipValidate){
   document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
   $('step'+n).classList.add('active');
   setProgress();
-  const showBid = (n===2);
-  $('bid-card').hidden = !showBid;
-  $('bid-block-m').hidden = !showBid;
   if(n===6) renderReview();
   window.scrollTo({top:0, behavior:'smooth'});
 }
@@ -1730,37 +1699,18 @@ $('zip').addEventListener('input',function(){ this.value=this.value.replace(/\D/
 $('condition').addEventListener('change',function(){ slide($('condition-other-slide'), this.value==='Other'); });
 
 /* ============================================================
-   BOOKING ID  —  5 random chars, fixed once at page load.
-   Alphabet excludes 0, 1, O, I to avoid confusion.  e.g. K7P4M
-   ============================================================ */
-const BOOKING_ID = (function(){
-  const ALPHABET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';   // 32 chars, no 0 1 O I
-  let out = '';
-  try {
-    const buf = new Uint8Array(5);
-    crypto.getRandomValues(buf);
-    for (let i = 0; i < 5; i++) out += ALPHABET[buf[i] % ALPHABET.length];
-  } catch (e) {
-    for (let i = 0; i < 5; i++) out += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
-  }
-  return out;
-})();
-['bid-code','bid-code-sb','bid-code-m'].forEach(id=>{ const el=$(id); if(el) el.textContent = BOOKING_ID; });
-$('bid-copy').addEventListener('click',function(){
-  const done=()=>{ const c=$('bid-copied'); c.classList.add('show'); setTimeout(()=>c.classList.remove('show'),2000); };
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(BOOKING_ID).then(done).catch(()=>{ showToast('Booking ID: '+BOOKING_ID); });
-  } else { showToast('Booking ID: '+BOOKING_ID); }
-});
-
-/* ============================================================
    STEP 3 — CALENDAR
    ============================================================ */
 let calLoaded=false;
 $('cal-iframe').addEventListener('load',()=>{ calLoaded=true; });
 setTimeout(()=>{ if(!calLoaded) $('cal-error').style.display='block'; },9000);
+// Appointment Booking Time: Eastern time, so it lines up with the Google Calendar notification.
+function fmtEastern(d){
+  return d.toLocaleString('en-US',{timeZone:'America/New_York',weekday:'short',month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit',second:'2-digit',timeZoneName:'short'});
+}
 $('appt-confirm-cb').addEventListener('change',function(){
   S.apptConfirmed=this.checked;
+  S.apptBookedAt = this.checked ? new Date() : null;
   $('appt-confirm-row').classList.toggle('on',this.checked);
   fieldErr(null,'appt-confirm-err',false);
 });
@@ -1965,7 +1915,7 @@ function renderReview(){
 
   const cards = [
     {k:'Property', step:3, body:`${fullAddress()||'—'}<br><span class="muted">${$('sqft-val').value||'—'} sq ft${$('ptype').value?' · '+$('ptype').value:''}${$('mls').value.trim()?' · MLS '+$('mls').value.trim():''}</span>`},
-    {k:'Appointment', step:2, body: (S.apptConfirmed ? 'Scheduled through the Google Calendar scheduler.' : '<span class="muted">Not yet confirmed</span>') + `<br><span class="muted">Booking ID: <strong>${BOOKING_ID}</strong></span>`},
+    {k:'Appointment', step:2, body: S.apptConfirmed ? `Booked through the Google Calendar scheduler.<br><span class="muted">Confirmed ${fmtEastern(S.apptBookedAt)}</span>` : '<span class="muted">Not yet confirmed</span>'},
     {k:'Access &amp; arrival', step:4, body:`${accessSummary()}<br><span class="muted">${occupancySummary()} · Pets: ${petLine}</span>${$('parking').value.trim()?`<br><span class="muted">Parking: ${$('parking').value.trim()}</span>`:''}`},
     {k:'Services', step:1, body: svcLines.join('<br>')},
     {k:'Travel', step:3, body: travelLine},
@@ -2009,7 +1959,8 @@ function buildEmail(){
   const shootContact=$('shoot-same-phone').checked?phone:$('shoot-contact').value.trim();
   const beds=$('beds').value.trim(), baths=$('baths').value.trim();
   const bedbath=(beds||baths)?`Bed/Bath: ${beds||'N/A'} bed / ${baths||'N/A'} bath\n`:'';
-  const ts=new Date().toLocaleString('en-US',{dateStyle:'full',timeStyle:'short'});
+  const ts=fmtEastern(new Date());
+  const apptTime = S.apptBookedAt ? fmtEastern(S.apptBookedAt) : 'Not recorded';
 
   const billing = S.billing==='other'
     ? `Someone else — ${$('bill-name').value.trim()} <${$('bill-email').value.trim()}>${$('bill-company').value.trim()?', '+$('bill-company').value.trim():''}${$('bill-po').value.trim()?', PO/Ref '+$('bill-po').value.trim():''}`
@@ -2025,12 +1976,12 @@ function buildEmail(){
   const condOther=$('condition-other').value.trim();
   const condition = $('condition').value ? ($('condition').value==='Other' ? 'Other — '+(condOther||'no detail') : $('condition').value) : 'N/A';
 
-  const subject=`New Media Mansion Booking — ${name} — ${BOOKING_ID} — ${$('addr1').value.trim()}`;
+  const subject=`New Media Mansion Booking — ${name} — ${$('addr1').value.trim()}`;
   const body =
 `NEW BOOKING — MEDIA MANSION
 =========================
-BOOKING ID: ${BOOKING_ID}   <-- match this to the Booking ID in the Google Calendar appointment
-Submitted: ${ts}
+APPOINTMENT BOOKING TIME: ${apptTime}   <-- match this to the Google Calendar booking notification
+Form submitted: ${ts}
 
 CLIENT
 Name: ${name}
@@ -2050,9 +2001,9 @@ Purpose: ${$('purpose').value||'N/A'}
 Condition on arrival: ${condition}
 
 APPOINTMENT
-Booking ID: ${BOOKING_ID}
-Client confirmed they selected a time in the embedded Google Calendar scheduler and entered this Booking ID.
-Find the matching Booking ID on the Google Calendar appointment to link it to this order.
+Appointment Booking Time: ${apptTime}
+Client checked "I confirm I have booked my appointment" at this time.
+Match it to the Google Calendar booking that came in just before.
 
 ACCESS & ARRIVAL
 Method: ${$('access').value||'N/A'}
@@ -2083,7 +2034,7 @@ Anything else: ${$('addl').value.trim()||'None'}
 =========================
 Client's email is ${email} (for your records — client will be contacted directly by Media Mansion).`;
 
-  const sms=`MM Booking ${BOOKING_ID}: ${name} | ${phone} | ${$('addr1').value.trim()} ${$('city').value.trim()} | ${fmt(total)}${custom.length?' + CUSTOM QUOTE':''} | Appt via Calendar | ${email}`;
+  const sms=`MM Booking | Appt booked ${apptTime}: ${name} | ${phone} | ${$('addr1').value.trim()} ${$('city').value.trim()} | ${fmt(total)}${custom.length?' + CUSTOM QUOTE':''} | ${email}`;
   return {subject, body, sms, email};
 }
 
@@ -2118,7 +2069,6 @@ function doSubmit(){
         ? `${$('rec-name').value.trim()||'—'} · ${$('rec-email').value.trim()||'—'}`
         : `${$('fullname').value.trim()||'—'} · ${$('email').value.trim()||'—'}`;
       $('success-review').innerHTML = [
-        {k:'Booking ID', b:`<strong>${BOOKING_ID}</strong>`},
         {k:'Property', b:`${fullAddress()}<br><span class="muted">${$('sqft-val').value} sq ft</span>`},
         {k:'Appointment', b:'Scheduled through the Google Calendar scheduler — we\'ll confirm it by email within 12 hours'},
         {k:'Services', b: svc.join('<br>')||'—'},
