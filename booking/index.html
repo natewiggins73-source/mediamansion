@@ -1065,8 +1065,6 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
 const EMAILJS_PUBLIC_KEY   = 'JDEolgk7OF3CsNckp';
 const EMAILJS_SERVICE_ID   = 'service_sv0w5hd';
 const EMAILJS_TEMPLATE_ID  = 'template_hs6yvic';
-const EMAILJS_SMS_TEMPLATE = 'template_oh4lr7z';
-const SMS_GATEWAY   = '2157797235@mypixmessages.com'; // Xfinity Mobile picture-message address
 const BUSINESS_EMAIL = 'hello@mediamansion.com';
 try{ emailjs.init(EMAILJS_PUBLIC_KEY); }catch(e){ console.error('EmailJS init failed', e); }
 
@@ -2034,26 +2032,16 @@ Anything else: ${$('addl').value.trim()||'None'}
 =========================
 Client's email is ${email} (for your records — client will be contacted directly by Media Mansion).`;
 
-  const sms=`MM Booking | Appt booked ${apptTime}: ${name} | ${phone} | ${$('addr1').value.trim()} ${$('city').value.trim()} | ${fmt(total)}${custom.length?' + CUSTOM QUOTE':''} | ${email}`;
-  return {subject, body, sms, email};
+  return {subject, body, email};
 }
 
 function doSubmit(){
   const btn=$('submit-btn');
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Submitting…';
   $('err-banner').classList.remove('show');
-  const {subject,body,sms,email}=buildEmail();
+  const {subject,body,email}=buildEmail();
 
-  // Try the text alert first. If it fails, still send the booking email,
-  // with a note at the top saying the text didn't go out.
-  // Only a failed booking email shows the customer an error.
-  emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_SMS_TEMPLATE,{to_email:SMS_GATEWAY,from_name:'Media Mansion',subject:'New MM Booking',message:sms})
-    .then(()=>body, err=>{
-      console.error('EmailJS text alert failed:',err);
-      const why = (err && (err.text||err.message)) ? ` (${err.text||err.message})` : '';
-      return `⚠️ TEXT MESSAGE NOTIFICATION ERROR — the text alert to ${SMS_GATEWAY} failed${why}. The booking below is still valid.\n\n` + body;
-    })
-    .then(finalBody=>emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{to_email:BUSINESS_EMAIL,from_name:$('fullname').value.trim(),from_email:BUSINESS_EMAIL,subject,message:finalBody}))
+  emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{to_email:BUSINESS_EMAIL,from_name:$('fullname').value.trim(),from_email:BUSINESS_EMAIL,subject,message:body})
     .then(()=>{
       const {pkgItem,addons,subtotal,discount,total,custom}=calcTotal();
       $('page-wrap').style.display='none';
