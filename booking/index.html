@@ -688,7 +688,7 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
     <div class="map-note" id="map-note">If the pin looks off, note the correct location under parking &amp; arrival instructions on the Access step.</div>
     <div id="map-na" style="display:none;font-size:13px;color:var(--taupe);margin-top:10px;font-style:italic">Map preview unavailable — that's fine, it doesn't affect your booking.</div>
 
-    <div class="travel-note" id="travel-note">Travel is included across our standard service area. If the address is outside it, a travel fee is calculated automatically and shown here and on your invoice.</div>
+    <div class="travel-note" id="travel-note">Travel is included within 50 miles of our Philadelphia base (ZIP 19144). If the address is farther, a travel fee is calculated automatically and shown here and on your invoice.</div>
     <div id="travel-notify-wrap" class="notify-wrap" style="display:none">
       <input type="checkbox" id="travel-notify-cb"><label for="travel-notify-cb">Notify me if Media Mansion expands to cover this area.</label>
     </div>
@@ -1036,7 +1036,7 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
       <h4>Payment</h4>
       <p>Nothing is charged when you submit this form. Payment is collected on the day of the appointment or shortly after, and always before final deliverables are released. Your invoice is sent within 24 hours of the completed appointment. Applicable sales tax and any custom-quote items are reflected on that invoice.</p>
       <h4>Travel</h4>
-      <p>Travel is included for properties within about 90 miles (roughly 2 hours) of our Philadelphia base. Beyond that, a travel fee of $1.25 per one-way mile is calculated automatically from the property address and appears on your order summary and invoice.</p>
+      <p>Travel is included for properties within 50 miles of our Philadelphia base (ZIP 19144). Beyond 50 miles, a travel fee of $1.25 per one-way mile is calculated automatically from the property address and appears on your order summary and invoice.</p>
       <h4>Weather</h4>
       <p>Exterior and aerial services may be rescheduled when weather conditions make safe operation or quality capture impractical. We will coordinate a replacement date with you, and no rescheduling fee applies in that case.</p>
       <h4>Custom quotes</h4>
@@ -1604,8 +1604,8 @@ function showPin(lat,lon,label){
   setTimeout(()=>leafMap.invalidateSize(),120);
   checkTravelFee(lat,lon);
 }
-const ORIGIN_LAT=40.0247, ORIGIN_LON=-75.2271;
-const TRAVEL_FREE_MILES=90, TRAVEL_FREE_SEC=7200, TRAVEL_RATE_PER_MILE=1.25, TRAVEL_MAX_SEC=16200;
+const ORIGIN_LAT=40.0275, ORIGIN_LON=-75.1817; // ZIP 19144
+const TRAVEL_FREE_MILES=50, TRAVEL_RATE_PER_MILE=1.25, TRAVEL_MAX_SEC=16200;
 function calcTravelFeeAmount(miles){ return Math.ceil((miles*TRAVEL_RATE_PER_MILE)/5)*5; }
 function fmtDrive(sec){
   const m=Math.round(sec/60);
@@ -1627,7 +1627,7 @@ function checkTravelFee(destLat,destLon){
         note.className='travel-note out';
         note.textContent="This address is outside our service range right now. We're always expanding — check back soon.";
         notifyWrap.style.display='flex';
-      } else if(route.duration>TRAVEL_FREE_SEC || miles>TRAVEL_FREE_MILES){
+      } else if(miles>TRAVEL_FREE_MILES){
         const fee=calcTravelFeeAmount(miles);
         S.travelMiles=miles; S.travelFee=fee;
         note.className='travel-note fee';
