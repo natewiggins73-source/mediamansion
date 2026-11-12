@@ -231,9 +231,10 @@
   }
 
   /* ---------- header ---------- */
-  header{position:fixed;inset:0 0 auto 0;z-index:50;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+  header{position:fixed;inset:0 0 auto 0;z-index:50;transition:background .3s,border-color .3s;border-bottom:1px solid transparent;transform:translate3d(0,0,0);-webkit-backface-visibility:hidden;backface-visibility:hidden}
   header::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(6,10,12,.62),rgba(6,10,12,0));transition:opacity .3s}
-  header.scrolled{background:rgba(6,10,12,.92);backdrop-filter:blur(10px);border-color:var(--line)}
+  /* solid background, no backdrop-filter: the live blur re-samples the moving marquee/videos/iframe beneath and flickers while scrolling */
+  header.scrolled{background:rgba(6,10,12,.97);border-color:var(--line)}
   header.scrolled::before{opacity:0}
   .nav{display:flex;align-items:center;justify-content:space-between;height:104px}
   .logo{display:flex;align-items:center;color:#fff}
@@ -1013,7 +1014,7 @@ if (trackEl) {
 ------------------------------------------------------ */
 const projects = [
   {
-    title:"Avalon, NJ — Beach House", year:"2026", role:"Photography", type:"gallery",
+    title:"Coastal Beach House", year:"2026", role:"Photography", type:"gallery",
     desc:"Full interior and exterior photo set, bedrooms, kitchen, and living spaces shot in natural light.",
     thumb:"https://static.showit.com/file/D_9YygL3fAC8ndEtAtSk2w/273321/bedroom_7.jpg",
     gallery:[
@@ -1026,13 +1027,13 @@ const projects = [
     ]
   },
   {
-    title:"Lake Harmony, PA - Airbnb", year:"2026", role:"Matterport Scan", type:"tour",
+    title:"Lakeside Vacation Rental", year:"2026", role:"Matterport Scan", type:"tour",
     desc:"Complete 3D scan with dollhouse model and floor plan for a short-term rental listing.",
     thumb:"https://static.showit.com/file/vhjgyTC56_b5jWGSwF7q1A/273321/03072026_165900_1.jpg",
     vid:"1173621935"
   },
   {
-    title:"Domus Apartments", year:"2026", role:"Photography", type:"gallery",
+    title:"Renovated Apartment Units", year:"2026", role:"Photography", type:"gallery",
     desc:"Listing photography for renovated apartment units — kitchen, bath, and living areas.",
     thumb:"https://static.showit.com/file/FwUqMfeD4htzspb7yA_v-A/273321/06132026_210322.jpg",
     gallery:[
@@ -1045,37 +1046,37 @@ const projects = [
     ]
   },
   {
-    title:"Evolve Real Estate — Property Tour", year:"2025", role:"Virtual Tour", type:"video",
+    title:"Three-Bedroom Apartment Tour", year:"2025", role:"Virtual Tour", type:"video",
     desc:"Promotional video showcasing a 3-bedroom apartment, featuring smooth pacing and clean transitions.",
     thumb:"https://static.showit.com/file/L1WsCDeit1y81v9DNkauuw/273321/chatgpt_image_sep_3_2026_03_52_50_pm.png",
     vid:"1099222537"
   },
   {
-    title:"Commercial Restaurant Chain 3D Model", year:"2026", role:"Matterport Tour", type:"tour",
-    desc:"Commercial-space 3D scan for a franchise location.",
+    title:"Restaurant 3D Model", year:"2026", role:"Matterport Tour", type:"tour",
+    desc:"Commercial 3D scan of a restaurant space.",
     thumb:"https://static.showit.com/file/Gu_wdfd0OMEDx4EJdRWNPg/273321/chatgpt_image_sep_3_2026_03_56_28_pm.png",
     vid:"1173625647"
   },
   {
-    title:"RE/MAX Property Listing Promo — New Zealand", year:"2022", role:"Video Editing", type:"video",
+    title:"Residential Listing Promo", year:"2022", role:"Video Editing", type:"video",
     desc:"A property showcase edited from provided footage, focused on highlighting the home's key features for listings and social media.",
     thumb:"https://static.showit.com/file/_9HLtQuYmZqIEP1b3ASdHw/273321/screenshot_2026-09-03_at_3_57_33_pm.png",
     vid:"1099235875"
   },
   {
-    title:"Seed Real Estate Promo", year:"2025", role:"Video Editing", type:"video",
+    title:"Property Listing Film", year:"2025", role:"Video Editing", type:"video",
     desc:"Listing package combining photography and a short property film.",
     thumb:"https://static.showit.com/file/rYFp0T6tUuWg_-YRAZcjHQ/273321/chatgpt_image_sep_3_2026_04_00_01_pm.png",
     vid:"1099221519"
   },
   {
-    title:"Sunrise Senior Living", year:"2026", role:"Photography", type:"tour",
-    desc:"Full scan of a 30,000 sq ft senior living property for updates and renovations.",
+    title:"Senior Living Community", year:"2026", role:"Matterport Scan", type:"tour",
+    desc:"Full 3D scan of a large senior living property to support updates and renovations.",
     thumb:"https://static.showit.com/file/mbPknpRH41C2NdpXUbil6Q/273321/screenshot_2026-09-03_at_4_00_50_pm.png",
     vid:"1173624578"
   },
   {
-    title:"Dobson Mills Apartments", year:"2026", role:"Photography", type:"gallery",
+    title:"Apartment Community Amenities", year:"2026", role:"Photography", type:"gallery",
     desc:"Full photo set of apartment amenities for website promotion and advertising.",
     thumb:"https://static.showit.com/file/AqrRGXP6JOME3w0dPYWSbQ/273321/screenshot_2026-09-03_at_4_03_44_pm.png",
     gallery:[
@@ -1172,7 +1173,17 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.clas
 
 /* ---------- header on scroll ---------- */
 const hdr = document.getElementById('hdr');
-const onScroll = () => hdr.classList.toggle('scrolled', window.scrollY > 40);
+// rAF-throttled, with hysteresis so the class can't flip back and forth near the threshold
+let hdrScrolled = null, hdrTick = false;
+const onScroll = () => {
+  if (hdrTick) return; hdrTick = true;
+  requestAnimationFrame(() => {
+    hdrTick = false;
+    const y = window.scrollY;
+    const next = hdrScrolled ? y > 20 : y > 60;
+    if (next !== hdrScrolled) { hdrScrolled = next; hdr.classList.toggle('scrolled', next); }
+  });
+};
 onScroll(); addEventListener('scroll', onScroll, {passive:true});
 
 /* ---------- mobile nav (dim + lock scroll + burger toggles to X) ---------- */
