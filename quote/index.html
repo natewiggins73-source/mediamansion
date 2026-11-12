@@ -410,7 +410,7 @@ footer{max-width:760px;margin:0 auto;padding:0 20px 120px;font-size:12px;color:v
   <!-- 4 — TRAVEL (optional) -->
   <section class="q locked" id="q-zip">
     <div class="qh"><span class="n">04</span><h2>Property ZIP</h2><span class="opt-tag">Optional</span></div>
-    <p class="hint">Travel is free within about 90 miles of Philadelphia. Add a ZIP code to check.</p>
+    <p class="hint">Travel is free within 50 miles of our Philadelphia base (ZIP 19144); beyond that it’s $1.25 per one-way mile. Add a ZIP code to check.</p>
     <label class="zip"><span class="zl">ZIP</span><input id="zip" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="e.g. 19103" aria-label="Property ZIP code"></label>
     <div class="tnote" id="tnote" aria-live="polite"></div>
   </section>
@@ -489,8 +489,8 @@ const VIDEDIT_MSG = {
 };
 
 /* travel — same rules as booking page */
-const ORIGIN_LAT=40.0247, ORIGIN_LON=-75.2271;
-const TRAVEL_FREE_MILES=90, TRAVEL_FREE_SEC=7200, TRAVEL_RATE_PER_MILE=1.25, TRAVEL_MAX_SEC=16200;
+const ORIGIN_LAT=40.0275, ORIGIN_LON=-75.1817; // ZIP 19144
+const TRAVEL_FREE_MILES=50, TRAVEL_RATE_PER_MILE=1.25, TRAVEL_MAX_SEC=16200;
 const travelFeeFor = miles => Math.ceil((miles*TRAVEL_RATE_PER_MILE)/5)*5;
 
 /* ============================================================ STATE */
@@ -770,7 +770,7 @@ async function checkZip(zip){
     if(route.duration>TRAVEL_MAX_SEC){
       Q.travelFee=0; Q.travelMiles=0; note.className='tnote out';
       note.textContent='That area is outside our service range right now.';
-    } else if(route.duration>TRAVEL_FREE_SEC || miles>TRAVEL_FREE_MILES){
+    } else if(miles>TRAVEL_FREE_MILES){
       Q.travelMiles=miles; Q.travelFee=travelFeeFor(miles); note.className='tnote fee';
       note.textContent=`About ${miles} miles away, so a ${fmt(Q.travelFee)} travel fee is added.`;
     } else {
