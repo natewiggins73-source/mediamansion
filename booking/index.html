@@ -1078,7 +1078,7 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
     <h3>Cancellations &amp; rescheduling</h3>
     <p style="font-size:15px;line-height:1.7;color:var(--ink)">Need to change plans? Give us at least 24 hours' notice. A $50 fee applies to cancellations or reschedules inside that window, or if the property isn't accessible or ready to photograph when we arrive.</p>
   </div>
-  <p style="margin-top:22px;font-size:14px;color:var(--ink)">Questions or changes? Email <a href="mailto:hello@mediamansion.com">hello@mediamansion.com</a> or call <a href="tel:+12157797235">(215) 779-7235</a>.</p>
+  <p style="margin-top:22px;font-size:14px;color:var(--ink)">Questions or changes? Email <a href="mailto:hello@mediamansion.com">hello@mediamansion.com</a> or call <a href="tel:+12153157904">(215) 315-7904</a>.</p>
 </div>
 
 <div class="tc-modal" id="tc-modal" hidden>
@@ -1091,7 +1091,7 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
       <h4>Cancellation &amp; rescheduling</h4>
       <p>Please notify us at least 24 hours before your scheduled appointment to cancel or reschedule. A $50 fee applies to appointments canceled or rescheduled inside this window.</p>
       <h4>Property access &amp; readiness</h4>
-      <p>If we arrive and the property cannot be accessed or is not ready to be photographed, a fee of 25% of the booked order total (minimum $50) applies before we can reschedule. A travel fee may also apply if we are given an incorrect address.</p>
+      <p>If we arrive and the property cannot be accessed or is not ready to be photographed, a $50 fee applies before we can reschedule. A travel fee may also apply if we are given an incorrect address.</p>
       <h4>Payment</h4>
       <p>Nothing is charged when you submit this form. Payment is collected on the day of the appointment or shortly after, and always before final deliverables are released. Your invoice is sent within 24 hours of the completed appointment. Applicable sales tax and any custom-quote items are reflected on that invoice.</p>
       <h4>Travel</h4>
@@ -2121,7 +2121,7 @@ function doSubmit(){
         {k:'Services', b: svc.join('<br>')||'—'},
         {k:'Estimated total', b:`${discount>0?`<span class="muted">Subtotal ${fmt(subtotal)} · Promo (${S.promoCode}) −${fmt(discount)}</span><br>`:''}<strong>${fmt(total)}</strong> <span class="muted">— no charge today; sales tax &amp; any custom-quote adjustments shown on your invoice</span>`},
         {k:'Media &amp; invoice to', b: mediaTo},
-        {k:'Media Mansion', b:`<a href="mailto:hello@mediamansion.com">hello@mediamansion.com</a> · <a href="tel:+12157797235">(215) 779-7235</a>`},
+        {k:'Media Mansion', b:`<a href="mailto:hello@mediamansion.com">hello@mediamansion.com</a> · <a href="tel:+12153157904">(215) 315-7904</a>`},
       ].map(c=>`<div class="rev"><div class="rh"><h4>${c.k}</h4></div><div class="rb">${c.b}</div></div>`).join('');
       $('success').classList.add('show');
       window.scrollTo({top:0,behavior:'smooth'});
@@ -2228,5 +2228,6 @@ render();
 })();
 </script>
 
+<div style="max-width:1180px;margin:0 auto;padding:22px 24px 48px;font-size:12px;text-align:center;opacity:.7"><a href="/privacy/" style="text-decoration:underline">Privacy Policy</a> &middot; <a href="/terms/" style="text-decoration:underline">Terms &amp; Conditions</a></div>
 </body>
 </html>
