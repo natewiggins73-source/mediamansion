@@ -404,6 +404,33 @@ h1,h2,h3,.display{font-family:var(--display);font-weight:400;text-transform:uppe
   .step-nav .btn{flex:1;justify-content:center;padding:15px 14px;letter-spacing:.1em}
   .cal-shell iframe{height:620px}
 }
+
+.mm-hide{display:none!important}
+.mm-collapsed>*:not(.bh){display:none!important}
+.mm-collapsed .bh{cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.mm-collapsed .bh h3::after{content:" +";color:var(--gold)}
+@media(max-width:700px){
+  body{-webkit-text-size-adjust:100%}
+  .fi,.fs,.ft,input[type=text],input[type=email],input[type=tel],input[type=number],select,textarea{font-size:16px!important;min-height:50px;padding-top:12px;padding-bottom:12px}
+  textarea.ft{min-height:110px}
+  .fl{font-size:14px!important;margin-bottom:6px}
+  .fg{margin-bottom:16px}
+  .block{padding:16px 14px!important;margin-bottom:14px}
+  .block .bh h3,.bh h3{font-size:26px!important;line-height:1.1}
+  #customize-block .bh h3{font-size:28px!important}
+  #customize-block .bhs{font-size:13px!important}
+  .opt{padding:15px 14px!important;min-height:56px}
+  .opt .on{font-size:16px!important}
+  .opt .od{font-size:13px!important;line-height:1.4}
+  .acc-h{padding:16px 14px!important;min-height:60px}
+  .step-head .num{display:none}
+  .step-head h2{font-size:30px!important;line-height:1.05}
+  .step-head p,.step-head .sub{font-size:14px!important;line-height:1.45}
+  .step-nav{gap:10px}
+  .step-nav .btn{min-height:54px;font-size:15px}
+  .fh{font-size:12.5px!important}
+  .cal-shell iframe{height:600px}
+}
 </style>
 </head>
 <body>
@@ -1887,7 +1914,7 @@ function validateStep(n){
     e.push(v($('city').value.trim(),$('city'),'city-err','Enter the city.'));
     e.push(v($('state').value,$('state'),'state-err','Select a state.'));
     e.push(v(/^\d{5}$/.test($('zip').value),$('zip'),'zip-err','Enter a valid 5-digit zip.'));
-    e.push(v($('sqft-val').value.trim(),$('sqft-val'),'sqft-val-err','Enter the exact square footage.'));
+    if(!LITE) e.push(v($('sqft-val').value.trim(),$('sqft-val'),'sqft-val-err','Enter the exact square footage.'));
     e.push(v($('ptype').value,$('ptype'),'ptype-err','Select a property type.'));
   }
   if(n===4){
@@ -1897,7 +1924,7 @@ function validateStep(n){
       e.push(v($('lockcode').value.trim(),$('lockcode'),'lockcode-err','Enter the access code.'));
     }
     if(!S.occ){ $('occ-err').classList.add('show'); e.push({el:$('occ-group'),msg:'Is the property occupied?'}); }
-    if(!S.pets){ $('pet-err').classList.add('show'); e.push({el:$('pet-group'),msg:'Are there pets at the property?'}); }
+    if(!LITE && !S.pets){ $('pet-err').classList.add('show'); e.push({el:$('pet-group'),msg:'Are there pets at the property?'}); }
     if(!$('shoot-same-phone').checked){
       e.push(v($('shoot-contact').value.replace(/\D/g,'').length===10,$('shoot-contact'),'shoot-err','Enter a day-of contact number.'));
     }
@@ -1962,7 +1989,7 @@ function renderReview(){
     ? `+${fmt(S.travelFee)} (${S.travelMiles} mi one-way)`
     : (S.travelMiles===0 && S.travelTimeSec>TRAVEL_MAX_SEC ? 'Outside service range' : 'Included');
 
-  const petLine = S.pets==='yes' ? ('Yes'+($('pet-note').value.trim()?` — ${$('pet-note').value.trim()}`:'')) : 'No';
+  const petLine = S.pets==='yes' ? ('Yes'+($('pet-note').value.trim()?` — ${$('pet-note').value.trim()}`:'')) : (S.pets==='no' ? 'No' : 'Not asked (see notes)');
   const recipientLine = S.recipient==='other'
     ? `${$('rec-name').value.trim()||'—'} · ${$('rec-email').value.trim()||'—'} · ${$('rec-phone').value.trim()||'—'}`
     : 'Me';
@@ -1971,7 +1998,7 @@ function renderReview(){
     : 'Same as contact';
 
   const cards = [
-    {k:'Property', step:3, body:`${fullAddress()||'—'}<br><span class="muted">${$('sqft-val').value||'—'} sq ft${$('ptype').value?' · '+$('ptype').value:''}${$('mls').value.trim()?' · MLS '+$('mls').value.trim():''}</span>`},
+    {k:'Property', step:3, body:`${fullAddress()||'—'}<br><span class="muted">${sqftTxt()} sq ft${$('ptype').value?' · '+$('ptype').value:''}${$('mls').value.trim()?' · MLS '+$('mls').value.trim():''}</span>`},
     {k:'Appointment', step:2, body: S.apptConfirmed ? `Booked through the Google Calendar scheduler.<br><span class="muted">Confirmed ${fmtEastern(S.apptBookedAt)}</span>` : '<span class="muted">Not yet confirmed</span>'},
     {k:'Access &amp; arrival', step:4, body:`${accessSummary()}<br><span class="muted">${occupancySummary()} · Pets: ${petLine}</span>${$('parking').value.trim()?`<br><span class="muted">Parking: ${$('parking').value.trim()}</span>`:''}`},
     {k:'Services', step:1, body: svcLines.join('<br>')},
@@ -1990,7 +2017,7 @@ function renderReview(){
     order: (!!pkgItem || addons.length>0 || custom.length>0),
     address: !!($('addr1').value.trim() && $('city').value.trim() && $('state').value && /^\d{5}$/.test($('zip').value)),
     appt: S.apptConfirmed,
-    access: !!$('access').value && !!S.occ && !!S.pets,
+    access: !!$('access').value && !!S.occ && (LITE||!!S.pets),
     contact: !!($('fullname').value.trim() && isEmail($('email').value) && $('phone').value.replace(/\D/g,'').length===10),
     terms: S.terms,
   };
@@ -2051,7 +2078,7 @@ Deliver finished media to: ${recipient}
 
 PROPERTY
 Address: ${fullAddress()}
-Exact Sq Ft: ${$('sqft-val').value||'N/A'}   (Approx size bracket: ${S.sqftKey||'N/A'})
+Exact Sq Ft: ${$('sqft-val').value||'not asked (mobile form)'}   (Approx size bracket: ${S.sqftKey||'N/A'})
 ${bedbath}MLS / Listing ID: ${$('mls').value.trim()||'N/A'}
 Property type: ${$('ptype').value||'N/A'}
 Purpose: ${$('purpose').value||'N/A'}
@@ -2094,14 +2121,51 @@ Client's email is ${email} (for your records — client will be contacted direct
   return {subject, body, email};
 }
 
+
+const LITE=window.matchMedia('(max-width:700px)').matches;
+(function(){
+  if(!LITE) return;
+  document.body.classList.add('mm-lite');
+  const H=el=>{ if(el) el.classList.add('mm-hide'); };
+  const byId=id=>document.getElementById(id);
+  const fg=id=>{ const e=byId(id); return e && (e.closest('.fg')||e); };
+  ['ess-addon-opt','acc-photo','acc-mkt','acc-gift','acc-aerial','rush-opt','travel-notify-wrap',
+   'pet-note-slide','occ-note-slide','vacant-timing-slide','condition-other-slide'].forEach(id=>H(byId(id)));
+  ['sqft-val','mls','beds','baths','condition','referral','access-note','parking','features'].forEach(id=>H(fg(id)));
+  const pk=byId('parking'); if(pk){ const bk=pk.closest('.block'); if(bk) H(bk); }
+  const pg=byId('pet-group'); if(pg){ H(pg.closest('.fg')||pg.parentElement); H(byId('pet-err')); }
+  const eb=document.querySelector('#acc-edit .acc-b');
+  if(eb){ let on=false; Array.from(eb.children).forEach(c=>{ if(!on && /^\s*Video editing\s*$/.test(c.textContent)) on=true; if(on) H(c); }); }
+  document.querySelectorAll('.bhs,.fh,p,div').forEach(e=>{ if(e.children.length===0 && /enter the exact\s+square footage on the next step/i.test(e.textContent)) e.textContent='This sets your pricing.'; });
+  const st=byId('state'); if(st && !st.value) st.value='PA';
+  const pt=byId('ptype'); if(pt && !pt.value) pt.value='Residential';
+  const ad=byId('addl');
+  if(ad){ ad.placeholder="Parking, who's meeting us, pets, gate codes, anything else we should know"; const l=document.querySelector('label[for="addl"]'); if(l) l.innerHTML='Notes for the photographer <span class="opt-tag">(optional)</span>'; }
+  const pc=byId('promo-code'); if(pc){ const blk=pc.closest('.block'); if(blk){ blk.classList.add('mm-collapsed'); const bh=blk.querySelector('.bh'); if(bh) bh.addEventListener('click',()=>blk.classList.remove('mm-collapsed')); } }
+})();
+function sqftTxt(){ return $('sqft-val').value || (S.sqftKey ? S.sqftKey.replace('-',' to ')+' (size range)' : '—'); }
+function _send(a,b,c){
+  try{ if(typeof emailjs==='undefined') throw new Error('EmailJS library not loaded'); return emailjs.send(a,b,c); }
+  catch(e){ return Promise.reject(e); }
+}
+function showFail(slow){
+  const btn=$('submit-btn'), bn=$('err-banner');
+  let href='mailto:hello@mediamansion.com';
+  try{ const m=buildEmail(); href+='?subject='+encodeURIComponent(m.subject)+'&body='+encodeURIComponent(m.body).slice(0,1800); }catch(e){}
+  bn.innerHTML=(slow?'This is taking longer than expected. Your request may not have gone through. ':'There was a problem submitting your booking. ')+'Please <a href="'+href.replace(/&/g,'&amp;')+'">click here to email us your details</a> (or write hello@mediamansion.com), or try again.';
+  bn.classList.add('show'); bn.scrollIntoView({behavior:'smooth',block:'center'});
+  btn.disabled=false; btn.innerHTML='Send Booking Request →';
+}
 function doSubmit(){
   const btn=$('submit-btn');
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Submitting…';
   $('err-banner').classList.remove('show');
   const {subject,body,email}=buildEmail();
 
-  emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{to_email:BUSINESS_EMAIL,from_name:$('fullname').value.trim(),from_email:BUSINESS_EMAIL,subject,message:body})
+  const _t=setTimeout(()=>{ showFail(true); },25000);
+  _send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{to_email:BUSINESS_EMAIL,from_name:$('fullname').value.trim(),from_email:BUSINESS_EMAIL,subject,message:body})
     .then(()=>{
+      clearTimeout(_t);
       const {pkgItem,addons,subtotal,discount,total,custom}=calcTotal();
       $('page-wrap').style.display='none';
       $('progress').style.display='none';
@@ -2116,7 +2180,7 @@ function doSubmit(){
         ? `${$('rec-name').value.trim()||'—'} · ${$('rec-email').value.trim()||'—'}`
         : `${$('fullname').value.trim()||'—'} · ${$('email').value.trim()||'—'}`;
       $('success-review').innerHTML = [
-        {k:'Property', b:`${fullAddress()}<br><span class="muted">${$('sqft-val').value} sq ft</span>`},
+        {k:'Property', b:`${fullAddress()}<br><span class="muted">${sqftTxt()} sq ft</span>`},
         {k:'Appointment', b:'Scheduled through the Google Calendar scheduler — we\'ll confirm it by email within 12 hours'},
         {k:'Services', b: svc.join('<br>')||'—'},
         {k:'Estimated total', b:`${discount>0?`<span class="muted">Subtotal ${fmt(subtotal)} · Promo (${S.promoCode}) −${fmt(discount)}</span><br>`:''}<strong>${fmt(total)}</strong> <span class="muted">— no charge today; sales tax &amp; any custom-quote adjustments shown on your invoice</span>`},
@@ -2127,10 +2191,9 @@ function doSubmit(){
       window.scrollTo({top:0,behavior:'smooth'});
     })
     .catch(err=>{
+      clearTimeout(_t);
       console.error('EmailJS:',err);
-      $('err-banner').classList.add('show');
-      $('err-banner').scrollIntoView({behavior:'smooth',block:'center'});
-      btn.disabled=false; btn.innerHTML='Send Booking Request →';
+      showFail(false);
     });
 }
 
