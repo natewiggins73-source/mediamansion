@@ -69,8 +69,8 @@ a.card:hover{border-color:rgba(201,161,92,.6);transform:translateY(-4px)}
 .card p{font-size:14.5px;color:var(--taupe-lt);line-height:1.65}
 .card .more{margin-top:auto;padding-top:18px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
 .ticks{list-style:none;display:grid;gap:8px}
-.ticks li{display:flex;gap:12px;align-items:baseline;font-size:15px;color:var(--taupe-lt);line-height:1.5}
-.ticks li::before{content:"";width:5px;height:5px;background:var(--gold);flex:none;transform:translateY(-3px)}
+.ticks li{position:relative;padding-left:17px;font-size:15px;color:var(--taupe-lt);line-height:1.5}
+.ticks li::before{content:"";position:absolute;left:0;top:.56em;width:5px;height:5px;background:var(--gold)}
 .note{border-left:2px solid var(--gold);padding:14px 18px;background:rgba(201,161,92,.07);font-size:14.5px;color:var(--taupe-lt);line-height:1.65;margin-top:22px;max-width:78ch}
 .note a{color:var(--gold);border-bottom:1px solid rgba(201,161,92,.4)}
 
@@ -133,7 +133,8 @@ td b{color:#fff;font-weight:500}
 .g-cols{display:grid;grid-template-columns:1fr 1fr;gap:34px}
 .g-cols h3{font-size:21px;color:var(--gold);margin-bottom:12px}
 .g-cols .blk{margin-bottom:26px}
-.g-cols .ticks.chk li::before{width:9px;height:9px;background:transparent;border:1px solid var(--gold);transform:translateY(-1px)}
+.g-cols .ticks.chk li{padding-left:21px}
+.g-cols .ticks.chk li::before{width:9px;height:9px;background:transparent;border:1px solid var(--gold);top:.4em}
 .guide .know{border-top:1px solid var(--line);padding-top:20px;margin-top:6px}
 .guide .know h3{font-size:21px;color:var(--gold);margin-bottom:10px}
 .guide .dl{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:26px}
@@ -144,7 +145,7 @@ td b{color:#fff;font-weight:500}
 .cta-band{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:34px;display:flex;align-items:center;justify-content:space-between;gap:26px;flex-wrap:wrap}
 .cta-band h3{font-size:30px;margin-bottom:8px}
 .cta-band p{font-size:15px;color:var(--taupe-lt);max-width:56ch}
-.cta-band .actions{flex:none}
+.cta-band .actions{flex:0 1 auto;max-width:100%}
 
 /* ---------- legal ---------- */
 .legal-page{padding:150px 0 90px}
